@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<widget id="com.ionicframework.vsegda214536" version="2.2.1" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+  <name>Такси Всегда</name>
+  <description>
+    Заказ такси
+  </description>
+  <author email="info@taxi21.ru" href="http://taxivsegda.ru/">
+    Taxi21 Development Team
+  </author>
+	<content src="index.html"/>
+</widget>

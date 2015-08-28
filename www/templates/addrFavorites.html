@@ -1,0 +1,20 @@
+<ion-view view-title="Избранные">
+	<ion-content>
+		<div class="list">
+	        <a class="item item-icon-left" 
+	        	ng-repeat="addr in adds" 
+	        	ng-class-even="'item-stable'"
+	        	ng-click="addrSelect(addr)">
+	        	<i class="icon ion-star"></i>
+        		<span ng-bind-html="addr.text()"></span>
+	        </a>
+		</div>
+		<div class="card" ng-if="adds.length == 0">
+  			<div class="item item-text-wrap">
+  				<p>
+  					У вас нет списка избранных адресов в г.&nbsp;{{app.twn_nme}}.
+  				</p>
+  			</div>
+		</div>
+	</ion-content>
+</ion-view>
