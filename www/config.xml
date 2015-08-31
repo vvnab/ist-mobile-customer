@@ -31,6 +31,7 @@
 	<!-- platforms -->
 	
 	<gap:platform name="android"/>
+	<gap:platform name="ios"/>
 	
 	<!-- preferences -->
 	
