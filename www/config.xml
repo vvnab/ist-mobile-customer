@@ -29,9 +29,9 @@
 	
 		
 	<!-- <gap:plugin name="cordova-plugin-console"/> -->
-	<gap:plugin name="cordova-plugin-device"/>
-	<gap:plugin name="cordova-plugin-geolocation"/>
-	<gap:plugin name="cordova-plugin-splashscreen"/>
+	<gap:plugin name="cordova-plugin-device" source="plugins.cordova.io"/>
+	<gap:plugin name="cordova-plugin-geolocation" source="plugins.cordova.io"/>
+	<gap:plugin name="cordova-plugin-splashscreen" source="plugins.cordova.io"/>
 	
 	<gap:plugin name="nl.x-services.plugins.toast" version="2.0.2"/>
 	<gap:plugin name="com.rjfun.cordova.sms" version="1.0.3"/>
