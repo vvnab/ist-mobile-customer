@@ -24,6 +24,11 @@
 	
 	<!-- plugins -->
 
+	<gap:plugin name="cordova-plugin-console" source="plugins.cordova.io"/>
 	<gap:plugin name="cordova-plugin-device" source="plugins.cordova.io"/>
+	<gap:plugin name="cordova-plugin-geolocation" source="plugins.cordova.io"/>
+	<gap:plugin name="cordova-plugin-splashscreen" source="plugins.cordova.io"/>
+	
+	<gap:plugin name="nl.x-services.plugins.toast" version="2.0.2" />
 
 </widget>
