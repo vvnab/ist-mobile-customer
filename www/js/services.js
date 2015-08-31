@@ -77,6 +77,7 @@ angular.module('app.services', ['ngResource'])
 					}
 					console.log('Towns_res: ' + JSON.stringify(res));
 					navigator.geolocation.getCurrentPosition(function(res) {
+						console.log('geolocation: ' + JSON.stringify(res));
 					    app.coords = {
 					      	lat: res.coords.latitude,
 					      	lon: res.coords.longitude
