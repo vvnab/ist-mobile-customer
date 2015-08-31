@@ -35,6 +35,6 @@
 	<gap:plugin name="cordova-plugin-splashscreen" source="npm"/>
 
 	<gap:plugin name="com.ionic.keyboard" source="npm"/>
-	<gap:plugin name="com.rjfun.cordova.sms" source="npm"/>
+	<!-- <gap:plugin name="com.rjfun.cordova.sms" source="npm"/> -->
 
 </widget>
