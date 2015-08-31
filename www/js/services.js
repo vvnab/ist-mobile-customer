@@ -87,6 +87,7 @@ angular.module('app.services', ['ngResource'])
 					      	function(location) {
 					        	var city = location.address.city || location.address.town;
 					        	var twn = _.findWhere(app.twns, {nme: city});
+					        	console.log('Town: ' + JSON.stringify(twn));
 					        	resolve(twn);
 					      	}
 					    );

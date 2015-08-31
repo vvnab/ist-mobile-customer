@@ -34,7 +34,7 @@ angular.module('app.directives', [])
                 if(value) {
                     $timeout(function() {
                         element[0].focus();
-                        if (window.cordova && cordova.plugins) cordova.plugins.Keyboard.show();
+                        if (window.cordova && cordova.plugins && cordova.plugins.Keyboard) cordova.plugins.Keyboard.show();
                     }, AUTO_FOCUS_DELAY);
                 }
             });
