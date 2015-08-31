@@ -93,7 +93,9 @@ angular.module('app.services', ['ngResource'])
 					        	resolve(twn);
 					      	}
 					    );
-					}, null, {maximumAge: 3600000, timeout: 5000, enableHighAccuracy: false});
+					}, function(err) {
+						console.log('Geolocation ERROR: ' + JSON.stringify(err));
+					}, {maximumAge: 3600000, timeout: 5000, enableHighAccuracy: false});
 				});
 			});
 		},
