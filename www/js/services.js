@@ -75,7 +75,7 @@ angular.module('app.services', ['ngResource'])
 						resolve(_.findWhere(res, {id: twn_id}));
 						return;
 					}
-					console.log('Towns_res: ', JSON.stringify(res));
+					console.log('Towns_res: ' + JSON.stringify(res));
 					navigator.geolocation.getCurrentPosition(function(res) {
 					    app.coords = {
 					      	lat: res.coords.latitude,
