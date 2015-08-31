@@ -68,6 +68,7 @@ angular.module('app.services', ['ngResource'])
 			}
 		],
 		getTwn: function(twn_id) {
+			console.log('navigator.geolocation: ', JSON.stringify(navigator.geolocation));
 			return $q(function(resolve, reject) {
 				app.twns_.$promise.then(function(res) {
 					app.twns = res;
@@ -77,7 +78,7 @@ angular.module('app.services', ['ngResource'])
 					}
 					navigator.geolocation.getCurrentPosition(function(res) {
 					    app.coords = {
-					      	lat: res.coords.latitude, 
+					      	lat: res.coords.latitude,
 					      	lon: res.coords.longitude
 					    };
 					    locationRes.get({
