@@ -21,6 +21,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage']
 			}
 		    if (window.SMS) {
 		      	SMS.startWatch(null, null);
+		      	toast("SMS Ok");
 		      	window.document.addEventListener("onSMSArrive", function(e) {
 		        	var sms = e.data ? e.data.body : "";
 		        	if (sms.match(/PIN/)) {
