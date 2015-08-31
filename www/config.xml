@@ -24,11 +24,8 @@
 	
 	<!-- plugins -->
 	
-	<!-- <gap:plugin name="com.ionic.keyboard"/> -->
-	
-	
-		
-	<!-- <gap:plugin name="cordova-plugin-console"/> -->
+	<gap:plugin name="com.ionic.keyboard" source="npm"/>
+	<gap:plugin name="cordova-plugin-console" source="plugins.cordova.io"/>
 	<gap:plugin name="cordova-plugin-device" source="plugins.cordova.io"/>
 	<gap:plugin name="cordova-plugin-geolocation" source="plugins.cordova.io"/>
 	<gap:plugin name="cordova-plugin-splashscreen" source="plugins.cordova.io"/>
