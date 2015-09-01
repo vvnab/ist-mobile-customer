@@ -340,7 +340,8 @@ angular.module('app.services', ['ngResource'])
 				return humanizeDuration(duration);
 			},
 			getTime: function(tme) {
-				toast('tme: ' + JSON.stringify(tme));
+				tme = JSON.stringify(tme);
+				toast('tme: ' + tme);
 				return moment(tme).format("HH:mm");
 			},
 			getHumanDatetime: function(tme) {
