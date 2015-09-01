@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 
-var DEBUG = true;
+var DEBUG = false;
 var API_URL = DEBUG ? "http://192.168.100.159:8015/v1" : "http://api.taxi21.ru/v1";
 var API_KEY = "SbzLONyITCNZ5U98tESyyvzvRQU0Ivwo7IyoKgqKQr2AaST1yNC496We4lezLgQF";
 var SEARCH_MIN_LENGTH = 3;
