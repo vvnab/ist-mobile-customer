@@ -1,0 +1,41 @@
+<ion-side-menus enable-menu-with-back-views="true">
+  <ion-side-menu-content  drag-content="false">
+    <!-- nav bar -->
+    <ion-nav-bar class="bar-dark" align-title="center">
+
+      <ion-nav-back-button class="button-clear">
+        <i class="ion-chevron-left"></i>
+      </ion-nav-back-button>
+
+      <ion-nav-buttons side="right">
+        <button class="button button-icon button-clear ion-navicon" menu-toggle="right">
+          <span class="badge badge-energized badge-main-menu" ng-if="user.curOrders.length" ng-bind="user.curOrders.length"></span>
+        </button>
+      </ion-nav-buttons>
+
+      <ion-nav-buttons side="left">
+        <a href="tel:{{app.tel}}" class="button button-icon button-clear ion-ios-telephone-outline hidden" ng-show="showTel">
+        </a>
+      </ion-nav-buttons>
+
+    </ion-nav-bar>
+    <!-- END or nav bar -->
+
+    <ion-nav-view name="menuContent"></ion-nav-view>
+  </ion-side-menu-content>
+
+  <ion-side-menu side="right">
+    <ion-header-bar class="bar-stable" align-title="center">
+      <h1 class="title">Меню приложения</h1>
+    </ion-header-bar>
+    <ion-content>
+      <ion-list>
+        <ion-item class="item-icon-left" nav-clear menu-close ng-repeat="item in app.menu" ng-href="{{item.href()}}" ng-click="item.action()">
+          <i class="icon ion-{{item.icon}}"></i>
+          {{item.title}}
+          <span class="badge badge-{{item.badgeClass}}" ng-show="item.badge" ng-bind="item.badge"></span>
+        </ion-item>
+      </ion-list>
+    </ion-content>
+  </ion-side-menu>
+</ion-side-menus>
