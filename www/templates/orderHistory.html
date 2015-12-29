@@ -1,0 +1,54 @@
+<ion-view view-title="История заказов">
+	<ion-content>
+		<div class="list">
+			<div class="item item-divider item-assertive- assertive-" ng-if="user.curOrders.length">
+		    	Текущие заказы
+		  	</div>		
+	        <a class="item item-icon-left item-icon-right" 
+	        	ng-repeat="order in user.curOrders" 
+	        	ng-class-even="'item-stable'"
+	        	ng-click="orderShowState(order)">
+	        	<i class="icon ion-model-s"></i>
+	        	<h3>
+	        		Сейчас
+	        	</h3>
+	        	<p>
+	        		{{_.first(order.adds).text()}}
+	        	</p>
+	        	<p>
+	        		{{_.last(order.adds).text()}}
+	        	</p>
+	        	<i class="icon ion-ios-arrow-right item-note"></i>
+	        </a>
+			<div class="item item-divider item-balanced-" ng-if="user.arcOrders.length">
+		    	Архивные заказы
+		  	</div>		
+	        <div class="item item-icon-left" 
+	        	ng-repeat="order in user.arcOrders" 
+	        	ng-class-even="'item-stable'">
+	        	<i class="icon ion-clock"></i>
+	        	<div class="pull-right text-right">
+	        		<button class="button button-clear button-small" ng-click="orderRepeat(order)">
+	        			Повторить
+	        		</button>
+	        		<!--br/>
+	        		<button class="button button-clear button-small">
+	        			Оставить отзыв
+	        		</button-->
+	        	</div>
+	        	<div>
+	        		{{_.findWhere(app.twns, {id: _.first(order.adds).twn_id}).nme}}
+	        	</div>
+	        	<h3>
+	        		{{order.tme_reg}}
+	        	</h3>
+	        	<p>
+	        		{{_.first(order.adds).text()}}
+	        	</p>
+	        	<p>
+	        		{{_.last(order.adds).text()}}
+	        	</p>
+	        </div>
+		</div>
+	</ion-content>
+</ion-view>
