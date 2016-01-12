@@ -1,0 +1,69 @@
+<ion-view view-title="Адрес">
+	<ion-content>
+		<!-- поле ввода адреса -->
+		<div class="list">
+	        <div class="item item-input item-input-inset">
+
+	            <div class="input-spinner" ng-if-="search.loading">
+	            	<i class="icon ion-ios-search" ng-if="!search.loading"></i>
+	            	<ion-spinner icon="ripple" ng-if="search.loading"></ion-spinner>
+	            </div>
+	        	<!-- <span class="input-label">Откуда поедем</span> -->
+	        	<label class="item-input-wrapper search-input">
+	        		<!--i class="icon ion-ios-search placeholder-icon"></i-->
+		            <input 
+		            	type="text" 
+		            	autocomplete="off" 
+		            	placeholder="Начните вводить адрес" 
+		            	ng-model="search.text"
+		            	ng-model-options="{debounce: {'default': 500, 'blur': 0}}"
+		            	auto-focus="true"/>
+	            </label>
+	        </div>
+		</div>
+		<!-- END OF поле ввода адреса -->
+		
+		<!-- список адресов по маске -->
+		<div class="list card list-search addr-dropdown" ng-if="search.items.length">
+	        <a class="item" 
+	        	ng-repeat="addr in search.items" 
+	        	ng-class-odd="'item-stable'"
+	        	ng-click="selectAddr(addr)">
+        		<!--i class="icon flaticon flaticon-address"></i-->
+	        	<small>
+	        		{{addr.nme}}
+		        	<h4>
+		        		{{search.types[addr.type]}}
+		        	</h4>
+	        	</small>
+	        </a>
+		</div>
+		<!-- END OF список адресов по маске -->
+
+		<!-- меню быстрого выбора -->
+		<div class="list list-inset-">
+			<a class="item item-icon-left item-icon-right"
+				ng-repeat="i in sources"
+				ng-click="gotoSelect(i)">
+				<i class="icon {{i.icon}}"></i>
+				{{i.name}}
+				<i class="icon ion-ios-arrow-right item-note"></i>
+			</a>
+		</div>
+		<!-- END OF меню быстрого выбора -->
+		
+		<!-- блок кнопок -->
+		<div class="row">
+			<div class="col">
+				<button class="button button-block icon-right -ion-chatbubbles flaticon flaticon-call40" ng-if="id != 0" ng-click="byVoice()">
+					{{search.byVoice}}
+				</button>
+				<button class="button button-block button-energized" ng-click="addrComplete()" ng-disabled="!search.text">
+					Готово
+				</button>
+			</div>
+		</div>
+		<!-- END OF блок кнопок -->
+
+	</ion-content>
+</ion-view>
