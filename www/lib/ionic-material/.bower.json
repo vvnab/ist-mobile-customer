@@ -42,7 +42,7 @@
     "commit": "28e42e2f80ea78f8b99bbfdf358c839e800b6ebb"
   },
   "_source": "git://github.com/zachsoft/Ionic-Material.git",
-  "_target": "~0.2.3",
+  "_target": "0.2.3",
   "_originalSource": "ionic-material",
   "_direct": true
 }

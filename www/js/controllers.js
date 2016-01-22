@@ -115,6 +115,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage']
 	};
 
 	$scope.toggleUrgentShow = function() {
+		console.log("toggleUrgentShow");
 		$scope.state.urgentShow = !$scope.state.urgentShow;
 		if ($scope.state.urgentShow) {
 			// срочный заказ, устанавливаем тариф и тип заказа
