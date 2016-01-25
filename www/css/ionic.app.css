@@ -7967,3 +7967,6 @@ td.rate-error {
 .button-clear.add {
     min-width: 8rem;
 }
+.back-text  {
+	display: none;
+}
