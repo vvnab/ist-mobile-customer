@@ -7968,5 +7968,5 @@ td.rate-error {
     min-width: 8rem;
 }
 .back-text  {
-	display: none;
+	display: none !important;
 }

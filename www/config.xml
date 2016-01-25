@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<widget id="com.ionicframework.vsegda214536" version="2.6.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+
+	<!-- basic -->
+
+  <name>Такси Всегда</name>
+  <description>
+    Заказ такси
+  </description>
+  <author email="info@taxi21.ru" href="http://taxivsegda.ru/">
+    Taxi21 Development Team
+  </author>
+	<content src="index.html"/>
+	<icon src="resources/icon.png"/>
+
+	<!--  spash & icons -->
+
+	<!-- android -->
+
+	<icon src="resources/android/icon/drawable-ldpi-icon.png" density="ldpi"/>
+	<icon src="resources/android/icon/drawable-mdpi-icon.png" gap:platform="android" gap:density="mdpi"/>
+	<icon src="resources/android/icon/drawable-hdpi-icon.png" gap:platform="android" gap:density="hdpi"/>
+	<icon src="resources/android/icon/drawable-xhdpi-icon.png" gap:platform="android" gap:density="xhdpi"/>
+	<icon src="resources/android/icon/drawable-xxhdpi-icon.png" gap:platform="android" gap:density="xxhdpi"/>
+	<icon src="resources/android/icon/drawable-xxxhdpi-icon.png" gap:platform="android" gap:density="xxxhdpi"/>
+	<gap:splash src="resources/android/splash/drawable-port-ldpi-screen.png" gap:platform="android" gap:density="ldpi"/>
+	<gap:splash src="resources/android/splash/drawable-port-mdpi-screen.png" gap:platform="android" gap:density="mdpi"/>
+	<gap:splash src="resources/android/splash/drawable-port-hdpi-screen.png" gap:platform="android" gap:density="hdpi"/>
+	<gap:splash src="resources/android/splash/drawable-port-xhdpi-screen.png" gap:platform="android" gap:density="xhdpi"/>
+	<gap:splash src="resources/android/splash/drawable-port-xxhdpi-screen.png" gap:platform="android" gap:density="xxhdpi"/>
+	<gap:splash src="resources/android/splash/drawable-port-xxxhdpi-screen.png" gap:platform="android" gap:density="xxxhdpi"/>
+
+	<!--  ios -->
+
+	<icon src="resources/ios/icon/icon.png" gap:platform="ios" width="57" height="57"/>
+	<icon src="resources/ios/icon/icon@2x.png" gap:platform="ios" width="114" height="114"/>
+	<icon src="resources/ios/icon/icon-40.png" gap:platform="ios" width="40" height="40"/>
+	<icon src="resources/ios/icon/icon-40@2x.png" gap:platform="ios" width="80" height="80"/>
+	<icon src="resources/ios/icon/icon-50.png" gap:platform="ios" width="50" height="50"/>
+	<icon src="resources/ios/icon/icon-50@2x.png" gap:platform="ios" width="100" height="100"/>
+	<icon src="resources/ios/icon/icon-60.png" gap:platform="ios" width="60" height="60"/>
+	<icon src="resources/ios/icon/icon-60@2x.png" gap:platform="ios" width="120" height="120"/>
+	<icon src="resources/ios/icon/icon-60@3x.png" gap:platform="ios" width="180" height="180"/>
+	<icon src="resources/ios/icon/icon-72.png" gap:platform="ios" width="72" height="72"/>
+	<icon src="resources/ios/icon/icon-72@2x.png" gap:platform="ios" width="144" height="144"/>
+	<icon src="resources/ios/icon/icon-76.png" gap:platform="ios" width="76" height="76"/>
+	<icon src="resources/ios/icon/icon-76@2x.png" gap:platform="ios" width="152" height="152"/>
+	<icon src="resources/ios/icon/icon-small.png" gap:platform="ios" width="29" height="29"/>
+	<icon src="resources/ios/icon/icon-small@2x.png" gap:platform="ios" width="58" height="58"/>
+	<icon src="resources/ios/icon/icon-small@3x.png" gap:platform="ios" width="87" height="87"/>
+	<gap:splash src="resources/ios/splash/Default-568h@2x~iphone.png" gap:platform="ios" width="640" height="1136"/>
+	<gap:splash src="resources/ios/splash/Default-667h.png" gap:platform="ios" width="750" height="1334"/>
+	<gap:splash src="resources/ios/splash/Default-736h.png" gap:platform="ios" width="1242" height="2208"/>
+	<gap:splash src="resources/ios/splash/Default-Landscape-736h.png" gap:platform="ios" width="2208" height="1242"/>
+	<gap:splash src="resources/ios/splash/Default-Landscape@2x~ipad.png" gap:platform="ios" width="2048" height="1536"/>
+	<gap:splash src="resources/ios/splash/Default-Landscape~ipad.png" gap:platform="ios" width="1024" height="768"/>
+	<gap:splash src="resources/ios/splash/Default-Portrait@2x~ipad.png" gap:platform="ios" width="1536" height="2048"/>
+	<gap:splash src="resources/ios/splash/Default-Portrait~ipad.png" gap:platform="ios" width="768" height="1024"/>
+	<gap:splash src="resources/ios/splash/Default@2x~iphone.png" gap:platform="ios" width="640" height="960"/>
+	<gap:splash src="resources/ios/splash/Default~iphone.png" gap:platform="ios" width="320" height="480"/>
+
+	<!-- platforms -->
+
+	<gap:platform name="android"/>
+	<gap:platform name="ios"/>
+
+	<!-- preferences -->
+
+	<preference name="orientation" value="portrait"/>
+	<preference name="fullscreen" value="false"/>
+	<preference name="SplashScreenDelay" value="15000"/>
+	<preference name="SplashScreen" value="screen"/>
+
+
+	<!-- plugins -->
+
+	<gap:plugin name="cordova-plugin-x-toast" version="2.3.2" />
+	<gap:plugin name="cordova-plugin-file" version="4.1.0" />
+	<gap:plugin name="cordova-plugin-media" version="2.1.0" />
+	<gap:plugin name="cordova-plugin-network-information" version="1.2.0" />
+
+	<gap:plugin name="cordova-plugin-console" source="npm"/>
+	<gap:plugin name="cordova-plugin-device" source="npm"/>
+	<gap:plugin name="cordova-plugin-geolocation" source="npm"/>
+	<gap:plugin name="cordova-plugin-splashscreen" source="npm"/>
+
+	<gap:plugin name="ionic-plugin-keyboard" source="npm" version="1.0.8"/>
+	<!-- <gap:plugin name="com.rjfun.cordova.sms" source="plugins.cordova.io" version="1.0.3"/> -->
+
+</widget>
