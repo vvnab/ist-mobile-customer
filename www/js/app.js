@@ -149,12 +149,18 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
       },
       templateUrl: "templates/error.html",
       controller: 'ErrorCtrl',
+      onEnter: function() {
+        if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+      }
     })
     .state("app", {
       url: "",
       abstract: true,
       templateUrl: "templates/menu.html",
       controller: "AppCtrl",
+      onEnter: function() {
+        if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+      },
       resolve: {
         login: function($state, $q, $localStorage, $window, app, user, userRes, locationRes, toast) {
           var def = $q.defer();
@@ -201,6 +207,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
     .state('app.main', {
       url: "/main",
       onEnter: function($ionicNavBarDelegate, $rootScope) {
+        if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
         $rootScope.showTel = true;
         $ionicNavBarDelegate.showBackButton(false);
       },
