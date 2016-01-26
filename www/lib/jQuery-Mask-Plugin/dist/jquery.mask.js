@@ -1,6 +1,6 @@
 /**
  * jquery.mask.js
- * @version: v1.13.4
+ * @version: v1.11.4
  * @author: Igor Escobar
  *
  * Created by Igor Escobar on 2012-03-10. Please report any bug at http://blog.igorescobar.com
@@ -100,7 +100,7 @@
             },
             events: function() {
                 el
-                .on('input.mask keyup.mask', p.behaviour)
+                .on('keyup.mask', p.behaviour)
                 .on('paste.mask drop.mask', function() {
                     setTimeout(function() {
                         el.keydown().keyup();
@@ -117,7 +117,7 @@
                 })
                 // it's very important that this callback remains in this position
                 // otherwhise oldValue it's going to work buggy
-                .on('blur.mask', function() {
+                .on('keydown.mask, blur.mask', function() {
                     oldValue = el.val();
                 })
                 // select all text on focus
@@ -167,7 +167,7 @@
                 return new RegExp(r);
             },
             destroyEvents: function() {
-                el.off(['input', 'keydown', 'keyup', 'paste', 'drop', 'blur', 'focusout', ''].join('.mask '));
+                el.off(['keydown', 'keyup', 'paste', 'drop', 'blur', 'focusout', ''].join('.mask '));
             },
             val: function(v) {
                 var isInput = el.is('input'),
@@ -357,13 +357,10 @@
                     el.attr('placeholder' , options.placeholder);
                 }
 
-                // this is necessary, otherwise if the user submit the form
-                // and then press the "back" button, the autocomplete will erase
-                // the data. Works fine on IE9+, FF, Opera, Safari.
-                if ($('input').length && 'oninput' in $('input')[0] === false && el.attr('autocomplete') === 'on') {
-                  el.attr('autocomplete', 'off');
-                }
-
+                // autocomplete needs to be off. we can't intercept events
+                // the browser doesn't  fire any kind of event when something is
+                // selected in a autocomplete list so we can't sanitize it.
+                el.attr('autocomplete', 'off');
                 p.destroyEvents();
                 p.events();
 
