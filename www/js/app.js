@@ -116,7 +116,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
       StatusBar.styleDefault();
     }
 
-    if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+    // if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
 
     ionic.Platform.isFullScreen = true;
 
@@ -167,9 +167,6 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
       abstract: true,
       templateUrl: "templates/menu.html",
       controller: "AppCtrl",
-      onEnter: function() {
-        if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
-      },
       resolve: {
         login: function($state, $q, $localStorage, $window, app, user, userRes, locationRes, toast) {
           var def = $q.defer();
