@@ -107,13 +107,19 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
     // for form inputs)
     // console.log('window.cordova.plugins:' + JSON.stringify(window.cordova.plugins));
     // console.log('window.plugins:' + JSON.stringify(window.plugins));
-    if(window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+
+    if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
       cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
     }
-    if(window.StatusBar) {
+
+    if (window.StatusBar) {
       StatusBar.styleDefault();
     }
+
+    if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+
     ionic.Platform.isFullScreen = true;
+
     document.addEventListener("backbutton", function() {
       if ($state.is("app.main") || $state.is("error")) {
         navigator.app.exitApp();
