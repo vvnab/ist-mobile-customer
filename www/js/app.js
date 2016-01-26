@@ -128,6 +128,9 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
       url: "/login",
       templateUrl: "templates/login.html",
       controller: 'LoginCtrl',
+      onEnter: function() {
+        if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+      },
     })
     .state('townSelect', {
       url: "/townSelect",
