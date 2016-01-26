@@ -178,7 +178,7 @@ angular.module('app.services', ['ngResource'])
             if (!tel) {
                 var tel = this.lgn;
             }
-            return tel.replace(/\D/g, "").replace(/^7|^8/, "").slice(-10);
+            return tel.replace(/\D/g, "").replace(/^7|^8/, "").slice(0, 10);
         },
         classicPhone: function(tel) {
             tel = "" + this.canonicalPhone(tel);
