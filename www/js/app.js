@@ -5,6 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 
 var DEBUG = false;
+var ARC_ORDERS_WEEKS = 52;
 var API_URL = DEBUG ? "http://192.168.100.159:8015/v1" : "http://api.taxi21.ru/v1";
 var API_KEY = "SbzLONyITCNZ5U98tESyyvzvRQU0Ivwo7IyoKgqKQr2AaST1yNC496We4lezLgQF";
 var SEARCH_MIN_LENGTH = 3;
@@ -197,10 +198,18 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
                     }
                   }
                 }, function(error) {
-                  $state.go("townSelect");
+                //   toast("Ошибка при определении города");
+                  app.twn_id = $localStorage.twn_id;
+                  if (app.twn_id) {
+                    def.resolve();
+                  } else {
+                    def.reject();
+                    $state.go("townSelect");
+                  }
                 });
               });
             }, function(error) {
+              def.reject();
               $state.go("login");
             }).finally(function() {});
           } else {

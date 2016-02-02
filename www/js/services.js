@@ -26,15 +26,6 @@ angular.module('app.services', ['ngResource'])
 		},
 		menu: [
 			{
-				get title() {
-					return app.twn_nme;
-				},
-				icon: "earth",
-				action: function() {
-					$state.go("townSelect");
-				},
-			},
-			{
 				title: "Новый заказ",
 				icon: "model-s",
 				action: function() {
@@ -63,7 +54,18 @@ angular.module('app.services', ['ngResource'])
 				title: "Смена аккаунта",
 				icon: "log-out",
 				action: function() {
+
 					$state.go("login");
+				},
+			},
+            {
+				get title() {
+                    return "Выбор города";
+					// return app.twn_nme;
+				},
+				icon: "earth",
+				action: function() {
+					$state.go("townSelect");
 				},
 			}
 		],
@@ -116,6 +118,7 @@ angular.module('app.services', ['ngResource'])
 						tariffs = _.sortBy(_.map(tariffs, function(i, k) {
 							return {
 								id: k + 1,
+                                tariffId: i.tariffId,
 								level: i.level,
 								mincost: i.mincost,
 								time: i.time,
@@ -443,7 +446,9 @@ angular.module('app.services', ['ngResource'])
 				if (this.complete) {
 					var def = costRes.get({
 						adrs: this.adds,
+                        twn_id: app.twn_id,
 						srv_id: this.srv_id,
+                        trf_id: this.trf.tariffId,
 						need_taxom: 1,
 						ord_type: this.type ? 0 : 1,
 						datetime: this.tme_drv
@@ -514,6 +519,8 @@ angular.module('app.services', ['ngResource'])
 				delete this.id;
 				this.tel = tel;
 				this.type = this.type ? 1 : 0;
+                this.tariffId = this.trf.tariffId;
+                this.twn_id = app.twn_id;
 				var self = this;
 				var req = _.clone(this);
 				return self.reduceOptions().then(function(res) {
@@ -673,7 +680,7 @@ function getStatusMessage(status){
 	});
 })
 .factory("orderRes", function($resource) {
-    return $resource(API_URL + "/AllOrders/:id/", {id: "@id"}, {
+    return $resource(API_URL + "/AllOrders/:id/", {id: "@id", weeks: ARC_ORDERS_WEEKS}, {
         getOne: {
             method: "GET",
             timeout: HTTP_TIMEOUT
@@ -681,7 +688,7 @@ function getStatusMessage(status){
     });
 })
 .factory("arcAddsRes", function($resource) {
-    return $resource(API_URL + "/AddsHistory/");
+    return $resource(API_URL + "/AddsHistory/", {weeks: ARC_ORDERS_WEEKS});
 })
 .factory("locationRes", function($resource) {
     return $resource(API_URL + "/ReverseLocation/");

@@ -2,6 +2,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage']
 
 .controller('LoginCtrl', function($scope, $state, $ionicLoading, $localStorage, $timeout, pinRes, userRes, app, user, toast, _) {
 	if (window.navigator && window.navigator.splashscreen) navigator.splashscreen.hide();
+	userRes.delete();
 	$scope.user = user;
 	$scope.user.smsSended = false;
 
