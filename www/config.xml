@@ -84,7 +84,7 @@
     <plugin name="cordova-plugin-splashscreen" spec="2.0.0" />
     <plugin name="cordova-plugin-x-toast" spec="2.3.2" />
     <plugin name="ionic-plugin-keyboard" spec="1.0.8" />
-    <plugin name="cordova-plugin-app-metrika" spec="n/a" />
+    <plugin name="cordova-plugin-app-metrika" spec="0.0.1" />
 
 	<!-- <gap:plugin name="cordova-plugin-x-toast" source="npm" />
 	<gap:plugin name="cordova-plugin-file" source="npm" />
