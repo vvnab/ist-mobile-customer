@@ -23,6 +23,8 @@ var ENTER_KEYCODES = [13, 84];
 var DAYS_FOR_ADVANCE_ORDER = 5;
 var ORDER_STATES_FOR_NOTIFY = [2, 3];
 var ORDER_STATE_AUDIO_NOTIFY_URL = "sound/addorder.ogg";
+var YANDEX_APP_METRIKA_ID = '140660';
+var YANDEX_APP_METRIKA_KEY = '62bb12e2-5352-45f2-9bec-10e370c1a780';
 var TARIFF_ICONS = {
   1: "flaticon-pig",
   2: "flaticon-set5",
@@ -96,6 +98,12 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
 
 .run(function($ionicPlatform, $state, toast, mediaSrv) {
   $ionicPlatform.ready(function() {
+    if (window.plugins && window.plugins.appMetrica) {
+        window.plugins.appMetrica.activate(YANDEX_APP_METRIKA_KEY);
+        toast("Яндекс плагин OK");
+    } else {
+        toast("Ошибка Яндекс плагина");
+    }
     // check onLine
     document.addEventListener("offline", function() {
       $state.go("error", {

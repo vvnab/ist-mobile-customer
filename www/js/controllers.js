@@ -116,13 +116,15 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage']
 	};
 
 	$scope.toggleUrgentShow = function() {
+		var urgentTrfId = _.findWhere(app.trfs, {level: 5}).id;
+		if (!urgentTrfId) return;
 		console.log("toggleUrgentShow");
 		$scope.state.urgentShow = !$scope.state.urgentShow;
 		if ($scope.state.urgentShow) {
 			// срочный заказ, устанавливаем тариф и тип заказа
 			$scope.state.order_trf = $scope.order.trf.id;
 			$scope.state.order_type = $scope.order.type;
-			$scope.order.trf = _.findWhere(app.trfs, {level: 5}).id;
+			$scope.order.trf = urgentTrfId;
 			$scope.order.type = 0;
 			user.order.getCost();
 		} else {
