@@ -3,13 +3,16 @@
 
 	<!-- basic -->
 
-  <name>Такси Всегда</name>
-  <description>
-    Заказ такси
-  </description>
-  <author email="info@taxi21.ru" href="http://taxivsegda.ru/">
-    Taxi21 Development Team
-  </author>
+    <name>Такси Всегда</name>
+    <description>
+        Заказ такси
+    </description>
+    <author email="info@taxi21.ru" href="http://taxivsegda.ru/">
+        Taxi21 Development Team
+    </author>
+    <access origin="*"/>
+    <access origin="tel:*" launch-external="yes"/>
+    <access origin="mailto:*" launch-external="yes"/>
 	<content src="index.html"/>
 	<icon src="resources/icon.png"/>
 
