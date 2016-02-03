@@ -100,9 +100,9 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
   $ionicPlatform.ready(function() {
     if (window.plugins && window.plugins.appMetrica) {
         window.plugins.appMetrica.activate(YANDEX_APP_METRIKA_KEY);
-        toast("Яндекс плагин OK");
+        // toast("Яндекс плагин OK");
     } else {
-        toast("Ошибка Яндекс плагина");
+        // toast("Ошибка Яндекс плагина");
     }
     // check onLine
     document.addEventListener("offline", function() {

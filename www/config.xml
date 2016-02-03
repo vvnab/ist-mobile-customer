@@ -84,9 +84,7 @@
     <plugin name="cordova-plugin-splashscreen" spec="2.0.0" />
     <plugin name="cordova-plugin-x-toast" spec="2.3.2" />
     <plugin name="ionic-plugin-keyboard" spec="1.0.8" />
-
-    <gap:plugin name="cordova-plugin-app-metrika" source="npm" />
-
+    <plugin name="cordova-plugin-app-metrika" spec="n/a" />
 
 	<!-- <gap:plugin name="cordova-plugin-x-toast" source="npm" />
 	<gap:plugin name="cordova-plugin-file" source="npm" />
@@ -96,7 +94,8 @@
 	<gap:plugin name="cordova-plugin-device" source="npm"/>
 	<gap:plugin name="cordova-plugin-geolocation" source="npm"/>
 	<gap:plugin name="cordova-plugin-splashscreen" source="npm"/>
-	<gap:plugin name="ionic-plugin-keyboard" source="npm" version="1.0.8"/> -->
+	<gap:plugin name="ionic-plugin-keyboard" source="npm" version="1.0.8"/>
+    <gap:plugin name="cordova-plugin-app-metrika" source="npm" /> -->
 
 	<!-- <gap:plugin name="com.rjfun.cordova.sms" source="plugins.cordova.io" version="1.0.3"/> -->
 
