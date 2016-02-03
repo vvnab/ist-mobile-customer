@@ -89,7 +89,9 @@
     <plugin name="ionic-plugin-keyboard" spec="1.0.8" />
     <plugin name="cordova-plugin-app-metrika" spec="0.0.1" />
 
-	<!-- <gap:plugin name="cordova-plugin-x-toast" source="npm" />
+    <gap:plugin name="cordova-plugin-whitelist" source="npm" />
+
+    <!-- <gap:plugin name="cordova-plugin-x-toast" source="npm" />
 	<gap:plugin name="cordova-plugin-file" source="npm" />
 	<gap:plugin name="cordova-plugin-media" source="npm" />
 	<gap:plugin name="cordova-plugin-network-information" source="npm" />
