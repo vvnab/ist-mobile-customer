@@ -14,6 +14,10 @@ angular.module('app.services', ['ngResource'])
 			app.trfs_ = trfRes.get();
 			app.opts_ = optRes.get();
 		},
+    promo: $localStorage.promo || {
+      enabled: false,
+      text: ""
+    },
 		twns_: twnRes.get({rem: "true"}),
 		trfs_: trfRes.get(),
 		opts_: optRes.get(),
@@ -28,8 +32,9 @@ angular.module('app.services', ['ngResource'])
 			{
 				title: "Новый заказ",
 				icon: "model-s",
-				action: function() {
-					$state.go("app.main");
+				action: function(user) {
+          user.order.reset();
+					$state.go("app.main", null, {reload: true});
 				},
 			},
 			{
@@ -54,13 +59,12 @@ angular.module('app.services', ['ngResource'])
 				title: "Смена аккаунта",
 				icon: "log-out",
 				action: function() {
-
 					$state.go("login");
 				},
 			},
-            {
+      {
 				get title() {
-                    return "Выбор города";
+          return "Выбор города";
 					// return app.twn_nme;
 				},
 				icon: "earth",
@@ -177,6 +181,9 @@ angular.module('app.services', ['ngResource'])
         curOrders: null,
         twn: null,
         historyUpdateFlag: true,
+        newOrder: function() {
+          this.order = new Order();
+        },
         canonicalPhone: function(tel) {
             if (!tel) {
                 var tel = this.lgn;
@@ -221,6 +228,7 @@ angular.module('app.services', ['ngResource'])
 		}
 		return {
 			type: parseInt(addr.type) || 0,
+      adr_id: addr.adr_id || null,
 			adr: addr.adr || addr.nme || "",
 			hse: addr.hse || "",
 			ent: addr.ent || "",
@@ -306,9 +314,13 @@ angular.module('app.services', ['ngResource'])
 				7: "delivered",
 				8: "advance"
 			},
+      opr_id: 4142,
+      source: "APPLICATION",
+      usePromo: true,
 			id: order.id,
 			type: 0,
 			cost: order.cost || null,
+      optionsSum: order.optionsSum || null,
 			tme_reg: order.tme_reg || null,
 			tme_wtd: order.tme_wtd || null,
 			tme_exe: order.tme_exe || null,
@@ -329,6 +341,29 @@ angular.module('app.services', ['ngResource'])
 					return s && !i.next(k == 0);
 				}, true) : false;
 			},
+      get auto_color() {
+        return this.auto && this.auto.split(" ").length ?  this.auto.split(" ")[0] : "";
+      },
+      get auto_model() {
+          return this.auto ? this.auto.split(" ").slice(1).join(" ") : "";
+      },
+      reset: function() {
+        this.adds = [new Addr(), new Addr()];
+        this.cost = null;
+        this.type = 0;
+        this.usePromo = true;
+        this.options = [];
+        // this.tme_reg = null;
+        // this.tme_wtd = null;
+        // this.tme_exe = null;
+        // this.tme_brd = null;
+      },
+      swapAdds: function(index) {
+        var swap = this.adds[index];
+        this.adds[index] = this.adds[index - 1];
+        this.adds[index - 1] = swap;
+        this.getCost();
+      },
 			canCancel: function() {
 				return _.contains(["search", "found", "en route", "arrived", "advance"], this.states[this.state] || 0);
 			},
@@ -358,34 +393,7 @@ angular.module('app.services', ['ngResource'])
 				});
 			},
 			getState: function() {
-				var text = "";
-				switch (this.states[this.state]) {
-					case "search":
-						text = "<div class='info'>Поиск автомобиля...</div>";
-						break;
-					case "found":
-						text = "<div class='info'>Поиск автомобиля...</div>";
-						//text = "<div class='auto'>{0}</div>".format(this.auto_rem);
-						break;
-					case "en route":
-						text = "<div class='time'>{2}</div><div class='auto'>{0}</div><div class='auto'>{1}</div>".format(this.auto, this.auto_nom, this.getTime(this.tme_wait), this.getWaitDuration());
-						break;
-					case "arrived":
-						text = "<div class='auto'>{0}</div><div class='info'>Машина подъехала, выходите!</div>".format(this.auto_rem);
-						break;
-					case "cancel":
-						text = "<div class='info'>Заказ отменён</div>"
-						break;
-					case "complete":
-						text = "<div class='info'>Заказ выполнен</div>"
-						break;
-					case "in car":
-						text = "<div class='auto'>{0}</div><div class='info'>Длительность поездки:</div><div class='info'>{1}</div>".format(this.auto_rem, this.getOrderTme());
-						break;
-					case "advance":
-						text = "<div class='info'>Предварительный заказ</div><div class='info'>{0}</div>".format(this.tme_drv);
-						break;
-				}
+				var text = this.states[this.state];
 				return text;
 			},
 			add: function(addr, id) {
@@ -444,69 +452,89 @@ angular.module('app.services', ['ngResource'])
 				srv_id = srv_id ? srv_id : this.srv_id;
 				delete self.error;
 				if (this.complete) {
-					var def = costRes.get({
-						adrs: this.adds,
-                        twn_id: app.twn_id,
-						srv_id: this.srv_id,
-                        trf_id: this.trf.tariffId,
-						need_taxom: 1,
-						ord_type: this.type ? 0 : 1,
-						datetime: this.tme_drv
-					}).$promise;
-					self.wtd_cost = null;
-					self.dist_km = null;
-					return def.then(function(res) {
-						if (res.error) {
-							throw res;
-						} else {
-							self.wtd_cost = res.wtd_cost;
-							self.dist_km = res.dist_km;
-						}
-					}).catch(function(err) {
-						var error = {
-							code: err.data.error.split(":")[0],
-							text: err.data.error.split(":")[1],
-							data: err.data.error_data
-						};
-						// сообщение об ошибке
-						if (err.data.taxom) {
-							var taxom = err.data.taxom;
-							var zones = taxom.geo_zones.length;
-							var info = _.reduce(taxom.tariff, function(memo, val, key) {
-								var res =  _.extend(memo, val);
-								var zones_dist = _.sortBy(val.zones_dist, 'dst');
-								var firstDist = _.first(zones_dist);
-								if (val.prc_dst_km && val.prc_dst_km > 0) {
-									// определена минимальная цена
-									res.free_dst_km = 0;
-								} else {
-									// минимальная цена не определена
-									if (firstDist && firstDist.dst > 0) {
-										res.free_dst_km = firstDist.dst / 1000;
-									} else {
-										res.free_dst_km = 0;
-									}
-								}
-								return res;
-							}, {});
-							self.error = info.free_dst_km ? "<h4>{0}</h4><h5>таксометр :</h5><dl>\
-										 <dt>стоимость посадки</dt><dd>{1} руб</dd>\
-										 <dt>стоимость километра</dt><dd>{2} руб</dd>\
-										 <dt>бесплатное расстояние</dt><dd>{3} км</dd></dl>"
-										 .format(error.text, info.prc_brd, info.prc_dst_km, info.free_dst_km) :
-										 "<h4>{0}</h4><h5>таксометр :</h5><dl>\
-										 <dt>стоимость посадки</dt><dd>{1} руб</dd>\
-										 <dt>стоимость километра</dt><dd>{2} руб</dd>"
-										 .format(error.text, info.prc_brd, info.prc_dst_km);
-						} else {
-							self.error = error.text;
-						}
-						// подсветка неверного адреса
-						_.each(error.data, function(i) {
-							self.adds[i].error = true;
-						})
-						console.error(error);
-					});
+          // если адрес имеет adr_id, то "выбрасываем" всё остальное
+          // ========================================================
+          var adrs = _.map(this.adds, function(i) {
+            return i.adr_id ? {adr_id: i.adr_id} : i;
+          });
+          // ========================================================
+
+          self.reduceOptions().then(function(res) {
+            if (self.type) {
+              res.push("reservation");
+            }
+            self.options = res;
+            var def = costRes.get({
+  						adrs: adrs,
+              twn_id: app.twn_id,
+  						srv_id: self.srv_id,
+              trf_id: self.trf.tariffId,
+  						need_taxom: 1,
+  						ord_type: self.type ? 1 : 0,
+  						datetime: self.tme_drv,
+              options: self.options,
+              promo: app.promo.enabled ? app.promo.text : null
+  					}).$promise;
+
+            self.wtd_cost = null;
+  					self.dist_km = null;
+
+  					return def.then(function(res) {
+  						if (res.error) {
+  							throw res;
+  						} else {
+                self.optionsSum = res.optionsSum;
+  							self.wtd_cost = res.wtd_cost + (res.optionsSum || 0);
+  							self.dist_km = res.dist_km;
+                self.badPromo = res.badPromo;
+                self.usePromo = res.usePromo;
+  						}
+  					}).catch(function(err) {
+  						var error = {
+  							code: err.data.error.split(":")[0],
+  							text: err.data.error.split(":")[1],
+  							data: err.data.error_data
+  						};
+  						// сообщение об ошибке
+  						if (err.data.taxom) {
+  							var taxom = err.data.taxom;
+  							var zones = taxom.geo_zones.length;
+  							var info = _.reduce(taxom.tariff, function(memo, val, key) {
+  								var res =  _.extend(memo, val);
+  								var zones_dist = _.sortBy(val.zones_dist, 'dst');
+  								var firstDist = _.first(zones_dist);
+  								if (val.prc_dst_km && val.prc_dst_km > 0) {
+  									// определена минимальная цена
+  									res.free_dst_km = 0;
+  								} else {
+  									// минимальная цена не определена
+  									if (firstDist && firstDist.dst > 0) {
+  										res.free_dst_km = firstDist.dst / 1000;
+  									} else {
+  										res.free_dst_km = 0;
+  									}
+  								}
+  								return res;
+  							}, {});
+  							self.error = info.free_dst_km ? "<h4>{0}</h4><h5>таксометр :</h5><dl>\
+  										 <dt>стоимость посадки</dt><dd>{1} руб</dd>\
+  										 <dt>стоимость километра</dt><dd>{2} руб</dd>\
+  										 <dt>бесплатное расстояние</dt><dd>{3} км</dd></dl>"
+  										 .format(error.text, info.prc_brd, info.prc_dst_km, info.free_dst_km) :
+  										 "<h4>{0}</h4><h5>таксометр :</h5><dl>\
+  										 <dt>стоимость посадки</dt><dd>{1} руб</dd>\
+  										 <dt>стоимость километра</dt><dd>{2} руб</dd>"
+  										 .format(error.text, info.prc_brd, info.prc_dst_km);
+  						} else {
+  							self.error = error.text;
+  						}
+  						// подсветка неверного адреса
+  						_.each(error.data, function(i) {
+  							self.adds[i].error = true;
+  						})
+  						console.error(error);
+  					});
+          });
 				} else {
 					var def = $q.defer();
 					def.reject({data: {
@@ -519,12 +547,19 @@ angular.module('app.services', ['ngResource'])
 				delete this.id;
 				this.tel = tel;
 				this.type = this.type ? 1 : 0;
-                this.tariffId = this.trf.tariffId;
-                this.twn_id = app.twn_id;
+        this.tariffId = this.trf.tariffId;
+        this.twn_id = app.twn_id;
 				var self = this;
 				var req = _.clone(this);
 				return self.reduceOptions().then(function(res) {
+          if (self.type) {
+            res.push("reservation");
+          }
 					req.options = res;
+          if (app.promo.enabled && app.promo.text) {
+            // добавляем промо-код
+            req.promo = app.promo.text;
+          }
 					if (DEBUG) req.srv_id = 254;
 					return orderRes.save(req).$promise;
 				});
@@ -593,14 +628,14 @@ angular.module('app.services', ['ngResource'])
 		});
 	}
 
-function getStatusMessage(status){
-	if(status === 0) {return 'Media.MEDIA_NONE';}
-	else if(status === 1) {return 'Media.MEDIA_STARTING';}
-	else if(status === 2) {return 'Media.MEDIA_RUNNING';}
-	else if(status === 3) {return 'Media.MEDIA_PAUSED';}
-	else if(status === 4) {return 'Media.MEDIA_STOPPED';}
-	else {return 'Unknown status <' + status + '>';}
-}
+  function getStatusMessage(status){
+  	if(status === 0) {return 'Media.MEDIA_NONE';}
+  	else if(status === 1) {return 'Media.MEDIA_STARTING';}
+  	else if(status === 2) {return 'Media.MEDIA_RUNNING';}
+  	else if(status === 3) {return 'Media.MEDIA_PAUSED';}
+  	else if(status === 4) {return 'Media.MEDIA_STOPPED';}
+  	else {return 'Unknown status <' + status + '>';}
+  }
 
 	function getErrorMessage(code){
 		if(code === 1) {return 'MediaError.MEDIA_ERR_ABORTED';}

@@ -25,6 +25,8 @@ var ORDER_STATES_FOR_NOTIFY = [2, 3];
 var ORDER_STATE_AUDIO_NOTIFY_URL = "sound/addorder.ogg";
 var YANDEX_APP_METRIKA_ID = '140660';
 var YANDEX_APP_METRIKA_KEY = '62bb12e2-5352-45f2-9bec-10e370c1a780';
+var BACK_BUTTON_COUNT = 0;
+var BACK_BUTTON_COUNT_TIMEOUT = 1 * 1000; // 1 sekond
 var TARIFF_ICONS = {
   1: "flaticon-pig",
   2: "flaticon-set5",
@@ -34,38 +36,35 @@ var TARIFF_ICONS = {
 };
 
 var OPTION_ICONS = {
-  "smoke":        "flaticon flaticon-smoke3", //"ion-ios-cloud",
-  "notsmdrv":     "flaticon flaticon-smoke", //"ion-no-smoking",
-  "bagage":       "flaticon flaticon-luggage17", //"ion-briefcase",
-  "roofbag":      "ion-bag",
-  "child":        "flaticon flaticon-bears1", //"ion-ios-body",
-  "animal":       "flaticon flaticon-dog50", //"ion-social-github",
-  "note":         "ion-cash",
-  "conditioner":  "flaticon flaticon-snow42", //"ion-ios-snowy",
-  "noshanson":    "flaticon flaticon-no55", //"ion-volume-mute",
-  "cheque":       "ion-clipboard",
-  "gntldrving":   "ion-social-github",
-  "silentdrv":    "ion-volume-mute"
+  "smoke": "flaticon flaticon-smoke3", //"ion-ios-cloud",
+  "nosmoke": "flaticon flaticon-smoke", //"ion-no-smoking",
+  "bag": "flaticon flaticon-luggage17", //"ion-briefcase",
+  "largeBag": "ion-bag",
+  "babyFix": "flaticon flaticon-bears1", //"ion-ios-body",
+  "pet": "flaticon flaticon-dog50", //"ion-social-github",
+  "cash5000": "ion-cash",
+  "conditioner": "flaticon flaticon-snow42", //"ion-ios-snowy",
+  "noshanson": "flaticon flaticon-no55", //"ion-volume-mute",
+  "ticket": "ion-clipboard",
+  "gntldrving": "ion-social-github",
+  "silentdrv": "ion-volume-mute"
 };
 
 var TWN_ID_DEFAULT = 181;
 var AVERAGE_SPEED = 40; // средняя скорость в км/ч
-var SAMPLE_ADDS = [
-  {
-    twn_id: 3,
-    type: 2,
-    adr: "ЦУМ ТЦ (Интернациональная ул. 147)",
-    hse: "",
-    ent: ""
-  },
-  {
-    twn_id: 3,
-    type: 9,
-    adr: "Советская",
-    hse: "88",
-    ent: ""
-  }
-];
+var SAMPLE_ADDS = [{
+  twn_id: 3,
+  type: 2,
+  adr: "ЦУМ ТЦ (Интернациональная ул. 147)",
+  hse: "",
+  ent: ""
+}, {
+  twn_id: 3,
+  type: 9,
+  adr: "Советская",
+  hse: "88",
+  ent: ""
+}];
 var NO_WTD_COST_ERR_MSG = "Данные недоступны";
 var SPLASHSCREEN_TIMEOUT = 1000;
 var ADDR_BY_VOICE = "Объясню водителю";
@@ -74,7 +73,7 @@ var OPERATOR_PHONE = "+78212242424";
 function declOfNum(number, titles) {
   // русские окончания числительных [1, 2..4, 5..0]
   cases = [2, 0, 1, 1, 1, 2];
-  return titles[ (number%100>4 && number%100<20)? 2 : cases[(number%10<5)?number%10:5] ];
+  return titles[(number % 100 > 4 && number % 100 < 20) ? 2 : cases[(number % 10 < 5) ? number % 10 : 5]];
 }
 
 function humanizeDuration(duration) {
@@ -92,268 +91,295 @@ function humanizeDuration(duration) {
 
 try {
   moment.locale("ru-RU");
-} catch(err) {}
+} catch (err) {}
 
 angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.providers'])
 
 .run(function($ionicPlatform, $state, toast, mediaSrv) {
-  $ionicPlatform.ready(function() {
-    if (window.plugins && window.plugins.appMetrica) {
+    $ionicPlatform.ready(function() {
+      if (window.plugins && window.plugins.appMetrica) {
         window.plugins.appMetrica.activate(YANDEX_APP_METRIKA_KEY);
         // toast("Яндекс плагин OK");
-    } else {
+      } else {
         // toast("Ошибка Яндекс плагина");
-    }
-    // check onLine
-    document.addEventListener("offline", function() {
-      $state.go("error", {
-        title: "Нет соединения",
-        text: "Отсутствует подключение к интернету!",
-        icon: "ion-flash-off"
+      }
+      // check onLine
+      document.addEventListener("offline", function() {
+        $state.go("error", {
+          title: "Нет соединения",
+          text: "Отсутствует подключение к интернету!",
+          icon: "ion-flash-off"
+        });
       });
-    });
-    // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-    // for form inputs)
-    // console.log('window.cordova.plugins:' + JSON.stringify(window.cordova.plugins));
-    // console.log('window.plugins:' + JSON.stringify(window.plugins));
+      // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
+      // for form inputs)
+      // console.log('window.cordova.plugins:' + JSON.stringify(window.cordova.plugins));
+      // console.log('window.plugins:' + JSON.stringify(window.plugins));
 
-    if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
-      cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
-    }
-
-    if (window.StatusBar) {
-      StatusBar.styleDefault();
-    }
-
-    // if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
-
-    ionic.Platform.isFullScreen = true;
-
-    document.addEventListener("backbutton", function() {
-      if ($state.is("app.main") || $state.is("error")) {
-        navigator.app.exitApp();
-      };
-    }, false);
-  });
-})
-.config(function($stateProvider, $urlRouterProvider) {
-  $stateProvider
-
-    .state('login', {
-      url: "/login",
-      templateUrl: "templates/login.html",
-      controller: 'LoginCtrl',
-      onEnter: function() {
-        if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
-      },
-    })
-    .state('townSelect', {
-      url: "/townSelect",
-      cache: false,
-      templateUrl: "templates/townSelect.html",
-      controller: 'TownSelectCtrl',
-      onEnter: function() {
-        if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+      if (window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard) {
+        cordova.plugins.Keyboard.hideKeyboardAccessoryBar(true);
       }
-    })
-    .state('error', {
-      url: "/error",
-      params: {
-        title: "Ошибка",
-        text: "Неизвестная ошибка",
-        next: "app.main",
-        eventForNext: "online",
-        icon: "ion-bug"
-      },
-      templateUrl: "templates/error.html",
-      controller: 'ErrorCtrl',
-      onEnter: function() {
-        if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+
+      if (window.StatusBar) {
+        StatusBar.styleDefault();
       }
-    })
-    .state("app", {
-      url: "",
-      abstract: true,
-      templateUrl: "templates/menu.html",
-      controller: "AppCtrl",
-      resolve: {
-        login: function($state, $q, $localStorage, $window, app, user, userRes, locationRes, toast) {
-          var def = $q.defer();
-          // проверка логина пользователя
-          if (!app.logged) {
-            userRes.get().$promise.then(function(res) {
-              $localStorage.userProfile = res;
-              app.logged = true;
-              user.profile = $localStorage.userProfile;
-              app.twns_.$promise.then(function(res) {
-                app.getTwn().then(function(twn) {
-                  if (!twn) {
-                    if (!app.twn_id) {
-                      $state.go("townSelect");
-                    } else {
-                      def.resolve();
-                    }
-                  } else {
-                    if (!app.twn_id) {
-                      app.twn_id = twn.id;
-                      $localStorage.twn_id = twn.id;
-                      def.resolve();
-                    } else if (twn.id != app.twn_id) {
-                      $state.go("townSelect");
-                      toast("Вы сейчас в г.{0}, \nне хотите переключиться?".format(twn.nme));
-                    } else {
-                      def.resolve();
-                    }
-                  }
-                }, function(error) {
-                //   toast("Ошибка при определении города");
-                  app.twn_id = $localStorage.twn_id;
-                  if (app.twn_id) {
-                    def.resolve();
-                  } else {
-                    def.reject();
-                    $state.go("townSelect");
-                  }
-                });
-              });
-            }, function(error) {
-              def.reject();
-              $state.go("login");
-            }).finally(function() {});
+
+      // if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+
+      ionic.Platform.isFullScreen = true;
+
+      $ionicPlatform.registerBackButtonAction(function(e) {
+        if ($state.is("app.main") || $state.is("error")) {
+          // выход
+          // требуем двойного нажатия
+          if (BACK_BUTTON_COUNT >= 1) {
+            navigator.app.exitApp();
           } else {
-            def.resolve();
+            toast("Для выхода нажмите дважды");
+            BACK_BUTTON_COUNT++;
+            // через 1сек сбрасываем BACK_BUTTON_COUNT
+            setTimeout(function() {
+              BACK_BUTTON_COUNT = 0;
+            }, BACK_BUTTON_COUNT_TIMEOUT);
           }
-          return def.promise;
-        }
-      }
-    })
-    .state('app.main', {
-      url: "/main",
-      onEnter: function($ionicNavBarDelegate, $rootScope) {
-        // if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
-        $rootScope.showTel = true;
-        $ionicNavBarDelegate.showBackButton(false);
-      },
-      onExit: function($ionicNavBarDelegate, $rootScope) {
-        $rootScope.showTel = false;
-        $ionicNavBarDelegate.showBackButton(true);
-      },
-      cache: false,
-      views: {
-        "menuContent": {
-          templateUrl: "templates/main.html",
-          controller: 'MainCtrl'
-        }
-      }
-    })
-    .state('app.addr', {
-      url: "/addr/:id",
-      cache: false,
-      views: {
-        "menuContent": {
-          templateUrl: "templates/addrSelect.html",
-          controller: 'AddrCtrl'
-        }
-      }
-    })
-    .state('app.addrEdit', {
-      url: "/addr/edit/:id",
-      cache: false,
-      views: {
-        "menuContent": {
-          templateUrl: "templates/addrEdit.html",
-          controller: 'AddrEditCtrl'
-        }
-      }
-    })
-    .state('app.addrHistory', {
-      url: "/addr/:id/select/history",
-      cache: false,
-      views: {
-        "menuContent": {
-          templateUrl: "templates/addrHistory.html",
-          controller: 'AddrHistoryCtrl'
-        }
-      }
-    })
-    .state('app.addrFavotites', {
-      url: "/addr/:id/select/favorites",
-      cache: false,
-      views: {
-        "menuContent": {
-          templateUrl: "templates/addrFavorites.html",
-          controller: 'AddrFavotitesCtrl'
-        }
-      }
-    })
-    .state('app.addrSelect', {
-      url: "/addr/select/:type",
-      cache: false,
-      views: {
-        "menuContent": {
-          templateUrl: "templates/addrSelect.html",
-          controller: 'AddrCtrl'
-        }
-      }
-    })
-    .state('app.orderAdvance', {
-      url: "/order/advance",
-      cache: false,
-      views: {
-        "menuContent": {
-          templateUrl: "templates/orderAdvance.html",
-          controller: 'OrderAdvanceCtrl'
-        }
-      }
-    })
-    .state('app.orderState', {
-      url: "/order/:id",
-      cache: false,
-      views: {
-        "menuContent": {
-          templateUrl: "templates/orderState.html",
-          controller: 'OrderCtrl'
-        }
-      },
-      onExit: function(user, $interval) {
-        $interval.cancel(user.orderInterval);
-      }
-    })
-    .state('app.orderHistory', {
-      url: "/history",
-      cache: false,
-      views: {
-        "menuContent": {
-          templateUrl: "templates/orderHistory.html",
-          controller: 'HistoryCtrl'
-        }
-      },
-      onExit: function(user, $interval) {
-        $interval.cancel(user.orderInterval);
-      }
+        } else {
+          navigator.app.backHistory();
+        };
+      }, 300);
     });
+  })
+  .config(function($stateProvider, $urlRouterProvider) {
+    $stateProvider
 
-  // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/main');
+      .state('login', {
+        url: "/login",
+        templateUrl: "templates/login.html",
+        controller: 'LoginCtrl',
+        onEnter: function() {
+          if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+        },
+      })
+      .state('townSelect', {
+        url: "/townSelect",
+        cache: false,
+        templateUrl: "templates/townSelect.html",
+        controller: 'TownSelectCtrl',
+        onEnter: function() {
+          if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+        }
+      })
+      .state('error', {
+        url: "/error",
+        params: {
+          title: "Ошибка",
+          text: "Неизвестная ошибка",
+          next: "app.main",
+          eventForNext: "online",
+          icon: "ion-bug"
+        },
+        templateUrl: "templates/error.html",
+        controller: 'ErrorCtrl',
+        onEnter: function() {
+          if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+        }
+      })
+      .state("app", {
+        url: "",
+        abstract: true,
+        templateUrl: "templates/menu.html",
+        controller: "AppCtrl",
+        resolve: {
+          login: function($state, $q, $localStorage, $window, app, user, userRes, locationRes, toast) {
+            var def = $q.defer();
+            // проверка логина пользователя
+            if (!app.logged) {
+              userRes.get().$promise.then(function(res) {
+                // установка промокода
+                $localStorage.userProfile = res;
+                app.logged = true;
+                user.profile = $localStorage.userProfile;
+                app.twns_.$promise.then(function(res) {
+                  app.getTwn().then(function(twn) {
+                    if (!twn) {
+                      if (!app.twn_id) {
+                        $state.go("townSelect");
+                      } else {
+                        def.resolve();
+                      }
+                    } else {
+                      if (!app.twn_id) {
+                        app.twn_id = twn.id;
+                        $localStorage.twn_id = twn.id;
+                        def.resolve();
+                      } else if (twn.id != app.twn_id) {
+                        $state.go("townSelect");
+                        toast("Вы сейчас в г.{0}, \nне хотите переключиться?".format(twn.nme));
+                      } else {
+                        def.resolve();
+                      }
+                    }
+                  }, function(error) {
+                    //   toast("Ошибка при определении города");
+                    app.twn_id = $localStorage.twn_id;
+                    if (app.twn_id) {
+                      def.resolve();
+                    } else {
+                      def.reject();
+                      $state.go("townSelect");
+                    }
+                  });
+                });
+              }, function(error) {
+                def.reject();
+                $state.go("login");
+              }).finally(function() {});
+            } else {
+              def.resolve();
+            }
+            return def.promise;
+          }
+        }
+      })
+      .state('app.main', {
+        url: "/main",
+        onEnter: function($ionicNavBarDelegate, $rootScope) {
+          // if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+          $rootScope.showTel = true;
+          $ionicNavBarDelegate.showBackButton(false);
+        },
+        onExit: function($ionicNavBarDelegate, $rootScope) {
+          $rootScope.showTel = false;
+          $ionicNavBarDelegate.showBackButton(true);
+        },
+        cache: false,
+        views: {
+          "menuContent": {
+            templateUrl: "templates/main.html",
+            controller: 'MainCtrl'
+          }
+        }
+      })
+      .state('app.addr', {
+        url: "/addr/:id",
+        cache: false,
+        views: {
+          "menuContent": {
+            templateUrl: "templates/addrSelect.html",
+            controller: 'AddrCtrl'
+          }
+        }
+      })
+      .state('app.addrEdit', {
+        url: "/addr/edit/:id",
+        cache: false,
+        views: {
+          "menuContent": {
+            templateUrl: "templates/addrEdit.html",
+            controller: 'AddrEditCtrl'
+          }
+        }
+      })
+      .state('app.addrHistory', {
+        url: "/addr/:id/select/history",
+        cache: false,
+        views: {
+          "menuContent": {
+            templateUrl: "templates/addrHistory.html",
+            controller: 'AddrHistoryCtrl'
+          }
+        }
+      })
+      .state('app.addrFavotites', {
+        url: "/addr/:id/select/favorites",
+        cache: false,
+        views: {
+          "menuContent": {
+            templateUrl: "templates/addrFavorites.html",
+            controller: 'AddrFavotitesCtrl'
+          }
+        }
+      })
+      .state('app.addrSelect', {
+        url: "/addr/select/:type",
+        cache: false,
+        views: {
+          "menuContent": {
+            templateUrl: "templates/addrSelect.html",
+            controller: 'AddrCtrl'
+          }
+        }
+      })
+      .state('app.orderAdvance', {
+        url: "/order/advance",
+        cache: false,
+        views: {
+          "menuContent": {
+            templateUrl: "templates/orderAdvance.html",
+            controller: 'OrderAdvanceCtrl'
+          }
+        }
+      })
+      .state('app.orderPromo', {
+        url: "/order/promo",
+        onExit: function(app, $localStorage) {
+          $localStorage.promo = app.promo;
+        },
+        cache: false,
+        views: {
+          "menuContent": {
+            templateUrl: "templates/orderPromo.html",
+            controller: 'OrderPromoCtrl'
+          }
+        }
+      })
+      .state('app.orderState', {
+        url: "/order/:id",
+        cache: false,
+        views: {
+          "menuContent": {
+            templateUrl: "templates/orderState.html",
+            controller: 'OrderCtrl'
+          }
+        },
+        onExit: function(user, $interval) {
+          $interval.cancel(user.orderInterval);
+        }
+      })
+      .state('app.orderHistory', {
+        url: "/history",
+        cache: false,
+        views: {
+          "menuContent": {
+            templateUrl: "templates/orderHistory.html",
+            controller: 'HistoryCtrl'
+          }
+        },
+        onExit: function(user, $interval) {
+          $interval.cancel(user.orderInterval);
+        }
+      });
 
-})
-.config(["$httpProvider", function($httpProvider) {
+    // if none of the above states are matched, use this as the fallback
+    $urlRouterProvider.otherwise('/main');
+
+  })
+  .config(["$httpProvider", function($httpProvider) {
     //Enable cross domain calls
     $httpProvider.defaults.useXDomain = true;
     $httpProvider.defaults.timeout = HTTP_TIMEOUT;
     $httpProvider.defaults.withCredentials = true;
     $httpProvider.defaults.headers.common.Apikey = API_KEY;
     delete $httpProvider.defaults.headers.common["X-Requested-With"];
-}])
-.config(["$resourceProvider", function($resourceProvider) {
+  }])
+  .config(["$resourceProvider", function($resourceProvider) {
     $resourceProvider.defaults.stripTrailingSlashes = false;
     $resourceProvider.defaults.timeout = HTTP_TIMEOUT;
-}])
-.config(["$ionicConfigProvider", function($ionicConfigProvider) {
-  $ionicConfigProvider.views.transition("none");
-  $ionicConfigProvider.views.maxCache(10);
-  $ionicConfigProvider.views.forwardCache(true);
-}])
-.config(["toastProvider", function(toastProvider) {
+  }])
+  .config(["$ionicConfigProvider", function($ionicConfigProvider) {
+    $ionicConfigProvider.views.transition("none");
+    $ionicConfigProvider.views.maxCache(10);
+    $ionicConfigProvider.views.forwardCache(true);
+  }])
+  .config(["toastProvider", function(toastProvider) {
     toastProvider.timeout = TOAST_DELAY;
-}]);
+  }]);

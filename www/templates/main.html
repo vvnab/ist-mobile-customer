@@ -2,23 +2,26 @@
 <ion-view view-title="{{app.twn_nme}}">
     <ion-content>
 		<div class="list location-list">
-			
+
 			<!-- список адресов -->
-		    <div class="item item-icon-left item-icon-right location" 
+
+		    <div class="item item-icon-left item-icon-right location"
 		    	ng-repeat="addr in order.adds"
 		    	ng-class-even="'item-stable'"
 		    	ng-class="{assertive: addr.error}">
-
 		    	<i class="icon ion-location" ng-if="!addr.error"></i>
-		    	<i class="icon ion-alert" ng-if="addr.error"></i>
+          <i class="icon ion-alert" ng-if="addr.error"></i>
+          <div class="swap-arrow" ng-if="!$first" ng-click="order.swapAdds($index)">
+            <i class="icon ion-arrow-swap orange-text"></i>
+          </div>
 		    	<div ng-click="addrEdit(addr, $index)">
 			    	<h2 ng-bind-html="addr.text($first)"></h2>
 		    	</div>
 		    	<i class="icon ion-ios-arrow-right item-note" ng-if="addr.next()"></i>
 		    	<i class="icon ion-ios-close-empty item-note" ng-if="!addr.next()" ng-click="addrRemove($index)"></i>
 		    </div>
-		    	
-		    <!-- END OF список адресов -->
+
+		  <!-- END OF список адресов -->
 
 			<!-- кнопка добавления адреса -->
         	<div class="item text-right buttons add-address" ng-if="order.canAdd">
@@ -35,9 +38,9 @@
     		<div class="row text-center tariffs-row" on-swipe-left="toggleUrgentShow()">
 
     			<!-- список обычных тарифов -->
-				<div 
-					class="col" 
-					ng-repeat="i in app.trfs" 
+				<div
+					class="col"
+					ng-repeat="i in app.trfs"
 					ng-class="{selected: i.id == order.trf.id}"
 					ng-click="trfChange(i.id)"
 					ng-if="i.level != 5">
@@ -51,25 +54,25 @@
 					</div>
 				</div>
 				<!-- END OF список обычных тарифов -->
-				
+
 
 				<div class="urgent-box" ng-if="state.urgent"></div>
 
 				<!-- тариф срочный! -->
-				<div class="urgent-row" 
-					ng-class="{'show': state.urgentShow}" 
-					ng-if="state.urgent" 
+				<div class="urgent-row"
+					ng-class="{'show': state.urgentShow}"
+					ng-if="state.urgent"
 					on-swipe-right="toggleUrgentShow()">
 					<div class="urgent-container">
 						<div class="urgent-label" ng-click="toggleUrgentShow()">
 							<div class="urgent-rotate">
-								Срочно 
+								Срочно
 								<i class="ion-plane icon-big icon-45-deg"></i>
 							</div>
 						</div>
 						<div class="urgent-content" style="padding-left: 30px;">
-							<table class="order-info-container" 
-								ng-if="order.complete" 
+							<table class="order-info-container"
+								ng-if="order.complete"
 								ng-include="'templates/orderInfo.html'">
 							</table>
 							<div class="text-left" style="margin-left: 25px;" ng-if="!order.complete">
@@ -91,9 +94,9 @@
 
 			</div>
 			<!-- END OF выбор тарифа -->
-			
+
 			<div class="clearfix"></div>
-			
+
 
 
 			<!-- блок выбора опций -->
@@ -101,10 +104,12 @@
 
 				<div class="row-divider" ng-show="order.complete"><span>Стоимость</span></div>
 
-				<table class="order-info-container" 
-					ng-if="order.complete" 
+				<table class="order-info-container"
+					ng-if="order.complete"
 					ng-include="'templates/orderInfo.html'">
 				</table>
+
+        <!-- опции заказа -->
 
 				<div class="row-divider"><span>Опции</span></div>
 
@@ -135,8 +140,31 @@
 						<i class="icon ion-ios-arrow-right item-note"></i>
 					</a-->
 				</div>
+
+        <!-- Ввод промокода -->
+
+        <div class="row-divider"><span>Промокод</span></div>
+
+				<div class="list order-type-list">
+					<a class="item item-icon-right schedule" ng-click="gotoPromo()"> <!-- ng-if="!order.type"-->
+						<div class="options none" ng-if="!(app.promo.enabled && app.promo.text) || !order.usePromo && !order.badPromo && order.usePromo">
+							Не используется
+						</div>
+            <div class="options red-text" ng-if="order.badPromo">
+							Не существует
+						</div>
+            <div class="options orange-text" ng-if="(app.promo.enabled && app.promo.text) && !order.badPromo && !order.usePromo">
+							Неприменим
+						</div>
+            <div class="options" ng-if="(app.promo.enabled && app.promo.text && !order.badPromo && order.usePromo)">
+							{{app.promo.text}}
+						</div>
+						<i class="icon ion-ios-arrow-right item-note"></i>
+					</a>
+				</div>
+
 				<div class="row-divider"></div>
-				
+
 
 				<!-- END OF список активных опций -->
 
@@ -144,17 +172,17 @@
  				<!--div>
 					<div class="row text-center">
 						<div class="col">
-							<button 
-								class="button button-clear button-block order-type-button" 
-								ng-class="{'button-energized': order.type == 0}" 
+							<button
+								class="button button-clear button-block order-type-button"
+								ng-class="{'button-energized': order.type == 0}"
 								ng-click="order.type = 0">
 								<i class="ion-plain ion-checkmark-round"></i>
 								Прямо сейчас
 							</button>
 						</div>
 						<div class="col">
-							<button 
-								class="button button-clear button-block order-type-button" 
+							<button
+								class="button button-clear button-block order-type-button"
 								ng-class="{'button-energized': order.type == 1}"
 								ng-click="order.type = 1">
 									Заказ на дату
@@ -163,14 +191,14 @@
 					</div>
 				</div-->
 				<!-- END OF выбор времени -->
-				
-				
+
+
 			</div>
 			<!-- END OF блок выбора опций -->
-			
+
 			<!-- кнопка вызова -->
 			<div class="row text-center list-buttons">
-					<button class="button button-block button-energized order-button" 
+					<button class="button button-block button-energized order-button"
 						ng-class="{'disabled': !order.complete}"
 						ng-click="orderCreate()">
 						<span ng-if="!order.type">

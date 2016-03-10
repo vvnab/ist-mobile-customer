@@ -1,0 +1,47 @@
+<div class="order-state-container" ng-switch="order.getState()">
+  <div ng-switch-when="search">
+    <div class='info'>Поиск автомобиля...</div>
+  </div>
+
+  <div ng-switch-when="found">
+    <div class='info'>Поиск автомобиля...</div>
+  </div>
+
+  <div ng-switch-when="en route">
+    <div>
+      Ориентировочное время прибытия
+    </div>
+
+    <div class="time">
+      {{order.getTime(order.tme_wait)}}
+    </div>
+    <div ng-include="'templates/autoInfo.html'"></div>
+  </div>
+
+  <div ng-switch-when="arrived">
+    <div class='info'>Машина подъехала, выходите!</div>
+    <div ng-include="'templates/autoInfo.html'"></div>
+  </div>
+
+  <div ng-switch-when="cancel">
+    <div class='info'>Заказ отменён</div>
+  </div>
+
+  <div ng-switch-when="complete">
+    <div class='info'>Заказ выполнен</div>
+  </div>
+
+  <div ng-switch-when="in car">
+    <div class='info'>
+      Длительность поездки: <br/>
+      {{order.getOrderTme()}}
+    </div>
+  </div>
+
+  <div ng-switch-when="advance">
+    <div class='info'>
+      Предварительный заказ: <br/>
+      {{order.tme_drv}}
+    </div>
+  </div>
+</div>

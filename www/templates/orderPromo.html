@@ -1,0 +1,30 @@
+<ion-view view-title="Промокод">
+	<ion-content>
+		<div class="list check-options">
+			<label class="item item-icon-left item-toggle text-center-" for="promo">
+			    Использовать промокод
+			    <i class="icon ion-pricetag"></i>
+			    <label class="toggle toggle-energized">
+		        	<input type="checkbox" ng-model="promo.enabled" name="promo">
+		        	<div class="track">
+		         		<div class="handle"></div>
+		        	</div>
+			    </label>
+		  	</label>
+		</div>
+
+		<div class="row" ng-show="promo.enabled">
+			<div class="col">
+				<label class="item-input-wrapper search-input">
+					<!-- <i class="icon ion-ios-search placeholder-icon"></i> -->
+					<input type="text" autocomplete="off" placeholder="Введите промокод" ng-model="promo.text" ng-show="promo.enabled" auto-focus="true">
+				</label>
+			<div>
+			<!-- <div class="col">
+				<button class="button button-block" ng-click="orderSetOptions()">
+					Принять
+				</button>
+			</div> -->
+		</div>
+	</ion-content>
+</ion-view>

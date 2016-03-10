@@ -1,37 +1,25 @@
 <ion-view view-title="Заказ">
-	<ion-content>
-		<div class="list location-list">
-			
-			<!-- список адресов -->
-		    <div class="item item-icon-left location" 
-		    	ng-repeat="addr in order.adds"
-		    	ng-if="!addr.next()"
-		    	ng-class-even="'item-stable'">
-		    	<i class="icon ion-location"></i>
-		    	<h2 ng-bind-html="addr.text($first)"></h2>
-		    </div>
-		</div>
+  <ion-content>
+    <div class="list location-list">
 
-		<div class="order-state-card">
-  			<div class="order-state-container"
-  				ng-bind-html="order.getState()">
-  			</div>
-		</div>
-		
-		<table class="order-info-container" 
-			ng-if="order.complete" 
-			ng-include="'templates/orderInfo.html'">
-		</table>
+      <!-- список адресов -->
+      <div class="item item-icon-left location" ng-repeat="addr in order.adds" ng-if="!addr.next()" ng-class-even="'item-stable'">
+        <i class="icon ion-location"></i>
+        <h2 ng-bind-html="addr.text($first)"></h2>
+      </div>
+    </div>
 
-		<div class="row text-center list-buttons">
-				<button class="button button-block button-assertive" 
-					ng-class="{disabled: !order.canCancel()}"
-					ng-click="orderCancel()">
-					Отменить заказ
-				</button>
-		</div>
-		<!-- END OF кнопка вызова -->
-	</div>
-	
-	</ion-content>
+    <div class="order-state-card" ng-include="'templates/orderStateInfo.html'"></div>
+
+    <table class="order-info-container" ng-if="order.complete" ng-include="'templates/orderInfo.html'"></table>
+
+    <div class="row text-center list-buttons">
+      <button class="button button-block button-assertive" ng-class="{disabled: !order.canCancel()}" ng-click="orderCancel()">
+        Отменить заказ
+      </button>
+    </div>
+    <!-- END OF кнопка вызова -->
+  </div>
+
+</ion-content>
 </ion-view>
