@@ -1,8 +1,9 @@
 <ion-view view-title="Дополнительные параметры">
 	<ion-content>
 		<div class="list check-options">
-			<label class="item item-icon-left item-toggle text-center-" ng-repeat="opt in opts" for="{{opt.name}}">
-			    {{opt.title}}
+			<label class="item item-icon-left item-toggle text-center-" ng-repeat="opt in opts">
+			    <span ng-class="{'opt-title': opt.cost}"> {{opt.title}} </span>
+					<small ng-if="opt.cost" class="opt-cost" ng-class="{active: opt.enabled}">Стоимость услуги {{opt.cost}} р.</small>
 			    <i class="icon {{opt.icon}}"></i>
 			    <label class="toggle toggle-energized">
 		        	<input type="checkbox" ng-model="opt.enabled" name="{{opt.name}}">
@@ -12,17 +13,7 @@
 			    </label>
 		  	</label>
 
-			<div ng-show="twn.mobileReservation">
-				<label class="item item-icon-left item-toggle text-center-" for="moment">
-				    Предварительный заказ
-				    <i class="icon ion-clock"></i>
-				    <label class="toggle toggle-energized">
-			        	<input type="checkbox" ng-model="moment.enabled" name="moment">
-			        	<div class="track">
-			         		<div class="handle"></div>
-			        	</div>
-				    </label>
-			  	</label>
+			<div ng-show="moment.enabled">
 				<div class="item text-center- item-divider" ng-if="moment.enabled">
 					Время подачи автомобиля
 				</div>
@@ -82,9 +73,9 @@
 		</div>
 		<div class="row">
 			<div class="col">
-				<!--button class="button button-block" ng-click="orderSetOptions()">
-					Принять
-				</button-->
+				<button class="button button-block" ng-click="orderSetOptions()">
+					Использовать выбранные опции
+				</button>
 			</div>
 		</div>
 	</ion-content>

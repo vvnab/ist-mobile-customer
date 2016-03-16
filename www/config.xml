@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.ionicframework.vsegda214536" version="2.8.2" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.ionicframework.vsegda214536" version="2.9.1" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
 
 	<!-- basic -->
 
@@ -91,6 +91,7 @@
     <gap:plugin name="cordova-plugin-whitelist" source="npm" />
     <gap:plugin name="cordova-plugin-app-metrika" source="npm" />
     <gap:plugin name="cordova-plugin-appversion" source="npm" />
+    <gap:plugin name="cordova-plugin-yandexnavi" source="npm" />
 
     <!-- <gap:plugin name="cordova-plugin-x-toast" source="npm" />
 	<gap:plugin name="cordova-plugin-file" source="npm" />

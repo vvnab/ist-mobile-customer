@@ -8979,3 +8979,27 @@ dl.auto-info dt {
 dl.auto-info dd {
   text-align: left;
 }
+
+.opt-cost {
+  display: block;
+  opacity: 0.5;
+  /*color: rgb(255, 160, 0);*/
+  margin-bottom: -0.5em;
+}
+
+.opt-cost.active {
+  color: rgb(255, 160, 0);
+  opacity: 1;
+}
+
+.opt-title {
+  display: block;
+  /*line-height: 80%;*/
+  margin-top: -0.5em;
+}
+
+.order-options-cost {
+  margin-bottom: -1em;
+  font-size: 1.3em;
+  margin-left: -1em;
+}

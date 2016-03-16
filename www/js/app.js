@@ -43,11 +43,13 @@ var OPTION_ICONS = {
   "babyFix": "flaticon flaticon-bears1", //"ion-ios-body",
   "pet": "flaticon flaticon-dog50", //"ion-social-github",
   "cash5000": "ion-cash",
+  "cash1000": "ion-cash",
   "conditioner": "flaticon flaticon-snow42", //"ion-ios-snowy",
   "noshanson": "flaticon flaticon-no55", //"ion-volume-mute",
   "ticket": "ion-clipboard",
   "gntldrving": "ion-social-github",
-  "silentdrv": "ion-volume-mute"
+  "silentdrv": "ion-volume-mute",
+  "reservation": "ion-clock"
 };
 
 var TWN_ID_DEFAULT = 181;

@@ -393,8 +393,6 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage']
 
     $scope.twn = _.findWhere(app.trfs_, {twn_id: app.twn_id});
 
-    console.warn($scope.twn);
-
     app.getOpts(user.order.trf ? user.order.trf.id : null).then(function(res) {
       // копия с полного набора опций
       $scope.opts = _.map(res, _.clone);
@@ -403,7 +401,6 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage']
         if (_.contains(user.order.options, i.name)) i.enabled = true;
       });
     });
-
 
     $scope.dates = _.map(_.range(0, DAYS_FOR_ADVANCE_ORDER), function(i) {
       return i == 0 ? "Сегодня" : i == 1 ? "Завтра" : moment().add(i, "days").format("dddd, Do MMMM");
@@ -472,6 +469,8 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage']
         }), "name");
         user.order.options = opts;
       }
+
+      $scope.moment.enabled = !!_.findWhere($scope.opts, {name: "reservation", enabled: true});
     }, true);
 
     $scope.$watch('moment', function(newVal, oldVal) {
@@ -498,6 +497,9 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage']
     //$ionicLoading.show();
     $scope._ = _;
     $scope.promo = app.promo || {};
+    $scope.orderSetPromo = function() {
+      $state.go("app.main");
+    };
   })
 
 .controller('TownSelectCtrl', function($scope, $state, $stateParams, $localStorage, user, Order, _, app, toast) {

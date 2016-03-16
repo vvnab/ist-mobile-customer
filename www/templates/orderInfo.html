@@ -26,10 +26,12 @@
 			</p>
 		</td>
 		<td>
+			<div ng-if="order.optionsSum || order.plusSum" class="nobr order-options-cost">
+				{{order.pureCost - order.plusSum}} р. + {{order.optionsSum + order.plusSum}} р. опции
+			</div>
 			<h1>
 				{{order.wtd_cost}} р.
 			</h1>
 		</td>
 	</tr>
 </tbody>
-
