@@ -91,7 +91,9 @@
     <gap:plugin name="cordova-plugin-whitelist" source="npm" />
     <gap:plugin name="cordova-plugin-app-metrika" source="npm" />
     <gap:plugin name="cordova-plugin-appversion" source="npm" />
-    <gap:plugin name="cordova-plugin-yandexnavi" source="npm" />
+    <!-- <gap:plugin name="cordova-plugin-yandexnavi" source="npm" /> -->
+
+    <plugin name="cordova-plugin-yandexnavi" spec="0.0.0" />
 
     <!-- <gap:plugin name="cordova-plugin-x-toast" source="npm" />
 	<gap:plugin name="cordova-plugin-file" source="npm" />
