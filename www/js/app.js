@@ -106,6 +106,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
         app.deviceready.resolve();
       } else {
         document.addEventListener("deviceready", app.deviceready.resolve, false);
+        setTimeout(app.deviceready.resolve, 5000);
       }
       if (window.plugins && window.plugins.appMetrica) {
         window.plugins.appMetrica.activate(YANDEX_APP_METRIKA_KEY);
