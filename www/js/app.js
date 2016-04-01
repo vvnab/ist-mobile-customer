@@ -5,7 +5,10 @@
 // the 2nd parameter is an array of 'requires'
 
 var DEBUG = false;
+var GEOLOCATION_TIMEOUT = 5000;
+var GEOLOCATION_ACCURACY = 50;
 var ARC_ORDERS_WEEKS = 52;
+var ARC_ORDERS_LIMIT = 10;
 var API_URL = DEBUG ? "http://192.168.100.159:8015/v1" : "http://api.taxi21.ru/v1";
 var API_KEY = "SbzLONyITCNZ5U98tESyyvzvRQU0Ivwo7IyoKgqKQr2AaST1yNC496We4lezLgQF";
 var SEARCH_MIN_LENGTH = 3;
@@ -97,8 +100,13 @@ try {
 
 angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.providers'])
 
-.run(function($ionicPlatform, $state, toast, mediaSrv) {
+.run(function($ionicPlatform, $state, toast, mediaSrv, app) {
     $ionicPlatform.ready(function() {
+      if (DEBUG) {
+        app.deviceready.resolve();
+      } else {
+        document.addEventListener("deviceready", app.deviceready.resolve, false);
+      }
       if (window.plugins && window.plugins.appMetrica) {
         window.plugins.appMetrica.activate(YANDEX_APP_METRIKA_KEY);
         // toast("Яндекс плагин OK");
@@ -137,7 +145,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
           if (BACK_BUTTON_COUNT >= 1) {
             navigator.app.exitApp();
           } else {
-            toast("Для выхода нажмите дважды");
+            toast("Для выхода из приложения дважды нажмите кнопку „Назад“");
             BACK_BUTTON_COUNT++;
             // через 1сек сбрасываем BACK_BUTTON_COUNT
             setTimeout(function() {
@@ -152,7 +160,6 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
   })
   .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
-
       .state('login', {
         url: "/login",
         templateUrl: "templates/login.html",
@@ -191,7 +198,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
         templateUrl: "templates/menu.html",
         controller: "AppCtrl",
         resolve: {
-          login: function($state, $q, $localStorage, $window, app, user, userRes, locationRes, toast) {
+          login: function($state, $q, $localStorage, $window, app, user, userRes, locationRes, $ionicLoading, toast) {
             var def = $q.defer();
             // проверка логина пользователя
             if (!app.logged) {
@@ -229,10 +236,13 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
                       def.reject();
                       $state.go("townSelect");
                     }
+                  }).finally(function() {
+                    $ionicLoading.hide();
                   });
                 });
               }, function(error) {
                 def.reject();
+                $ionicLoading.hide();
                 $state.go("login");
               }).finally(function() {});
             } else {

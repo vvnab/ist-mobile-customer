@@ -10,20 +10,20 @@ angular.module('app.providers', [])
     	";
     	self.timeout = 0;
         self.$get = [
-    		"$timeout", 
-    		"$http", 
-    		"$compile", 
-    		"$templateCache", 
+    		"$timeout",
+    		"$http",
+    		"$compile",
+    		"$templateCache",
     		"$rootScope",
     		"$sce",
     		"$q",
     		function(
-    			$timeout, 
-    			$http, 
-    			$compile, 
-    			$templateCache, 
-    			$rootScope, 
-    			$sce, 
+    			$timeout,
+    			$http,
+    			$compile,
+    			$templateCache,
+    			$rootScope,
+    			$sce,
     			$q
     		) {
     			var container = document.getElementById('toast-container');
@@ -37,14 +37,14 @@ angular.module('app.providers', [])
 				    var scope = $rootScope.$new();
 				    scope.message = $sce.trustAsHtml(args.message);
 				    scope.class = args.class || "toast-text";
-				    
+
 				    scope.setHide = function() {
 				    	scope.show = false;
 				    }
-				    
+
 					if (window.plugins && window.plugins.toast) {
 						//console.log("TOAST native");
-						window.plugins.toast.showLongTop(args.message);
+						window.plugins.toast.showLongBottom(args.message);
 					} else {
 						//console.log("TOAST NOT native");
 					    if (args.timeout) {

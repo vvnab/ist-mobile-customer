@@ -23,6 +23,8 @@ angular.module('app.services', ['ngResource'])
       twns_: twnRes.get({
         rem: "true"
       }),
+      deviceready: $q.defer(),
+      coordsDef: $q.defer(),
       trfs_: trfRes.get(),
       opts_: optRes.get(),
       tel: OPERATOR_PHONE,
@@ -85,14 +87,23 @@ angular.module('app.services', ['ngResource'])
               }));
               return;
             }
-            // console.log('Towns_res: ' + JSON.stringify(res));
+            // ================================================
+            // геолокация
+            // ================================================
+            // только после DEVICEDEADY
 
-            if (DEBUG) {
+            app.deviceready.promise.then(function() {
+
+              // примерное определение местоположения
+              // используется для определения города в котором находится клиент
+
               navigator.geolocation.getCurrentPosition(function(res) {
-                // console.log('geolocation: ' + JSON.stringify(res));
+                // console.log("get", res);
+                setTimeout(app.coordsDef.resolve, GEOLOCATION_TIMEOUT * 2);
                 app.coords = {
                   lat: res.coords.latitude,
-                  lon: res.coords.longitude
+                  lon: res.coords.longitude,
+                  accuracy: res.coords.accuracy
                 };
                 locationRes.get({
                   lat: app.coords.lat,
@@ -103,7 +114,6 @@ angular.module('app.services', ['ngResource'])
                     var twn = _.findWhere(app.twns, {
                       nme: city
                     });
-                    // console.log('Town: ' + JSON.stringify(twn));
                     resolve(twn);
                   }
                 );
@@ -111,42 +121,32 @@ angular.module('app.services', ['ngResource'])
                 console.log('Geolocation ERROR: ' + JSON.stringify(err));
                 reject();
               }, {
-                maximumAge: 3600000,
-                timeout: 5000,
+                maximumAge: 60 * 60 * 1000,
+                timeout: GEOLOCATION_TIMEOUT,
                 enableHighAccuracy: false
               });
-            } else {
-              document.addEventListener("deviceready", function() {
-                navigator.geolocation.getCurrentPosition(function(res) {
-                  console.log('geolocation: ' + JSON.stringify(res));
-                  app.coords = {
-                    lat: res.coords.latitude,
-                    lon: res.coords.longitude
-                  };
-                  locationRes.get({
-                    lat: app.coords.lat,
-                    lon: app.coords.lon
-                  }).$promise.then(
-                    function(location) {
-                      var city = location.address.city || location.address.town;
-                      var twn = _.findWhere(app.twns, {
-                        nme: city
-                      });
-                      console.log('Town: ' + JSON.stringify(twn));
-                      resolve(twn);
-                    }
-                  );
-                }, function(err) {
-                  console.log('Geolocation ERROR: ' + JSON.stringify(err));
-                  reject();
-                }, {
-                  maximumAge: 3600000,
-                  timeout: 5000,
-                  enableHighAccuracy: false
-                });
-              }, false);
-            }
 
+              // точное определение местоположения
+              // используется для определения адреса
+
+              navigator.geolocation.watchPosition(function(res) {
+                // console.log("watch", res);
+                app.coords = {
+                  lat: res.coords.latitude,
+                  lon: res.coords.longitude,
+                  accuracy: res.coords.accuracy
+                };
+                if (res.coords.accuracy <= GEOLOCATION_ACCURACY) app.coordsDef.resolve();
+              }, function(err) {
+                console.log('Geolocation ERROR: ' + JSON.stringify(err));
+              }, {
+                maximumAge: 60 * 60 * 1000,
+                timeout: GEOLOCATION_TIMEOUT,
+                enableHighAccuracy: true
+              });
+
+            });
+            // ================================================
           });
         });
       },
@@ -243,7 +243,9 @@ angular.module('app.services', ['ngResource'])
       twn: null,
       historyUpdateFlag: true,
       newOrder: function() {
-        this.order = new Order();
+        var order = new Order();
+        order.adds[0].geolocation();
+        return order;
       },
       canonicalPhone: function(tel) {
         if (!tel) {
@@ -284,7 +286,7 @@ angular.module('app.services', ['ngResource'])
       }
     }
   })
-  .factory("Addr", ["_", function(_) {
+  .factory("Addr", ["app", "geolocationRes", "_", function(app, geolocationRes, _) {
     return function(addr) {
       if (!addr) {
         var addr = {};
@@ -357,6 +359,28 @@ angular.module('app.services', ['ngResource'])
         },
         entrance: function() {
           return this.ent.search(/\D+/) + 1 ? this.ent : "{0}-й подъезд".format(this.ent);
+        },
+        geolocation: function() {
+          var self = this;
+          app.coordsDef.promise.then(function() {
+            geolocationRes.get({
+              lat: app.coords.lat,
+              lon: app.coords.lon,
+              twn_id: app.twn_id
+            }).$promise.then(function(result) {
+              if (result.length) {
+                var addr = result[0];
+                self.id = addr.id;
+                self.type = addr.type;
+                self.twn_id = addr.twn_id;
+                self.stt = addr.stt;
+                self.hse = addr.hse;
+                self.adr = addr.stt;
+                self.lat = addr.lat;
+                self.lon = addr.lon;
+              }
+            });
+          });
         }
       }
     }
@@ -420,9 +444,13 @@ angular.module('app.services', ['ngResource'])
           // this.tme_wtd = null;
           // this.tme_exe = null;
           // this.tme_brd = null;
+          this.adds[0].geolocation();
         },
         swapAdds: function(index) {
           var swap = this.adds[index];
+
+          if (index == 1 && swap.adr == ADDR_BY_VOICE) return;
+
           this.adds[index] = this.adds[index - 1];
           this.adds[index - 1] = swap;
           this.getCost();
@@ -517,13 +545,20 @@ angular.module('app.services', ['ngResource'])
           srv_id = srv_id ? srv_id : this.srv_id;
           delete self.error;
           if (this.complete) {
+
             // если адрес имеет adr_id, то "выбрасываем" всё остальное
             // ========================================================
+
+            // var adrs = _.map(this.adds, function(i) {
+            //   return i.adr_id ? {
+            //     adr_id: i.adr_id
+            //   } : i;
+            // });
+
             var adrs = _.map(this.adds, function(i) {
-              return i.adr_id ? {
-                adr_id: i.adr_id
-              } : i;
+              return i;
             });
+
             // ========================================================
 
             self.reduceOptions().then(function(res) {
@@ -804,10 +839,11 @@ angular.module('app.services', ['ngResource'])
       }
     });
   })
-  .factory("orderRes", function($resource) {
+  .factory("orderRes", function($resource, $localStorage) {
     return $resource(API_URL + "/AllOrders/:id/", {
       id: "@id",
-      weeks: ARC_ORDERS_WEEKS
+      weeks: ARC_ORDERS_WEEKS,
+      limit: ARC_ORDERS_LIMIT + ($localStorage.removedOrders ? $localStorage.removedOrders.length : 0)
     }, {
       getOne: {
         method: "GET",
@@ -822,4 +858,17 @@ angular.module('app.services', ['ngResource'])
   })
   .factory("locationRes", function($resource) {
     return $resource(API_URL + "/ReverseLocation/");
+  })
+  .factory("geolocationRes", function($resource, app) {
+    return $resource(API_URL + "/Geolocation/", {
+      quantity: 1,
+      method: 'radius',
+      type: 9
+    }, {
+      get: {
+        method: "GET",
+        timeout: HTTP_TIMEOUT,
+        isArray: true
+      }
+    });
   });

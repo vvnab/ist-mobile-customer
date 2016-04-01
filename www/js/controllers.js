@@ -1,4 +1,4 @@
-angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage'])
+angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage', 'app.filters'])
 
 .controller('LoginCtrl', function($scope, $state, $ionicLoading, $localStorage, $timeout, pinRes, userRes, app, user, toast, _) {
     if (window.navigator && window.navigator.splashscreen) navigator.splashscreen.hide();
@@ -57,11 +57,12 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage']
       }, function(err) {
         //  ERROR
         user.error = "Неверный логин/пароль";
+        $ionicLoading.hide();
         toast(user.error);
         console.error(err);
       }).finally(function() {
         user.pin = "";
-        $ionicLoading.hide();
+        // $ionicLoading.hide();
       });
     };
 
@@ -74,7 +75,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage']
       if (window.navigator && window.navigator.splashscreen) navigator.splashscreen.hide();
       toast("Здравствуйте, " + (user.profile.name.value || user.profile.lgn));
     }, SPLASHSCREEN_TIMEOUT);
-    user.order = user.order ? user.order : new Order();
+    user.order = user.order ? user.order : user.newOrder();
     user.profile = $localStorage.userProfile || {};
     user.historyUpdate().then(function() {
       if (user.curOrders.length > 0) $state.go("app.orderState", {
@@ -93,8 +94,6 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage']
     $scope.order = user.order;
     $scope.user = user;
     $scope.app = app;
-
-
 
     $scope.state = {
       tel: true,
@@ -367,7 +366,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage']
     };
 
   })
-  .controller('HistoryCtrl', function($scope, $state, $stateParams, user, app, Order, _) {
+  .controller('HistoryCtrl', function($scope, $state, $stateParams, $localStorage, toast, user, app, Order, _) {
     //$ionicLoading.show();
     $scope._ = _;
     $scope.orderShowState = function(order) {
@@ -379,6 +378,17 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage']
       app.twn_id = _.first(order.adds).twn_id;
       user.order = new Order(order);
       $state.go("app.main");
+    };
+    $scope.orderRemove = function(order) {
+      if ($scope.ordId == order.id) {
+        var removedOrders = $localStorage.removedOrders || [];
+        removedOrders.push(order.id);
+        $localStorage.removedOrders = removedOrders;
+        toast("Заказ удалён из истории");
+      } else {
+        toast("Для удаления заказа из истории нажмите ещё раз");
+      }
+      $scope.ordId = order.id;
     };
     $scope.user = user;
   })

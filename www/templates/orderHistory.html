@@ -3,9 +3,9 @@
 		<div class="list">
 			<div class="item item-divider item-assertive- assertive-" ng-if="user.curOrders.length">
 		    	Текущие заказы
-		  	</div>		
-	        <a class="item item-icon-left item-icon-right" 
-	        	ng-repeat="order in user.curOrders" 
+		  	</div>
+	        <a class="item item-icon-left item-icon-right"
+	        	ng-repeat="order in user.curOrders"
 	        	ng-class-even="'item-stable'"
 	        	ng-click="orderShowState(order)">
 	        	<i class="icon ion-model-s"></i>
@@ -22,19 +22,21 @@
 	        </a>
 			<div class="item item-divider item-balanced-" ng-if="user.arcOrders.length">
 		    	Архивные заказы
-		  	</div>		
-	        <div class="item item-icon-left" 
-	        	ng-repeat="order in user.arcOrders" 
+		  	</div>
+	        <div class="item item-icon-left"
+	        	ng-repeat="order in user.arcOrders | removedOrders"
 	        	ng-class-even="'item-stable'">
 	        	<i class="icon ion-clock"></i>
-	        	<div class="pull-right text-right">
+	        	<div class="pull-right text-left">
 	        		<button class="button button-clear button-small" ng-click="orderRepeat(order)">
 	        			Повторить
 	        		</button>
-	        		<!--br/>
-	        		<button class="button button-clear button-small">
-	        			Оставить отзыв
-	        		</button-->
+	        		<br/>
+	        		<button class="button button-clear button-small" ng-click="orderRemove(order)">
+								<span class="red-text" style="opacity: 0.7">
+	        				Удалить
+								</span>
+	        		</button>
 	        	</div>
 	        	<div>
 	        		{{_.findWhere(app.twns, {id: _.first(order.adds).twn_id}).nme}}
