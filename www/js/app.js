@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 
-var DEBUG = true;
+var DEBUG = false;
 var GEOLOCATION_TIMEOUT = 5000;
 var GEOLOCATION_ACCURACY = 50;
 var ARC_ORDERS_WEEKS = 52;
@@ -102,12 +102,13 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
 
 .run(function($ionicPlatform, $state, toast, mediaSrv, app) {
     $ionicPlatform.ready(function() {
-      if (DEBUG) {
-        app.deviceready.resolve();
-      } else {
-        document.addEventListener("deviceready", app.deviceready.resolve, false);
-        setTimeout(app.deviceready.resolve, 5000);
-      }
+      app.deviceready.resolve();
+      // if (DEBUG) {
+      //   app.deviceready.resolve();
+      // } else {
+      //   document.addEventListener("deviceready", app.deviceready.resolve, false);
+      //   setTimeout(app.deviceready.resolve, 5000);
+      // }
       if (window.plugins && window.plugins.appMetrica) {
         window.plugins.appMetrica.activate(YANDEX_APP_METRIKA_KEY);
         // toast("Яндекс плагин OK");
