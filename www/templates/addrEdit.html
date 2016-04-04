@@ -4,15 +4,15 @@
 	        <div class="item item-input item-input-inset">
         		<div class="col">
 		        	<!--label class="item-input-wrapper search-input">
-			            <input 
-			            	type="text" 
+			            <input
+			            	type="text"
 			            	readonly
-			            	autocomplete="off" 
-			            	placeholder="Начните вводить адрес" 
+			            	autocomplete="off"
+			            	placeholder="Начните вводить адрес"
 			            	ng-model="addr.adr"
 			            	ng-model-options="{debounce: {'default': 500, 'blur': 0}}"/>
 		            </label-->
-		            <div class="button button-block button-clear button-black-text" 
+		            <div class="button button-block button-clear button-black-text"
 		            	ng-bind="addr.adr"
 		            	ng-click="gotoAddrSelect()"></div>
 		        </div>
@@ -21,22 +21,22 @@
 		        <div class="item item-input item-input-inset">
 		        	<div class="col">
 	    	        	<label class="item-input-wrapper search-input">
-	    		            <input 
+	    		            <input
 	    		            	type="text"
-	    		            	autocomplete="off" 
-	    		            	placeholder="дом" 
+	    		            	autocomplete="off"
+	    		            	placeholder="дом"
 	    		            	ng-model="addr.hse"
 	    		            	ng-model-options="{debounce: {'default': 100, 'blur': 0}}"
-	    		            	auto-focus="true"
+	    		            	auto-focus="false"
 	    		            	key-focus/>
 	    	            </label>
 		        	</div>
 		        	<div class="col col-67">
 	    	        	<label class="item-input-wrapper search-input">
-	    		            <input 
-	    		            	type="text" 
-	    		            	autocomplete="off" 
-	    		            	placeholder="корпус/строение" 
+	    		            <input
+	    		            	type="text"
+	    		            	autocomplete="off"
+	    		            	placeholder="корпус/строение"
 	    		            	ng-model="addr.corp"
 	    		            	ng-model-options="{debounce: {'default': 100, 'blur': 0}}"
 	    		            	key-focus/>
@@ -48,16 +48,16 @@
 
 
 		<!--div class="row-text-divider">примечание</div-->
-		
+
 		<div class="row">
 			<div class="col">
 				<textarea class="note" ng-model="addr.ent" placeholder="Подъезд / Как проехать" key-focus></textarea>
 			</div>
 		</div>
-		
+
 		<div class="row">
 			<div class="col">
-				<button class="button button-block button-energized" 
+				<button class="button button-block button-energized"
 					ng-click="saveAddr()"
 					ng-class="{disabled: addr.next()}">
 					Готово

@@ -8763,6 +8763,10 @@ textarea.note {
 .pincode input {
   font-size: 1.4rem;
 }
+
+.addr-dropdown {
+  margin-top: 0 !important;
+}
 .addr-dropdown i.icon:before {
   font-size: 18px;
 }
@@ -9002,4 +9006,24 @@ dl.auto-info dd {
   margin-bottom: -1em;
   font-size: 1.3em;
   margin-left: -1em;
+}
+
+.list-adds-search {
+  margin-bottom: 0;
+}
+
+
+.item-divider2 {
+  /*margin-top: -20px;*/
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.list-adds-search a.item {
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.list-adds-search a.item .icon {
+  font-size: 24px;
 }

@@ -244,7 +244,6 @@ angular.module('app.services', ['ngResource'])
       historyUpdateFlag: true,
       newOrder: function() {
         var order = new Order();
-        order.adds[0].geolocation();
         return order;
       },
       canonicalPhone: function(tel) {
@@ -360,6 +359,17 @@ angular.module('app.services', ['ngResource'])
         entrance: function() {
           return this.ent.search(/\D+/) + 1 ? this.ent : "{0}-й подъезд".format(this.ent);
         },
+        set: function(addr) {
+          var self = this;
+          self.id = addr.id;
+          self.type = addr.type;
+          self.twn_id = addr.twn_id;
+          self.stt = addr.stt;
+          self.hse = addr.hse;
+          self.adr = addr.stt;
+          self.lat = addr.lat;
+          self.lon = addr.lon;
+        },
         geolocation: function() {
           var self = this;
           app.coordsDef.promise.then(function() {
@@ -370,14 +380,7 @@ angular.module('app.services', ['ngResource'])
             }).$promise.then(function(result) {
               if (result.length) {
                 var addr = result[0];
-                self.id = addr.id;
-                self.type = addr.type;
-                self.twn_id = addr.twn_id;
-                self.stt = addr.stt;
-                self.hse = addr.hse;
-                self.adr = addr.stt;
-                self.lat = addr.lat;
-                self.lon = addr.lon;
+                self.set(addr);
               }
             });
           });
@@ -444,7 +447,6 @@ angular.module('app.services', ['ngResource'])
           // this.tme_wtd = null;
           // this.tme_exe = null;
           // this.tme_brd = null;
-          this.adds[0].geolocation();
         },
         swapAdds: function(index) {
           var swap = this.adds[index];

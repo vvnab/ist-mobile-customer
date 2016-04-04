@@ -217,8 +217,73 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     };
     setActiveOptions();
   })
-  .controller('AddrCtrl', function($scope, $state, $stateParams, $http, $timeout, Addr, user, app) {
+  .controller('AddrCtrl', function($scope, $state, $stateParams, $http, $timeout, Addr, geolocationRes, user, app) {
     $scope.id = $stateParams.id;
+
+    // =====================================
+    // geolocationAdds - срисок ближайших адресов
+    // =====================================
+
+    $scope.geolocationAdds = user.geolocationAdds || [];
+
+    // =====================================
+    // Заполнение geolocationAdds
+    // =====================================
+
+    $scope.getGeolocation = function(n) {
+      n = n || GEOLOCATION_ADDS_QUANTITY;
+      var self = this;
+      app.coordsDef.promise.then(function() {
+        geolocationRes.get({
+          lat: app.coords.lat,
+          lon: app.coords.lon,
+          twn_id: app.twn_id,
+          quantity: n
+        }).$promise.then(function(result) {
+          $scope.geolocationAdds = _.map(result, function(item) {
+            var addr = new Addr();
+            addr.set(item);
+            return addr;
+          });
+          user.geolocationAdds = $scope.geolocationAdds;
+        });
+      });
+    }
+
+    if ($scope.id == 0) $scope.getGeolocation();
+
+    // =====================================
+    // Список избранных адресов
+    // =====================================
+
+    $scope.favoriteAdds = [];
+
+    // =====================================
+    // Заполнение списока избранных адресов
+    // =====================================
+
+    $scope.favoriteAdds = _.map(_.where(user.profile.adds.slice(0, GEOLOCATION_ADDS_QUANTITY), {
+      twn_id: String(app.twn_id)
+    }), Addr);
+
+    // =====================================
+
+    // =====================================
+    // Список истории адресов
+    // =====================================
+
+    $scope.historyAdds = [];
+
+    // =====================================
+    // Заполнение списока истории адресов
+    // =====================================
+
+    user.arcAdds.then(function(res) {
+      $scope.historyAdds = _.map(res.slice(0, GEOLOCATION_ADDS_QUANTITY), Addr);
+    });
+
+    // =====================================
+
     $scope.sources = [
       // {
       // 	icon: "ion-location",
@@ -258,7 +323,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
           $http.get(API_URL + "/Adds/", {
               params: {
                 nme: res,
-                limit: 10,
+                limit: SEARCH_ADDS_QUANTITY,
                 twn_id: app.twn_id
               }
             })

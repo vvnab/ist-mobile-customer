@@ -7,11 +7,13 @@
 var DEBUG = false;
 var GEOLOCATION_TIMEOUT = 5000;
 var GEOLOCATION_ACCURACY = 50;
+var GEOLOCATION_ADDS_QUANTITY = 3;
 var ARC_ORDERS_WEEKS = 52;
 var ARC_ORDERS_LIMIT = 10;
 var API_URL = DEBUG ? "http://192.168.100.159:8015/v1" : "http://api.taxi21.ru/v1";
 var API_KEY = "SbzLONyITCNZ5U98tESyyvzvRQU0Ivwo7IyoKgqKQr2AaST1yNC496We4lezLgQF";
 var SEARCH_MIN_LENGTH = 3;
+var SEARCH_ADDS_QUANTITY = 5;
 var NEED_HSE = [0, 1, 9];
 var DELTA_COST = 5;
 var AUTO_FOCUS_DELAY = 1000;
@@ -102,13 +104,13 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
 
 .run(function($ionicPlatform, $state, toast, mediaSrv, app) {
     $ionicPlatform.ready(function() {
-      app.deviceready.resolve();
-      // if (DEBUG) {
-      //   app.deviceready.resolve();
-      // } else {
-      //   document.addEventListener("deviceready", app.deviceready.resolve, false);
-      //   setTimeout(app.deviceready.resolve, 5000);
-      // }
+      // app.deviceready.resolve();
+      if (DEBUG) {
+        app.deviceready.resolve();
+      } else {
+        document.addEventListener("deviceready", app.deviceready.resolve, false);
+        setTimeout(app.deviceready.resolve, 5000);
+      }
       if (window.plugins && window.plugins.appMetrica) {
         window.plugins.appMetrica.activate(YANDEX_APP_METRIKA_KEY);
         // toast("Яндекс плагин OK");
