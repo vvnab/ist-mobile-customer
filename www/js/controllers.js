@@ -344,9 +344,13 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     $scope.selectAddr = function(addr) {
       // выбор адреса из выпадающего списка
       user.order.adds[$stateParams.id] = new Addr(addr);
-      $state.go("app.addrEdit", {
-        id: $stateParams.id
-      });
+      if ($scope.id == 0) {
+        $state.go("app.addrEdit", {
+          id: $stateParams.id
+        });
+      } else {
+        $state.go("app.main");
+      }
     }
     $scope.gotoSelect = function(i) {
       switch (i.href) {
