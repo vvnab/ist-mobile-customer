@@ -99,7 +99,8 @@ angular.module('app.services', ['ngResource'])
 
               navigator.geolocation.getCurrentPosition(function(res) {
                 // console.log("get", res);
-                setTimeout(app.coordsDef.resolve, GEOLOCATION_TIMEOUT * 2);
+                // setTimeout(app.coordsDef.resolve, GEOLOCATION_TIMEOUT);
+                app.coordsDef.resolve();
                 app.coords = {
                   lat: res.coords.latitude,
                   lon: res.coords.longitude,
@@ -136,7 +137,7 @@ angular.module('app.services', ['ngResource'])
                   lon: res.coords.longitude,
                   accuracy: res.coords.accuracy
                 };
-                if (res.coords.accuracy <= GEOLOCATION_ACCURACY) app.coordsDef.resolve();
+                app.coordsDef.resolve();
               }, function(err) {
                 console.log('Geolocation ERROR: ' + JSON.stringify(err));
               }, {
@@ -865,7 +866,8 @@ angular.module('app.services', ['ngResource'])
     return $resource(API_URL + "/Geolocation/", {
       quantity: 1,
       method: 'radius',
-      type: 9
+      type: 9,
+      radius: GEOLOCATION_ACCURACY
     }, {
       get: {
         method: "GET",
