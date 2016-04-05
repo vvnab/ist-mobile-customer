@@ -458,6 +458,9 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
         toast("Для удаления заказа из истории нажмите ещё раз");
       }
       $scope.ordId = order.id;
+      setTimeout(function() {
+        $scope.ordId = null;
+      }, HISTORY_ORDER_REMOVE_TIMEOUT);
     };
     $scope.user = user;
   })
