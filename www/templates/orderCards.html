@@ -1,0 +1,36 @@
+<ion-view view-title="Карта/промокод">
+	<ion-content>
+		<div class="list">
+
+			<div class="item item-icon-left item-icon-right" ng-click="cardSelect(-1)">
+        <i class="icon ion-close-circled" ng-class="{energized: selectedCard == -1}"></i>
+          Не использовать
+          <div class="small">
+  		      поездка без карты/промокода
+          </div>
+        <i class="icon ion-ios-checkmark-outline" ng-if="selectedCard == -1"></i>
+		  </div>
+
+      <div class="item item-icon-left item-icon-right item-stable" ng-click="cardSelect(0)">
+        <i class="icon ion-pricetag" ng-class="{energized: selectedCard == 0}"></i>
+        <span ng-if="promo.text">{{promo.text}}</span>
+        <span ng-if="!promo.text"><Введите номер></span>
+
+        <div class="small">
+		      Промокод
+        </div>
+        <i class="icon ion-ios-checkmark-outline" ng-if="selectedCard == 0"></i>
+		  </div>
+
+      <div class="item item-icon-left item-icon-right"
+        ng-repeat="card in cards"
+        ng-click="cardSelect(card)"
+        ng-class-even="'item-stable'">
+        <div class="order-card" ng-include="'templates/orderCardPane.html'"></div>
+        <i class="icon ion-ios-checkmark-outline" ng-if="selectedCard.id == card.id"></i>
+		  </div>
+
+		</div>
+
+	</ion-content>
+</ion-view>

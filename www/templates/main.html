@@ -32,10 +32,10 @@
         	</div>
 			<!-- END OF кнопка добавления адреса -->
 
-			<div class="row-divider"><span>Тариф</span></div>
+			<div class="row-divider" ng-if="!app.card"><span>Тариф</span></div>
 
 			<!-- выбор тарифа -->
-    		<div class="row text-center tariffs-row" on-swipe-left="toggleUrgentShow()">
+    		<div class="row text-center tariffs-row" on-swipe-left="toggleUrgentShow()" ng-if="!app.card">
 
     			<!-- список обычных тарифов -->
 				<div
@@ -143,22 +143,42 @@
 
         <!-- Ввод промокода -->
 
-        <div class="row-divider"><span>Промокод</span></div>
+        <div class="row-divider"><span>Карта/Промокод</span></div>
 
 				<div class="list order-type-list">
-					<a class="item item-icon-right schedule" ng-click="gotoPromo()"> <!-- ng-if="!order.type"-->
-						<div class="options none" ng-if="!(app.promo.enabled && app.promo.text) || !order.usePromo && !order.badPromo && order.usePromo">
-							Не используется
-						</div>
-            <div class="options red-text" ng-if="order.badPromo">
-							Не существует
-						</div>
-            <div class="options orange-text" ng-if="(app.promo.enabled && app.promo.text) && !order.badPromo && !order.usePromo">
-							Неприменим
-						</div>
-            <div class="options" ng-if="(app.promo.enabled && app.promo.text && !order.badPromo && order.usePromo)">
-							{{app.promo.text}}
-						</div>
+					<!-- <a class="item item-icon-right schedule" ng-click="gotoPromo()">  -->
+          <a class="item item-icon-right schedule" ng-click="gotoCards()">
+            <div ng-if="!app.card">
+              <div class="options none" ng-if="!(app.promo.enabled && app.promo.text) || !order.usePromo && !order.badPromo && order.usePromo">
+  							Не используется
+  						</div>
+              <div class="options red-text" ng-if="order.badPromo">
+  							Не существует
+  						</div>
+              <div class="options orange-text" ng-if="(app.promo.enabled && app.promo.text) && !order.badPromo && !order.usePromo">
+  							Неприменим
+  						</div>
+              <div class="options" ng-if="(app.promo.enabled && app.promo.text && !order.badPromo && order.usePromo)">
+  							{{app.promo.text}}
+                <div class="small">
+                  промокод
+                </div>
+  						</div>
+            </div>
+
+            <div ng-if="app.card">
+              <div class="options">
+                <span ng-if="app.card.type == 8">
+                  <i class="ion-ios-plus-outline" ng-if="!app.card.writeOff"></i>
+                  <i class="ion-ios-minus-outline" ng-if="app.card.writeOff"></i>
+                </span>
+  							{{app.card.num}}
+                <div class="small">
+                  {{app.card.typeMeta.title}} карта
+                </div>
+  						</div>
+            </div>
+
 						<i class="icon ion-ios-arrow-right item-note"></i>
 					</a>
 				</div>

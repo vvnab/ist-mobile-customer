@@ -20,6 +20,7 @@ angular.module('app.services', ['ngResource'])
         enabled: false,
         text: ""
       },
+      // card: $localStorage.card || null,
       twns_: twnRes.get({
         rem: "true"
       }),
@@ -28,6 +29,7 @@ angular.module('app.services', ['ngResource'])
       trfs_: trfRes.get(),
       opts_: optRes.get(),
       tel: OPERATOR_PHONE,
+      supTel: SUPPORT_PHONE,
       twn_id: $localStorage.twn_id,
       twns: [],
       get twn_nme() {
@@ -38,7 +40,8 @@ angular.module('app.services', ['ngResource'])
       },
       menu: [{
         title: "Новый заказ",
-        icon: "model-s",
+        icon: "&#xE05E;",
+        iconType: "md",
         action: function(user) {
           user.order.reset();
           $state.go("app.main", null, {
@@ -47,7 +50,8 @@ angular.module('app.services', ['ngResource'])
         },
       }, {
         title: "История заказов",
-        icon: "clock",
+        icon: "history",
+        iconType: "md",
         action: function() {
           $state.go("app.orderHistory");
         },
@@ -57,13 +61,22 @@ angular.module('app.services', ['ngResource'])
         }
       }, {
         title: "Звонок оператору",
-        icon: "ios-telephone",
+        icon: "&#xE311;",
+        iconType: "md",
         href: function() {
           return "tel:" + app.tel;
         }
       }, {
+        title: "Контроль качества",
+        icon: "&#xE61D;",
+        iconType: "md",
+        href: function() {
+          return "tel:" + app.supTel;
+        }
+      }, {
         title: "Смена аккаунта",
-        icon: "log-out",
+        icon: "&#xE853;",
+        iconType: "md",
         action: function() {
           $state.go("login");
         },
@@ -72,7 +85,8 @@ angular.module('app.services', ['ngResource'])
           return "Выбор города";
           // return app.twn_nme;
         },
-        icon: "earth",
+        icon: "&#xE7F1;",
+        iconType: "md",
         action: function() {
           $state.go("townSelect");
         },
@@ -243,6 +257,29 @@ angular.module('app.services', ['ngResource'])
       curOrders: null,
       twn: null,
       historyUpdateFlag: true,
+      getCards: function() {
+        var self = this;
+        var cards = _.filter(self.profile.tels[0].cards, function(card) {
+          return card.type == 3 ? card.bill.stay + card.bill.debt >= MIN_CARD_STAY: true;
+        });
+        cards = _.map(cards, function(card) {
+          if (card.type == 8) {
+            card.writeOff = card.writeOff == undefined ? false : card.writeOff;
+            card.canWriteOff = card.stay > MIN_CARD_STAY;
+          }
+          card.typeMeta = CARD_TYPES[card.type];
+          return card;
+        });
+        cards = _.filter(cards, function(card) {
+          return card.twn_id == app.twn_id && _.contains([3, 8], card.type);
+        });
+        console.warn(cards);
+        return cards;
+      },
+      getCard: function(id) {
+        var self = this;
+        return _.findWhere(self.getCards(), {id: parseInt(id)});
+      },
       newOrder: function() {
         var order = new Order();
         return order;
@@ -546,6 +583,11 @@ angular.module('app.services', ['ngResource'])
         getCost: function(srv_id) {
           var self = this;
           srv_id = srv_id ? srv_id : this.srv_id;
+          var tariffId = self.trf.tariffId;
+          if (app.card) {
+            srv_id = app.card.srv_id;
+            tariffId = app.card.trf_id == 31415 ? undefined : app.card.trf_id;
+          }
           delete self.error;
           if (this.complete) {
 
@@ -569,8 +611,8 @@ angular.module('app.services', ['ngResource'])
               var def = costRes.get({
                 adrs: adrs,
                 twn_id: app.twn_id,
-                srv_id: self.srv_id,
-                trf_id: self.trf.tariffId,
+                srv_id: srv_id,
+                trf_id: tariffId,
                 need_taxom: 1,
                 ord_type: self.type ? 1 : 0,
                 datetime: self.tme_drv,
@@ -662,6 +704,17 @@ angular.module('app.services', ['ngResource'])
             if (app.promo.enabled && app.promo.text) {
               // добавляем промо-код
               req.promo = app.promo.text;
+            } else if (_.isObject(app.card)) {
+              // добавляем карту
+              req.crd_id = app.card.id;
+              req.crd_num = app.card.num;
+              req.crd_type = app.card.type;
+              req.crd_rem = app.card.rem;
+              if (app.card.type == 8) {
+                req.crd_num = (app.card.writeOff ? '-' : '+') + req.crd_num;
+              }
+              req.tariffId = app.card.trf_id == 31415 ? undefined : app.card.trf_id;
+              req.srv_id = app.card.srv_id || this.srv_id;
             }
             if (DEBUG) req.srv_id = 254;
             return orderRes.save(req).$promise;

@@ -77,6 +77,25 @@ var NO_WTD_COST_ERR_MSG = "Данные недоступны";
 var SPLASHSCREEN_TIMEOUT = 1000;
 var ADDR_BY_VOICE = "Объясню водителю";
 var OPERATOR_PHONE = "+78212242424";
+var SUPPORT_PHONE = "+79042002121";
+
+var MIN_CARD_STAY = 50;
+var CARD_EDIT_TIMEOUT = 500;
+var CARD_TYPES = {
+  '0': {
+    title: 'промокод',
+    icon: 'ion-pricetag'
+  },
+  '3': {
+    title: 'безналичная',
+    icon: 'ion-card'
+  },
+  '8': {
+    title: 'накопительная',
+    icon: 'ion-star'
+  }
+};
+
 
 function declOfNum(number, titles) {
   // русские окончания числительных [1, 2..4, 5..0]
@@ -178,8 +197,9 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
         cache: false,
         templateUrl: "templates/townSelect.html",
         controller: 'TownSelectCtrl',
-        onEnter: function() {
+        onEnter: function(app) {
           if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+          app.card = null;
         }
       })
       .state('error', {
@@ -259,10 +279,15 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
       })
       .state('app.main', {
         url: "/main",
-        onEnter: function($ionicNavBarDelegate, $rootScope) {
+        onEnter: function($ionicNavBarDelegate, $rootScope, $localStorage, app, user) {
           // if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
           $rootScope.showTel = true;
           $ionicNavBarDelegate.showBackButton(false);
+          // установка карты
+          if (!app.card) {
+            var savedCard = $localStorage.card || {};
+            app.card = user.getCard(savedCard.id);
+          }
         },
         onExit: function($ionicNavBarDelegate, $rootScope) {
           $rootScope.showTel = false;
@@ -336,10 +361,35 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
           }
         }
       })
+      .state('app.orderCards', {
+        url: "/order/cards",
+        cache: false,
+        onExit: function(app, $localStorage) {
+          $localStorage.promo = app.promo;
+          $localStorage.card = app.card;
+        },
+        views: {
+          "menuContent": {
+            templateUrl: "templates/orderCards.html",
+            controller: 'OrderCardsCtrl'
+          }
+        }
+      })
+      .state('app.orderCard', {
+        url: "/order/card/:id",
+        cache: false,
+        views: {
+          "menuContent": {
+            templateUrl: "templates/orderCardInfo.html",
+            controller: 'OrderCardCtrl'
+          }
+        }
+      })
       .state('app.orderPromo', {
         url: "/order/promo",
         onExit: function(app, $localStorage) {
           $localStorage.promo = app.promo;
+          $localStorage.card = app.card;
         },
         cache: false,
         views: {

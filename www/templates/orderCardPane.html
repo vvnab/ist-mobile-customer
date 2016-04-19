@@ -1,0 +1,25 @@
+<i class="icon {{card.typeMeta.icon}}" ng-class="{energized: selectedCard.id == card.id}"></i>
+<span ng-if="card.type == 8">
+  <i class="ion-ios-plus-outline" ng-if="!card.writeOff"></i>
+  <i class="ion-ios-minus-outline" ng-if="card.writeOff"></i>
+</span>
+{{card.num}}
+<span class="small">
+  ({{card.typeMeta.title}}<span ng-if="card.writeOff">/списание</span>)
+</span>
+
+<div class="small">
+
+  <div ng-if="card.type == 8">
+    Баланс: {{card.stay}} р.
+    Начисление: {{card.reit}}{{card.fl_prc ? '%' : 'р.'}}
+  </div>
+
+  <div ng-if="card.type == 3">
+    Остаток: {{card.bill.stay}} р.
+    <span ng-if="card.bill.debt > 0">
+      Кредит: {{card.bill.debt}} р.
+    </span>
+  </div>
+
+</div>

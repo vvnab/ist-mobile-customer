@@ -193,6 +193,10 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
       $state.go("app.orderPromo")
     };
 
+    $scope.gotoCards = function() {
+      $state.go("app.orderCards")
+    };
+
     $scope.addrRemove = function(i) {
       if (i == 0 || user.order.adds.length == 2) {
         user.order.adds[i] = new Addr();
@@ -473,7 +477,9 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     $scope.order = user.order;
     $scope.opts = [];
 
-    $scope.twn = _.findWhere(app.trfs_, {twn_id: app.twn_id});
+    $scope.twn = _.findWhere(app.trfs_, {
+      twn_id: app.twn_id
+    });
 
     app.getOpts(user.order.trf ? user.order.trf.id : null).then(function(res) {
       // копия с полного набора опций
@@ -552,7 +558,10 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
         user.order.options = opts;
       }
 
-      $scope.moment.enabled = !!_.findWhere($scope.opts, {name: "reservation", enabled: true});
+      $scope.moment.enabled = !!_.findWhere($scope.opts, {
+        name: "reservation",
+        enabled: true
+      });
     }, true);
 
     $scope.$watch('moment', function(newVal, oldVal) {
@@ -575,14 +584,81 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
       console.log(opt);
     }
   })
-  .controller('OrderPromoCtrl', function($scope, $state, $stateParams, user, app, Order, _) {
-    //$ionicLoading.show();
-    $scope._ = _;
-    $scope.promo = app.promo || {};
-    $scope.orderSetPromo = function() {
+
+.controller('OrderCardsCtrl', function($scope, $state, $stateParams, user, app, Order, _, toast) {
+  if (!app._dont_show_cadr_edit_toast) {
+    toast('Для редактирования карты/промокода нажмите на него дважды');
+    app._dont_show_cadr_edit_toast = true;
+  }
+  $scope.promo = app.promo || {};
+  $scope.selectedCard = app.card ? app.card : ($scope.promo.enabled ? 0 : -1);
+  $scope._ = _;
+  $scope.cards = user.getCards();
+  $scope.cardSelect = function(card) {
+    if (card == -1) {
+      app.promo.enabled = false;
+      app.card = null;
       $state.go("app.main");
-    };
-  })
+      return;
+    }
+    if (card == 0 && !$scope.promo.text) {
+      app.promo.enabled = true;
+      $state.go("app.orderPromo");
+      return;
+    }
+    // двойное нажатие
+    if ($scope.editSelectedCardId == (_.isObject(card) ? card.id : card)) {
+      clearTimeout($scope.timeout);
+      if (card == 0) {
+        $state.go("app.orderPromo");
+      } else if (card) {
+        $state.go("app.orderCard", {
+          id: card.id
+        });
+      } else {
+      }
+      return;
+    }
+
+    $scope.selectedCard = card;
+    $scope.editSelectedCardId = (card ? card.id : card);
+
+    // выбор карты
+    if (card == 0) {
+      app.promo.enabled = true;
+      app.card = null;
+    } else if (card == -1) {
+      app.promo.enabled = false;
+      app.card = null;
+    } else {
+      app.promo.enabled = false;
+      app.card = card;
+    }
+
+    $scope.timeout = setTimeout(function() {
+      delete $scope.editSelectedCardId;
+      $state.go("app.main");
+    }, CARD_EDIT_TIMEOUT);
+  }
+})
+
+.controller('OrderCardCtrl', function($scope, $state, $stateParams, user, app, Order, _) {
+  //$ionicLoading.show();
+  $scope._ = _;
+  $scope.card = user.getCard($stateParams.id);
+  $scope.orderSetCard = function() {
+    $state.go("app.main");
+  };
+})
+
+.controller('OrderPromoCtrl', function($scope, $state, $stateParams, user, app, Order, _) {
+  //$ionicLoading.show();
+  $scope._ = _;
+  $scope.promo = app.promo || {};
+  $scope.orderSetPromo = function() {
+    $state.go("app.main");
+  };
+})
 
 .controller('TownSelectCtrl', function($scope, $state, $stateParams, $localStorage, user, Order, _, app, toast) {
     $scope.app = app;
