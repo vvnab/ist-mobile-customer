@@ -6,8 +6,10 @@
         <h2>
           <i class="icon {{card.typeMeta.icon}}" ></i>
           <span ng-if="card.type == 8">
-            <i class="ion-ios-plus-outline" ng-if="!card.writeOff"></i>
-            <i class="ion-ios-minus-outline" ng-if="card.writeOff"></i>
+            <!-- <i class="ion-ios-plus-outline" ng-if="!card.writeOff"></i> -->
+            <!-- <i class="ion-ios-minus-outline" ng-if="card.writeOff"></i> -->
+            <i class="material-icons vertical-align-bottom" ng-if="!app.card.writeOff">&#xE148;</i>
+            <i class="material-icons vertical-align-bottom" ng-if="app.card.writeOff">&#xE15D;</i>
           </span>
           {{card.num}}
         </h2>
@@ -24,25 +26,34 @@
           </dd>
 
           <dt>
+            Владелец:
+          </dt>
+          <dd>
+            {{card.bill.clt.name}}
+          </dd>
+
+          <dt>
             Счёт:
           </dt>
           <dd>
             "{{card.bill.rem}}"
           </dd>
 
-          <dt>
-            Остаток:
-          </dt>
-          <dd>
-            {{card.bill.stay}}р.
-          </dd>
+          <span ng-if="!card.entity">
+            <dt>
+              Остаток:
+            </dt>
+            <dd>
+              {{card.bill.stay}}р.
+            </dd>
 
-          <dt>
-            Кредит:
-          </dt>
-          <dd>
-            {{card.bill.debt}}р.
-          </dd>
+            <dt>
+              Кредит:
+            </dt>
+            <dd>
+              {{card.bill.debt}}р.
+            </dd>
+          </span>
 
           <dt>
             Примечание:

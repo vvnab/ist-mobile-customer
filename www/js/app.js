@@ -79,7 +79,7 @@ var ADDR_BY_VOICE = "Объясню водителю";
 var OPERATOR_PHONE = "+78212242424";
 var SUPPORT_PHONE = "+79042002121";
 
-var MIN_CARD_STAY = 50;
+var MIN_CARD_STAY = 10;
 var CARD_EDIT_TIMEOUT = 500;
 var CARD_TYPES = {
   '0': {
@@ -222,6 +222,24 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
         abstract: true,
         templateUrl: "templates/menu.html",
         controller: "AppCtrl",
+        onEnter: function(geolocationRes, app, Addr) {
+          var n = n || GEOLOCATION_ADDS_QUANTITY;
+          var self = this;
+          app.coordsDef.promise.then(function() {
+            geolocationRes.get({
+              lat: app.coords.lat,
+              lon: app.coords.lon,
+              twn_id: app.twn_id,
+              quantity: n
+            }).$promise.then(function(result) {
+              app.geolocationAdds = _.map(result, function(item) {
+                var addr = new Addr();
+                addr.set(item);
+                return addr;
+              });
+            });
+          });
+        },
         resolve: {
           login: function($state, $q, $localStorage, $window, app, user, userRes, locationRes, $ionicLoading, toast) {
             var def = $q.defer();
@@ -279,8 +297,9 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
       })
       .state('app.main', {
         url: "/main",
-        onEnter: function($ionicNavBarDelegate, $rootScope, $localStorage, app, user) {
+        onEnter: function($ionicNavBarDelegate, $rootScope, $localStorage, $ionicLoading, app, user) {
           // if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+          $ionicLoading.hide();
           $rootScope.showTel = true;
           $ionicNavBarDelegate.showBackButton(false);
           // установка карты

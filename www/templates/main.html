@@ -1,5 +1,8 @@
 
-<ion-view view-title="{{app.twn_nme}}">
+<ion-view>
+    <ion-nav-title ng-click="gotoTwnSelect()">
+      {{app.twn_nme}}
+    </ion-nav-title>
     <ion-content>
 		<div class="list location-list">
 
@@ -32,8 +35,12 @@
         	</div>
 			<!-- END OF кнопка добавления адреса -->
 
-			<div class="row-divider" ng-if="!app.card"><span>Тариф</span></div>
-
+      <div class="row-divider"><span>Тариф</span></div>
+      <div class="row text-center tariffs-row" ng-if="app.card">
+        <div class="col selected" style="margin-left: 2em; margin-right: 2em; color: white; display: block; width: auto; font-size: 1.2em;">
+          {{app.card.srv.nme || app.card.trf.rem}}
+        </div>
+      </div>
 			<!-- выбор тарифа -->
     		<div class="row text-center tariffs-row" on-swipe-left="toggleUrgentShow()" ng-if="!app.card">
 
@@ -167,14 +174,19 @@
             </div>
 
             <div ng-if="app.card">
-              <div class="options">
+              <div class="options" ng-class="{'text-disabled': app.card.type == 3 && app.card.balance < order.wtd_cost}">
                 <span ng-if="app.card.type == 8">
-                  <i class="ion-ios-plus-outline" ng-if="!app.card.writeOff"></i>
-                  <i class="ion-ios-minus-outline" ng-if="app.card.writeOff"></i>
+                  <!-- <i class="ion-ios-plus-outline" ng-if="!app.card.writeOff"></i> -->
+                  <!-- <i class="ion-ios-minus-outline" ng-if="app.card.writeOff"></i> -->
+                  <i class="material-icons vertical-align-bottom" ng-if="!app.card.writeOff">&#xE148;</i>
+                  <i class="material-icons vertical-align-bottom" ng-if="app.card.writeOff">&#xE15D;</i>
                 </span>
-  							{{app.card.num}}
-                <div class="small">
+  							{{app.card.title}}
+                <div class="small" ng-if="app.card.type == 8 || app.card.balance >= order.wtd_cost">
                   {{app.card.typeMeta.title}} карта
+                </div>
+                <div class="small red-text" ng-if="app.card.type == 3 && app.card.balance < order.wtd_cost">
+                  недостаточно средств
                 </div>
   						</div>
             </div>
@@ -222,10 +234,24 @@
 						ng-class="{'disabled': !order.complete}"
 						ng-click="orderCreate()">
 						<span ng-if="!order.type">
-							Вызов такси
+							Вызвать такси <span ng-if="order.wtd_cost">
+                <span ng-if="order.cash > 0">
+                  за {{order.cash}} р
+                </span>
+                <span ng-if="order.cash == 0">
+                  бесплатно
+                </span>
+              </span>
 						</span>
 						<span ng-if="order.type">
-							Разместить заказ
+							Разместить заказ <span ng-if="order.wtd_cost">
+                <span ng-if="order.cash > 0">
+                  за {{order.cash}} р
+                </span>
+                <span ng-if="order.cash == 0">
+                  бесплатно
+                </span>
+              </span>
 						</span>
 					</button>
 				<!--div class="col">

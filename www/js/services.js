@@ -55,7 +55,7 @@ angular.module('app.services', ['ngResource'])
         action: function() {
           $state.go("app.orderHistory");
         },
-        badgeClass: "energized",
+        badgeClass: "assertive",
         get badge() {
           return app.curOrders;
         }
@@ -205,11 +205,17 @@ angular.module('app.services', ['ngResource'])
       },
       getDefaultTrf: function(twn_id) {
         var self = this;
-        return self.getTrfs(twn_id).then(function(res) {
+        return self.getTrfs(twn_id || app.twn_id).then(function(res) {
           return _.findWhere(res, {
             default: true
           });
         });
+      },
+      getDefaultSrv: function() {
+        var trf = _.findWhere(app.trfs, {
+          default: true
+        });
+        return trf ? _.first(trf.srv_ids) : null;
       },
       getOpts: function(trf_id) {
         // возвращает Promise списка опций
@@ -259,8 +265,13 @@ angular.module('app.services', ['ngResource'])
       historyUpdateFlag: true,
       getCards: function() {
         var self = this;
-        var cards = _.filter(self.profile.tels[0].cards, function(card) {
-          return card.type == 3 ? card.bill.stay + card.bill.debt >= MIN_CARD_STAY: true;
+        var tel = _.first(self.profile.tels);
+        var cards = tel ? tel.cards : [];
+        // cards = _.filter(cards, function(card) {
+        //   return card.type == 3 ? card.bill.stay + card.bill.debt >= MIN_CARD_STAY: true;
+        // });
+        cards = _.filter(cards, function(card) {
+          return (card.twn_id ? card.twn_id == app.twn_id : true) && _.contains([3, 8], card.type);
         });
         cards = _.map(cards, function(card) {
           if (card.type == 8) {
@@ -268,12 +279,13 @@ angular.module('app.services', ['ngResource'])
             card.canWriteOff = card.stay > MIN_CARD_STAY;
           }
           card.typeMeta = CARD_TYPES[card.type];
+          if (card.type == 3) {
+            card.entity = card.bill.clt.inn.length == 10;
+          }
+          card.title = card.type == 3 ? card.bill.clt.name : card.num
+          card.balance = card.type == 3 ? card.bill.stay + card.bill.debt : card.stay;
           return card;
         });
-        cards = _.filter(cards, function(card) {
-          return card.twn_id == app.twn_id && _.contains([3, 8], card.type);
-        });
-        console.warn(cards);
         return cards;
       },
       getCard: function(id) {
@@ -634,6 +646,8 @@ angular.module('app.services', ['ngResource'])
                   self.dist_km = res.dist_km;
                   self.badPromo = res.badPromo;
                   self.usePromo = res.usePromo;
+                  var balance = app.card ? (app.card.type == 8 && app.card.writeOff ? self.wtd_cost - app.card.balance : self.wtd_cost) : self.wtd_cost;
+                  self.cash = balance > 0 ? balance : 0;
                 }
               }).catch(function(err) {
                 var error = {
@@ -692,6 +706,15 @@ angular.module('app.services', ['ngResource'])
           }
         },
         create: function(tel) {
+          if (app.card && app.card.type == 3 && app.card.balance < this.wtd_cost) {
+            var defer = $q.defer();
+            defer.reject({
+              data: {
+                detail: "На карте недостаточно средств"
+              }
+            });
+            return defer.promise;
+          }
           delete this.id;
           this.tel = tel;
           this.type = this.type ? 1 : 0;
@@ -714,7 +737,7 @@ angular.module('app.services', ['ngResource'])
                 req.crd_num = (app.card.writeOff ? '-' : '+') + req.crd_num;
               }
               req.tariffId = app.card.trf_id == 31415 ? undefined : app.card.trf_id;
-              req.srv_id = app.card.srv_id || this.srv_id;
+              req.srv_id = app.card.srv_id || this.srv_id || app.getDefaultSrv() || undefined;
             }
             if (DEBUG) req.srv_id = 254;
             return orderRes.save(req).$promise;

@@ -70,7 +70,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
       $state.go("app.main");
     }
   })
-  .controller('AppCtrl', function($scope, $rootScope, $state, $ionicLoading, $timeout, $localStorage, toast, pinRes, userRes, orderRes, Order, user, app) {
+  .controller('AppCtrl', function($scope, $rootScope, $state, $ionicLoading, $timeout, $localStorage, toast, pinRes, geolocationRes, userRes, orderRes, Order, user, app) {
     $timeout(function() {
       if (window.navigator && window.navigator.splashscreen) navigator.splashscreen.hide();
       toast("Здравствуйте, " + (user.profile.name.value || user.profile.lgn));
@@ -82,18 +82,24 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
         id: _.first(user.curOrders).id
       });
     });
+
     user.arcAddsLoad();
     user.periodicHistoryUpdate();
     $scope.user = user;
     $scope.app = app;
     $scope.appVersion = window.AppVersion ? "(v{0})".format(AppVersion.version) : "";
   })
-  .controller('MainCtrl', function($scope, $rootScope, $state, $stateParams, $timeout, $ionicLoading, orderRes, Addr, Order, app, user, _, toast) {
+  .controller('MainCtrl', function($scope, $rootScope, $state, $stateParams, $timeout, $ionicLoading, geolocationRes, orderRes, Addr, Order, app, user, _, toast) {
 
     $scope._ = _;
     $scope.order = user.order;
     $scope.user = user;
     $scope.app = app;
+
+    $scope.gotoTwnSelect = function() {
+      $state.go('townSelect');
+    };
+
 
     $scope.state = {
       tel: true,
@@ -175,14 +181,16 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
       user.order.create(user.profile.lgn).then(function(res) {
         user.curOrders.push(_.extend(res, user.order));
         app.curOrders = user.curOrders.length;
-        $ionicLoading.hide();
         user.order.id = parseInt(res.id);
         $state.go("app.orderState", {
           id: res.id
         });
       }, function(err) {
+        toast(err.data.detail);
         console.error(err);
-      }).finally(function() {});
+      }).finally(function() {
+        $ionicLoading.hide();
+      });
     };
 
     $scope.gotoAdvance = function() {
@@ -228,7 +236,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     // geolocationAdds - срисок ближайших адресов
     // =====================================
 
-    $scope.geolocationAdds = user.geolocationAdds || [];
+    $scope.geolocationAdds = user.geolocationAdds || app.geolocationAdds || [];
 
     // =====================================
     // Заполнение geolocationAdds
@@ -347,13 +355,14 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     });
     $scope.selectAddr = function(addr) {
       // выбор адреса из выпадающего списка
-      user.order.adds[$stateParams.id] = new Addr(addr);
-      if ($scope.id == 0) {
+      var addr = new Addr(addr);
+      user.order.adds[$stateParams.id] = addr;
+      if ($scope.id != 0 && addr.next() == null) {
+        $state.go("app.main");
+      } else {
         $state.go("app.addrEdit", {
           id: $stateParams.id
         });
-      } else {
-        $state.go("app.main");
       }
     }
     $scope.gotoSelect = function(i) {
@@ -484,6 +493,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     app.getOpts(user.order.trf ? user.order.trf.id : null).then(function(res) {
       // копия с полного набора опций
       $scope.opts = _.map(res, _.clone);
+      console.warn($scope.opts);
       // установка существующих опций
       _.forEach($scope.opts, function(i) {
         if (_.contains(user.order.options, i.name)) i.enabled = true;
@@ -594,6 +604,17 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
   $scope.selectedCard = app.card ? app.card : ($scope.promo.enabled ? 0 : -1);
   $scope._ = _;
   $scope.cards = user.getCards();
+  $scope.cardEdit = function(card) {
+    clearTimeout($scope.timeout);
+    if (card == 0) {
+      $state.go("app.orderPromo");
+    } else if (card) {
+      $state.go("app.orderCard", {
+        id: card.id
+      });
+    } else {
+    }
+  }
   $scope.cardSelect = function(card) {
     if (card == -1) {
       app.promo.enabled = false;
@@ -606,17 +627,11 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
       $state.go("app.orderPromo");
       return;
     }
+
     // двойное нажатие
+
     if ($scope.editSelectedCardId == (_.isObject(card) ? card.id : card)) {
-      clearTimeout($scope.timeout);
-      if (card == 0) {
-        $state.go("app.orderPromo");
-      } else if (card) {
-        $state.go("app.orderCard", {
-          id: card.id
-        });
-      } else {
-      }
+      $scope.cardEdit(card);
       return;
     }
 
@@ -647,6 +662,8 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
   $scope._ = _;
   $scope.card = user.getCard($stateParams.id);
   $scope.orderSetCard = function() {
+    app.card = $scope.card;
+    app.promo.enabled = false;
     $state.go("app.main");
   };
 })
@@ -656,6 +673,8 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
   $scope._ = _;
   $scope.promo = app.promo || {};
   $scope.orderSetPromo = function() {
+    app.promo.enabled = true;
+    app.card = null;
     $state.go("app.main");
   };
 })
