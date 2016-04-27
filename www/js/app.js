@@ -242,10 +242,13 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
         },
         resolve: {
           login: function($state, $q, $localStorage, $window, app, user, userRes, locationRes, $ionicLoading, toast) {
+            console.info("login resolve");
             var def = $q.defer();
             // проверка логина пользователя
             if (!app.logged) {
+              console.info("user get");
               userRes.get().$promise.then(function(res) {
+                console.info("user get ok");
                 // установка промокода
                 $localStorage.userProfile = res;
                 app.logged = true;
@@ -279,7 +282,8 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
                       def.reject();
                       $state.go("townSelect");
                     }
-                  }).finally(function() {
+                  })
+                  .finally(function() {
                     $ionicLoading.hide();
                   });
                 });

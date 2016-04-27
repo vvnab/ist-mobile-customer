@@ -136,7 +136,7 @@ angular.module('app.services', ['ngResource'])
                 );
               }, function(err) {
                 console.log('Geolocation ERROR: ' + JSON.stringify(err));
-                reject();
+                reject(err);
               }, {
                 maximumAge: 60 * 60 * 1000,
                 timeout: GEOLOCATION_TIMEOUT,

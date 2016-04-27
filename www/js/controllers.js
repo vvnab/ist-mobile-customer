@@ -56,7 +56,6 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
         pwd: $scope.user.pin
       }).$promise.then(function(res) {
         $localStorage.userProfile = res;
-        app.logged = true;
         user.profile = $localStorage.userProfile;
         $localStorage.card = null;
         app.card = $localStorage.card;
@@ -74,7 +73,9 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     };
 
     var loginOk = function() {
-      $state.go("app.main");
+      $state.go("app.main", null, {
+        reload: true
+      });
     }
   })
   .controller('AppCtrl', function($scope, $rootScope, $state, $ionicLoading, $timeout, $localStorage, toast, pinRes, geolocationRes, userRes, orderRes, Order, user, app) {
