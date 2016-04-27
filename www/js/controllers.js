@@ -2,7 +2,11 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
 
 .controller('LoginCtrl', function($scope, $state, $ionicLoading, $localStorage, $timeout, pinRes, userRes, app, user, toast, _) {
     if (window.navigator && window.navigator.splashscreen) navigator.splashscreen.hide();
-    userRes.delete();
+    user.profile = null;
+    userRes.delete(function() {
+      user.lgn = null;
+      console.info("user deleted");
+    });
     $scope.user = user;
     $scope.user.smsSended = false;
 
@@ -51,8 +55,11 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
         lgn: $scope.user.canonicalPhone(),
         pwd: $scope.user.pin
       }).$promise.then(function(res) {
-        // OK
         $localStorage.userProfile = res;
+        app.logged = true;
+        user.profile = $localStorage.userProfile;
+        $localStorage.card = null;
+        app.card = $localStorage.card;
         loginOk();
       }, function(err) {
         //  ERROR
@@ -229,7 +236,10 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     };
     setActiveOptions();
   })
-  .controller('AddrCtrl', function($scope, $state, $stateParams, $http, $timeout, Addr, geolocationRes, user, app) {
+  .controller('AddrCtrl', function($scope, $state, $stateParams, $ionicHistory, $http, $timeout, Addr, geolocationRes, user, app) {
+
+    console.warn($ionicHistory.backView() ? $ionicHistory.backView().stateName : null);
+
     $scope.id = $stateParams.id;
 
     // =====================================
@@ -273,11 +283,11 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     // =====================================
     // Заполнение списока избранных адресов
     // =====================================
-
-    $scope.favoriteAdds = _.map(_.where(user.profile.adds.slice(0, GEOLOCATION_ADDS_QUANTITY), {
-      twn_id: String(app.twn_id)
-    }), Addr);
-
+    if (user.profile.adds && user.profile.adds.length) {
+      $scope.favoriteAdds = _.map(_.where(user.profile.adds.slice(0, GEOLOCATION_ADDS_QUANTITY), {
+        twn_id: String(app.twn_id)
+      }), Addr);
+    }
     // =====================================
 
     // =====================================
@@ -423,11 +433,12 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
       });
     }
   })
-  .controller('OrderCtrl', function($scope, $state, $stateParams, $interval, $ionicLoading, orderRes, Addr, Order, user) {
+  .controller('OrderCtrl', function($scope, $state, $stateParams, $interval, $ionicLoading, orderRes, Addr, Order, user, app) {
     $ionicLoading.show();
-    $scope.order = new Order({
-      id: $stateParams.id
-    });
+    var order = _.findWhere(user.curOrders, {id: $stateParams.id}) || {id: $stateParams.id};
+    console.log(order);
+    $scope.order = new Order(order);
+    console.log($scope.order);
     $scope.order.update(orderRes).then(function(res) {
       $ionicLoading.hide();
       if (res.wtd_cost <= 0) {

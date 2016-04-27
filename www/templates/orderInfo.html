@@ -17,12 +17,16 @@
 <!-- отображение информации о маршруте (стоимость, длина) -->
 <tbody ng-if="order.wtd_cost > 0">
 	<tr>
-		<td>
+		<td style="width: 40%">
 			<p class="nobr">
-				<i class="-ion-clock flaticon-time12"></i> {{order.duration}} мин.
+				<span ng-if="order.duration">
+					<i class="-ion-clock flaticon-time12"></i> {{order.duration}} мин.
+				</span>
 			</p>
 			<p class="nobr">
-				<i class="-ion-earth flaticon-road24"></i> {{order.dist_km}} км.
+				<span ng-if="order.dist_km">
+					<i class="-ion-earth flaticon-road24"></i> {{order.dist_km}} км.
+				</span>
 			</p>
 		</td>
 		<td>

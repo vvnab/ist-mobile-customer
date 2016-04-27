@@ -3,16 +3,17 @@
 		<h1 class="title">Выбор города</h1>
 	</ion-header-bar>
 	<ion-content>
-		<div class="list location-list-">
-			
+		<div class="list location-list">
+
 			<!-- список адресов -->
-		    <div class="item item-icon-left item-icon-right location-" 
+		    <div class="item item-icon-left item-icon-right- location-item"
 		    	ng-repeat="twn in app.twns_"
 		    	ng-click="twnSelect(twn)"
 		    	ng-class-even="'item-stable'">
-		    	<i class="icon ion-location"></i>
+		    	<!-- <i class="icon ion-location"></i> -->
+					<i class="icon material-icons red-text" ng-if="twn.id == app.twn_id">&#xE52D;</i>
 		    	<h2 ng-bind-html="twn.nme"></h2>
-		    	<i ng-if="twn.id == app.twn_id" class="icon ion-ios-checkmark-outline"></i>
+		    	<!-- <i ng-if="twn.id == app.twn_id" class="icon ion-ios-checkmark-outline"></i> -->
 		    </div>
 		</div>
 	</ion-content>

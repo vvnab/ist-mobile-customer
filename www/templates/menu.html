@@ -33,7 +33,7 @@
   			<img src="img/vsegda_logo.svg" alt="">
   		</div>
       <ion-list>
-        <ion-item class="item-icon-left menu-item" nav-clear menu-close ng-repeat="item in app.menu" ng-href="{{item.href()}}" ng-click="item.action(user)">
+        <ion-item class="item-icon-left menu-item" nav-clear menu-toggle ng-repeat="item in app.menu" ng-href="{{item.href()}}" ng-click="item.action(user)">
           <i class="icon ion-{{item.icon}}" ng-if="item.iconType != 'md'"></i>
           <i class="icon material-icons" ng-if="item.iconType == 'md'" ng-bind-html="item.icon"></i>
           {{item.title}}

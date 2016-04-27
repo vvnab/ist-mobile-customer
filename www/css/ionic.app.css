@@ -8710,6 +8710,25 @@ table.order-info-container td:last-child h1 {
 .location-list > .buttons {
   padding: 8px 12px;
 }
+
+.location-list .location-item.item {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px dotted lightgrey;
+}
+
+.location-list .location-item.item h2 {
+  color: #494842;
+}
+
+.location-list .location-item.item:last-child {
+  border-bottom: none;
+}
+
+.location-list .location-item.item.item-stable {
+  background-color: #FFFDE7;
+}
+
 .location h2 {
   color: #aaa;
 }

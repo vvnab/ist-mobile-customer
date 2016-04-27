@@ -122,7 +122,7 @@ try {
 
 angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.providers'])
 
-.run(function($ionicPlatform, $state, toast, mediaSrv, app) {
+.run(function($ionicPlatform, $state, $ionicHistory, toast, mediaSrv, app) {
     $ionicPlatform.ready(function() {
       // app.deviceready.resolve();
       if (DEBUG) {

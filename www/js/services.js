@@ -6,7 +6,7 @@ angular.module('app.services', ['ngResource'])
   .factory('moment', function() {
     return window.moment; // assumes underscore has already been loaded on the page
   })
-  .factory("app", function($state, $localStorage, $q, twnRes, trfRes, optRes, locationRes, _, toast) {
+  .factory("app", function($state, $localStorage, $ionicHistory,  $ionicSideMenuDelegate, $q, twnRes, trfRes, optRes, locationRes, _, toast) {
 
     var app = {
       init: function() {
@@ -44,15 +44,15 @@ angular.module('app.services', ['ngResource'])
         iconType: "md",
         action: function(user) {
           user.order.reset();
-          $state.go("app.main", null, {
-            reload: true
-          });
+          $ionicSideMenuDelegate.toggleRight();
+          $state.go("app.main");
         },
       }, {
         title: "История заказов",
         icon: "history",
         iconType: "md",
         action: function() {
+          $ionicSideMenuDelegate.toggleRight();
           $state.go("app.orderHistory");
         },
         badgeClass: "assertive",
@@ -78,6 +78,7 @@ angular.module('app.services', ['ngResource'])
         icon: "&#xE853;",
         iconType: "md",
         action: function() {
+          $ionicSideMenuDelegate.toggleRight();
           $state.go("login");
         },
       }, {
@@ -88,6 +89,7 @@ angular.module('app.services', ['ngResource'])
         icon: "&#xE7F1;",
         iconType: "md",
         action: function() {
+          $ionicSideMenuDelegate.toggleRight();
           $state.go("townSelect");
         },
       }],
@@ -256,7 +258,7 @@ angular.module('app.services', ['ngResource'])
     });
     return app;
   })
-  .service("user", function($interval, Addr, Order, orderRes, arcAddsRes, _, app) {
+  .service("user", function($interval, $localStorage, Addr, Order, orderRes, userRes, arcAddsRes, _, app) {
     return {
       profile: null,
       arcOrders: null,
@@ -322,7 +324,19 @@ angular.module('app.services', ['ngResource'])
           var orderGroup = _.groupBy(result, function(order) {
             return order.st == 70 ? "arc" : "cur"
           });
-          self.curOrders = _.map(orderGroup.cur, Order);
+          var curOrders = _.map(orderGroup.cur, Order);
+          if (self.curOrders && curOrders.length != self.curOrders.length) {
+            console.info("curOrders change, reloading user profile...");
+            userRes.get().$promise.then(function(res) {
+              $localStorage.userProfile = res;
+              self.profile = $localStorage.userProfile;
+              var curCardId = app.card ? app.card.id : null;
+              $localStorage.card = self.getCard(curCardId);
+              app.card = $localStorage.card;
+              console.info("OK");
+            });
+          }
+          self.curOrders = curOrders;
           self.arcOrders = _.map(orderGroup.arc, Order);
           app.curOrders = self.curOrders.length;
         });
@@ -468,6 +482,7 @@ angular.module('app.services', ['ngResource'])
         tme_drv: order.tme_drv || null,
         wtd_cost: order.wtd_cost || null,
         options: order.options || [],
+        dist_km: order.dist_km || 0,
         adds: order.adds ? _.map(order.adds, function(addr) {
           return new Addr(addr);
         }) : [new Addr(), new Addr()],
