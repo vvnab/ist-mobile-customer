@@ -108,7 +108,6 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
       $state.go('townSelect');
     };
 
-
     $scope.state = {
       tel: true,
       urgentShow: user.order.trf && user.order.trf.level == 5,

@@ -219,6 +219,28 @@ angular.module('app.services', ['ngResource'])
         });
         return trf ? _.first(trf.srv_ids) : null;
       },
+      getTrfId: function(order) {
+        var tariffId = order.trf ? order.trf.tariffId : undefined;
+        if (this.card) {
+          var tariffId = this.card.trf_id == 31415 ? tariffId : this.card.trf_id;
+        }
+        return tariffId;
+      },
+      getSrvId: function(order) {
+        var srv_id = order.srv_id;
+        if (this.card) {
+          var srv_id = this.card.srv_id || order.srv_id || this.getDefaultSrv() || undefined;
+        }
+        return srv_id;
+      },
+      showTrfChoice: function(order) {
+        if (this.card) {
+          var tariffId = this.card.trf_id == 31415 ? undefined : this.card.trf_id;
+          var srv_id = this.card.srv_id || undefined;
+          return !(srv_id || tariffId);
+        }
+        return true;
+      },
       getOpts: function(trf_id) {
         // возвращает Promise списка опций
         var self = this;
@@ -607,16 +629,12 @@ angular.module('app.services', ['ngResource'])
         },
 
         // стоимость
-        getCost: function(srv_id) {
+        getCost: function() {
           var self = this;
-          srv_id = srv_id ? srv_id : this.srv_id;
-          var tariffId = self.trf.tariffId;
-          if (app.card) {
-            srv_id = app.card.srv_id;
-            tariffId = app.card.trf_id == 31415 ? undefined : app.card.trf_id;
-          }
+          var srv_id = app.getSrvId(self);
+          var tariffId = app.getTrfId(self);
           delete self.error;
-          if (this.complete) {
+          if (self.complete) {
 
             // если адрес имеет adr_id, то "выбрасываем" всё остальное
             // ========================================================
@@ -627,7 +645,7 @@ angular.module('app.services', ['ngResource'])
             //   } : i;
             // });
 
-            var adrs = _.map(this.adds, function(i) {
+            var adrs = _.map(self.adds, function(i) {
               return i;
             });
 
@@ -739,6 +757,10 @@ angular.module('app.services', ['ngResource'])
           var req = _.clone(this);
           return self.reduceOptions().then(function(res) {
             req.options = res;
+
+            req.srv_id = app.getSrvId(self);
+            req.tariffId = app.getTrfId(self);
+
             if (app.promo.enabled && app.promo.text) {
               // добавляем промо-код
               req.promo = app.promo.text;
@@ -751,8 +773,8 @@ angular.module('app.services', ['ngResource'])
               if (app.card.type == 8) {
                 req.crd_num = (app.card.writeOff ? '-' : '+') + req.crd_num;
               }
-              req.tariffId = app.card.trf_id == 31415 ? undefined : app.card.trf_id;
-              req.srv_id = app.card.srv_id || this.srv_id || app.getDefaultSrv() || undefined;
+              // req.tariffId = app.card.trf_id == 31415 ? undefined : app.card.trf_id;
+              // req.srv_id = app.card.srv_id || this.srv_id || app.getDefaultSrv() || undefined;
             }
             if (DEBUG) req.srv_id = 254;
             return orderRes.save(req).$promise;

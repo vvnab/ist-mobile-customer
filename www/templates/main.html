@@ -36,13 +36,13 @@
 			<!-- END OF кнопка добавления адреса -->
 
       <div class="row-divider"><span>Тариф</span></div>
-      <div class="row text-center tariffs-row" ng-if="app.card">
+      <div class="row text-center tariffs-row" ng-if="!app.showTrfChoice(order)">
         <div class="col selected" style="margin-left: 2em; margin-right: 2em; color: white; display: block; width: auto; font-size: 1.2em;">
           {{app.card.srv.nme || app.card.trf.rem}}
         </div>
       </div>
 			<!-- выбор тарифа -->
-    		<div class="row text-center tariffs-row" on-swipe-left="toggleUrgentShow()" ng-if="!app.card">
+    		<div class="row text-center tariffs-row" on-swipe-left="toggleUrgentShow()" ng-if="app.showTrfChoice(order)">
 
     			<!-- список обычных тарифов -->
 				<div
@@ -235,20 +235,20 @@
 						ng-click="orderCreate()">
 						<span ng-if="!order.type">
 							Вызвать такси <span ng-if="order.wtd_cost">
-                <span ng-if="order.cash > 0">
+                <span ng-if="order.cash > 0 && order.complete">
                   за {{order.cash}} р
                 </span>
-                <span ng-if="order.cash == 0">
+                <span ng-if="order.cash == 0 && order.complete">
                   бесплатно
                 </span>
               </span>
 						</span>
 						<span ng-if="order.type">
 							Разместить заказ <span ng-if="order.wtd_cost">
-                <span ng-if="order.cash > 0">
+                <span ng-if="order.cash > 0 && order.complete">
                   за {{order.cash}} р
                 </span>
-                <span ng-if="order.cash == 0">
+                <span ng-if="order.cash == 0 && order.complete">
                   бесплатно
                 </span>
               </span>
