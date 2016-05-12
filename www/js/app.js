@@ -5,6 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 
 var DEBUG = false;
+var API_PING_INTERVAL = 3000;
 var GEOLOCATION_TIMEOUT = 5000;
 var GEOLOCATION_ACCURACY = 100;
 var GEOLOCATION_ADDS_QUANTITY = 3;
@@ -122,7 +123,7 @@ try {
 
 angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.providers'])
 
-.run(function($ionicPlatform, $state, $ionicHistory, toast, mediaSrv, app) {
+.run(function($ionicPlatform, apiRes, $state, $ionicHistory, toast, mediaSrv, app) {
     $ionicPlatform.ready(function() {
       // app.deviceready.resolve();
       if (DEBUG) {
@@ -145,6 +146,18 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
           icon: "ion-flash-off"
         });
       });
+      // пинг API
+      setInterval(function() {
+        var onlineEvent = new Event('online');
+        var offlineEvent = new Event('offline');
+        apiRes.get().$promise.then(function(data) {
+          console.info("online", data);
+          document.dispatchEvent(onlineEvent);
+        }, function() {
+          console.warn("offline");
+          document.dispatchEvent(offlineEvent);
+        });
+      }, API_PING_INTERVAL);
       // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
       // for form inputs)
       // console.log('window.cordova.plugins:' + JSON.stringify(window.cordova.plugins));
@@ -213,6 +226,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
         },
         templateUrl: "templates/error.html",
         controller: 'ErrorCtrl',
+        cache: false,
         onEnter: function() {
           if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
         }
@@ -246,9 +260,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
             var def = $q.defer();
             // проверка логина пользователя
             if (!app.logged) {
-              console.info("user get");
               userRes.get().$promise.then(function(res) {
-                console.info("user get ok");
                 // установка промокода
                 $localStorage.userProfile = res;
                 app.logged = true;
@@ -288,9 +300,19 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
                   });
                 });
               }, function(error) {
+                console.error(error);
                 def.reject();
                 $ionicLoading.hide();
-                $state.go("login");
+                if (error.data) {
+                  $state.go("login");
+                } else {
+                  $state.go("error", {
+                    title: "Нет соединения",
+                    text: "Отсутствует подключение к интернету!",
+                    icon: "ion-flash-off"
+                  });
+                }
+
               }).finally(function() {});
             } else {
               def.resolve();

@@ -2,11 +2,13 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
 
 .controller('LoginCtrl', function($scope, $state, $ionicLoading, $localStorage, $timeout, pinRes, userRes, app, user, toast, _) {
     if (window.navigator && window.navigator.splashscreen) navigator.splashscreen.hide();
+
     user.profile = null;
     userRes.delete(function() {
       user.lgn = null;
       console.info("user deleted");
     });
+
     $scope.user = user;
     $scope.user.smsSended = false;
 
@@ -103,6 +105,8 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     $scope.order = user.order;
     $scope.user = user;
     $scope.app = app;
+
+    console.warn(app.card);
 
     $scope.gotoTwnSelect = function() {
       $state.go('townSelect');
@@ -706,10 +710,11 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     $scope.app = app;
     $scope.error = $stateParams;
     $scope.next = function() {
+      document.removeEventListener($scope.error.eventForNext, $scope.next);
       app.init();
-      document.removeEventListener($scope.error.eventForNext, this);
-      $state.go($scope.error.next);
+      $state.go($scope.error.next || "app.main");
     }
+    $scope.repeat = $scope.next;
     $scope.exit = function() {
       navigator.app.exitApp();
     }

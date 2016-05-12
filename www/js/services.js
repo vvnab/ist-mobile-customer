@@ -975,6 +975,15 @@ angular.module('app.services', ['ngResource'])
   .factory("locationRes", function($resource) {
     return $resource(API_URL + "/ReverseLocation/");
   })
+  .factory("apiRes", function($resource) {
+    return $resource(API_URL + "/", null, {
+      get: {
+        method: "GET",
+        timeout: HTTP_TIMEOUT,
+        isArray: false
+      }
+    });
+  })
   .factory("geolocationRes", function($resource, app) {
     return $resource(API_URL + "/Geolocation/", {
       quantity: 1,
