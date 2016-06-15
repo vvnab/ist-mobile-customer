@@ -289,18 +289,33 @@ angular.module('app.services', ['ngResource'])
       historyUpdateFlag: true,
       getCards: function() {
         var self = this;
+        if (!self.eventOn) {
+          document.addEventListener('newCardEvent', function (e) {
+            self.addCard(e.detail);
+          }, false);
+
+          document.addEventListener('setCardEvent', function (e) {
+            self.setCard(e.detail);
+          }, false);
+
+          self.eventOn = true;
+        }
         var tel = _.first(self.profile.tels);
         var cards = tel ? tel.cards : [];
         // cards = _.filter(cards, function(card) {
         //   return card.type == 3 ? card.bill.stay + card.bill.debt >= MIN_CARD_STAY: true;
         // });
         cards = _.filter(cards, function(card) {
-          return (card.twn_id ? card.twn_id == app.twn_id : true) && _.contains([3, 8], card.type);
+          return (card.twn_id ? card.twn_id == app.twn_id : true) && _.contains([3, 8], card.type) && (card.type == 8 ? (card.stay > 0 || card.reit > 0) : true);
         });
         cards = _.map(cards, function(card) {
           if (card.type == 8) {
+            if ($localStorage.card && $localStorage.card.id == card.id) {
+              card.writeOff = card.stay > MIN_CARD_STAY ? $localStorage.card.writeOff : false;
+            }
             card.writeOff = card.writeOff == undefined ? false : card.writeOff;
             card.canWriteOff = card.stay > MIN_CARD_STAY;
+            card.canWriteOn = card.reit > 0;
           }
           card.typeMeta = CARD_TYPES[card.type];
           if (card.type == 3) {
@@ -311,6 +326,23 @@ angular.module('app.services', ['ngResource'])
           return card;
         });
         return cards;
+      },
+      addCard: function(card) {
+        var self = this;
+        var tel = _.first(self.profile.tels);
+        var cards = tel ? tel.cards : [];
+        cards.push(self.setCard(card));
+      },
+      setCard: function(card) {
+        var self = this;
+        card.writeOff = true;
+        card.title = card.num;
+        card.typeMeta = CARD_TYPES[card.type];
+        app.promo = {};
+        $localStorage.promo = app.promo;
+        app.card = card;
+        $localStorage.card = app.card;
+        return card;
       },
       getCard: function(id) {
         var self = this;
@@ -474,7 +506,7 @@ angular.module('app.services', ['ngResource'])
       }
     }
   }])
-  .factory("Order", function($q, _, moment, app, Addr, costRes, orderRes, toast, mediaSrv) {
+  .factory("Order", function($q, _, moment, app, Addr, costRes, orderRes, toast, mediaSrv, $localStorage) {
     return function(order) {
       order = order || {};
 
@@ -679,6 +711,21 @@ angular.module('app.services', ['ngResource'])
                   self.dist_km = res.dist_km;
                   self.badPromo = res.badPromo;
                   self.usePromo = res.usePromo;
+
+                  if (res.card && !res.card.stay) {
+                    self.badPromo = false;
+                    self.oldPromo = true;
+                  } else {
+                    if (res.card && !res.card.exist) {
+                      var event = new CustomEvent('newCardEvent', {detail: res.card});
+                      document.dispatchEvent(event);
+                    }
+                    if (res.promo && res.card && res.card.exist) {
+                      var event = new CustomEvent('setCardEvent', {detail: res.card});
+                      document.dispatchEvent(event);
+                    }
+                  }
+
                   var balance = app.card ? (app.card.type == 8 && app.card.writeOff ? self.wtd_cost - app.card.balance : self.wtd_cost) : self.wtd_cost;
                   self.cash = balance > 0 ? balance : 0;
                 }

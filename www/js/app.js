@@ -80,7 +80,7 @@ var ADDR_BY_VOICE = "Объясню водителю";
 var OPERATOR_PHONE = "+78212242424";
 var SUPPORT_PHONE = "+79042002121";
 
-var MIN_CARD_STAY = 10;
+var MIN_CARD_STAY = 1;
 var CARD_EDIT_TIMEOUT = 500;
 var CARD_TYPES = {
   '0': {
@@ -151,7 +151,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
         var onlineEvent = new Event('online');
         var offlineEvent = new Event('offline');
         apiRes.get().$promise.then(function(data) {
-          console.info("online", data);
+          // console.info("online", data);
           document.dispatchEvent(onlineEvent);
         }, function() {
           console.warn("offline");

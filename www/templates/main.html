@@ -165,6 +165,9 @@
               <div class="options orange-text" ng-if="(app.promo.enabled && app.promo.text) && !order.badPromo && !order.usePromo">
   							Неприменим
   						</div>
+              <div class="options orange-text" ng-if="(app.promo.enabled && app.promo.text) && !order.badPromo && !order.usePromo && order.oldPromo">
+  							Промокод использован
+  						</div>
               <div class="options" ng-if="(app.promo.enabled && app.promo.text && !order.badPromo && order.usePromo)">
   							{{app.promo.text}}
                 <div class="small">
