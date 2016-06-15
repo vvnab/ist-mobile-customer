@@ -324,7 +324,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
       .state('app.main', {
         url: "/main",
         onEnter: function($ionicNavBarDelegate, $rootScope, $localStorage, $ionicLoading, app, user) {
-          // if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+          if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
           $ionicLoading.hide();
           $rootScope.showTel = true;
           $ionicNavBarDelegate.showBackButton(false);
