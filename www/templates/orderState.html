@@ -11,7 +11,7 @@
 
     <div class="order-state-card" ng-include="'templates/orderStateInfo.html'"></div>
 
-    <table class="order-info-container" ng-if="order.complete" ng-include="'templates/orderInfo.html'"></table>
+    <table class="order-info-container" ng-include="'templates/orderInfo2.html'"></table>
 
     <div class="row text-center list-buttons">
       <button class="button button-block button-assertive" ng-class="{disabled: !order.canCancel()}" ng-click="orderCancel()">

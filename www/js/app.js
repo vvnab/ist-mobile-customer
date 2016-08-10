@@ -12,6 +12,7 @@ var GEOLOCATION_ADDS_QUANTITY = 3;
 var ARC_ORDERS_WEEKS = 52;
 var ARC_ORDERS_LIMIT = 10;
 var API_URL = DEBUG ? "http://192.168.100.159:8015/v1" : "http://api.taxi21.ru/v1";
+var API3_URL = DEBUG ? "http://taxi-dev01.taxi21.ru:8001" : "http://api.customer.taxi21.ru";
 var API_KEY = "SbzLONyITCNZ5U98tESyyvzvRQU0Ivwo7IyoKgqKQr2AaST1yNC496We4lezLgQF";
 var SEARCH_MIN_LENGTH = 3;
 var SEARCH_ADDS_QUANTITY = 5;
@@ -125,6 +126,40 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
 
 .run(function($ionicPlatform, apiRes, $state, $ionicHistory, toast, mediaSrv, app) {
     $ionicPlatform.ready(function() {
+      if (window.PushNotification) {
+        console.log("PushNotification init...");
+        app.push = PushNotification.init({
+          android: {
+            senderID: "986216252822",
+            forceShow: true
+          },
+          browser: {
+            pushServiceURL: 'http://push.api.phonegap.com/v1/push'
+          },
+          ios: {
+            alert: "true",
+            badge: "true",
+            sound: "true"
+          },
+          windows: {}
+        });
+
+        app.push.on('registration', function(data) {
+          console.log("PushNotification register OK");
+        });
+
+        app.push.on('notification', function(data) {
+          console.warn("PushNotification:", data);
+          // data.message,
+          // data.title,
+          // data.count,
+          // data.sound,
+          // data.image,
+          // data.additionalData
+        });
+      } else {
+        console.error("PushNotification error!");
+      }
       // app.deviceready.resolve();
       if (DEBUG) {
         app.deviceready.resolve();
@@ -202,7 +237,9 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
         templateUrl: "templates/login.html",
         controller: 'LoginCtrl',
         onEnter: function() {
-          if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+          if (window.navigator && navigator.splashscreen) {
+            navigator.splashscreen.hide();
+          }
         },
       })
       .state('townSelect', {
@@ -243,7 +280,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
             geolocationRes.get({
               lat: app.coords.lat,
               lon: app.coords.lon,
-              twn_id: app.twn_id,
+              townId: app.twn_id,
               quantity: n
             }).$promise.then(function(result) {
               app.geolocationAdds = _.map(result, function(item) {
@@ -255,49 +292,49 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
           });
         },
         resolve: {
-          login: function($state, $q, $localStorage, $window, app, user, userRes, locationRes, $ionicLoading, toast) {
-            console.info("login resolve");
+          login: function($state, $q, $localStorage, $window, app, user, userRes, locationRes, $ionicLoading, toast, dataTransform) {
             var def = $q.defer();
             // проверка логина пользователя
             if (!app.logged) {
               userRes.get().$promise.then(function(res) {
+                res.adds = _.map(res.addresses, dataTransform.addr0);
                 // установка промокода
                 $localStorage.userProfile = res;
                 app.logged = true;
                 user.profile = $localStorage.userProfile;
-                app.twns_.$promise.then(function(res) {
+                app._tariffs.$promise.then(function(res) {
                   app.getTwn().then(function(twn) {
-                    if (!twn) {
-                      if (!app.twn_id) {
-                        $state.go("townSelect");
+                      if (!twn) {
+                        if (!app.twn_id) {
+                          $state.go("townSelect");
+                        } else {
+                          def.resolve();
+                        }
                       } else {
-                        def.resolve();
+                        if (!app.twn_id) {
+                          app.twn_id = twn.id;
+                          $localStorage.twn_id = twn.id;
+                          def.resolve();
+                        } else if (twn.id != app.twn_id) {
+                          $state.go("townSelect");
+                          toast("Вы сейчас в г.{0}, \nне хотите переключиться?".format(twn.nme));
+                        } else {
+                          def.resolve();
+                        }
                       }
-                    } else {
-                      if (!app.twn_id) {
-                        app.twn_id = twn.id;
-                        $localStorage.twn_id = twn.id;
+                    }, function(error) {
+                      //   toast("Ошибка при определении города");
+                      app.twn_id = $localStorage.twn_id;
+                      if (app.twn_id) {
                         def.resolve();
-                      } else if (twn.id != app.twn_id) {
-                        $state.go("townSelect");
-                        toast("Вы сейчас в г.{0}, \nне хотите переключиться?".format(twn.nme));
                       } else {
-                        def.resolve();
+                        def.reject();
+                        $state.go("townSelect");
                       }
-                    }
-                  }, function(error) {
-                    //   toast("Ошибка при определении города");
-                    app.twn_id = $localStorage.twn_id;
-                    if (app.twn_id) {
-                      def.resolve();
-                    } else {
-                      def.reject();
-                      $state.go("townSelect");
-                    }
-                  })
-                  .finally(function() {
-                    $ionicLoading.hide();
-                  });
+                    })
+                    .finally(function() {
+                      $ionicLoading.hide();
+                    });
                 });
               }, function(error) {
                 console.error(error);

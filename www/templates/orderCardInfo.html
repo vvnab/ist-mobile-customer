@@ -41,18 +41,18 @@
 
           <span ng-if="!card.entity">
             <dt>
-              Остаток:
+              Баланс:
             </dt>
             <dd>
               {{card.bill.stay}}р.
             </dd>
 
-            <dt>
+            <!-- <dt>
               Кредит:
             </dt>
             <dd>
               {{card.bill.debt}}р.
-            </dd>
+            </dd> -->
           </span>
 
           <dt>
@@ -79,14 +79,14 @@
             Остаток:
           </dt>
           <dd>
-            {{card.stay}}р.
+            {{card.stay}} &#8381;
           </dd>
 
           <dt>
             Начисление:
           </dt>
           <dd>
-            {{card.reit}}{{card.fl_prc ? '%' : 'р.'}}
+            {{card.reit}}{{card.fl_prc ? '%' : ' &#8381;'}}
           </dd>
 
           <dt>

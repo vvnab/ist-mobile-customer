@@ -3,7 +3,7 @@
 		<div class="list check-options">
 			<label class="item item-icon-left item-toggle text-center-" ng-repeat="opt in opts">
 			    <span ng-class="{'opt-title': opt.cost}"> {{opt.title}} </span>
-					<small ng-if="opt.cost" class="opt-cost" ng-class="{active: opt.enabled}">Стоимость услуги {{opt.cost}} р.</small>
+					<small ng-if="opt.cost" class="opt-cost" ng-class="{active: opt.enabled}">Стоимость услуги {{opt.cost}} &#8381;</small>
 			    <i class="icon {{opt.icon}}"></i>
 			    <label class="toggle toggle-energized">
 		        	<input type="checkbox" ng-model="opt.enabled" name="{{opt.name}}">

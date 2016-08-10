@@ -9164,3 +9164,12 @@ ion-item.menu-item a.item-content {
 .text-disabled {
   color: lightgrey;
 }
+
+.item-note.rounded::before {
+  color: #ffbc00;
+  /*background: #ffbc00;*/
+  /*border-radius: 1em;*/
+  /*color: white;*/
+  font-weight: bold;
+  /*padding: 1px 0 0 2px;*/
+}

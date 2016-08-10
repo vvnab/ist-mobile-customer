@@ -26,6 +26,7 @@
       <div class="item item-icon-left item-icon-right"
         ng-repeat="card in cards"
         ng-click="cardSelect(card)"
+				ng-if="!card.defaultAccumCard"
         ng-class-even="'item-stable'">
         <div class="order-card" ng-include="'templates/orderCardPane.html'"></div>
         <!-- <i class="icon ion-ios-checkmark-outline" ng-if="selectedCard.id == card.id"></i> -->

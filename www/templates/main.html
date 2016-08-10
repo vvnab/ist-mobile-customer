@@ -38,7 +38,7 @@
       <div class="row-divider"><span>Тариф</span></div>
       <div class="row text-center tariffs-row" ng-if="!app.showTrfChoice(order)">
         <div class="col selected" style="margin-left: 2em; margin-right: 2em; color: white; display: block; width: auto; font-size: 1.2em;">
-          {{app.card.srv.nme || app.card.trf.rem}}
+          {{app.card.srv.nme || app.card.trf.rem || "srv_id: " + app.card.srv_id}}
         </div>
       </div>
 			<!-- выбор тарифа -->
@@ -57,7 +57,7 @@
 						{{i.desc || i.name}}
 					</div>
 					<div>
-						от {{i.mincost}} руб.
+						от {{i.mincost}} &#8381;
 					</div>
 				</div>
 				<!-- END OF список обычных тарифов -->
@@ -88,7 +88,7 @@
 								</h3>
 								<hr>
 								<h4>
-									от {{state.urgentCost}} руб.
+									от {{state.urgentCost}} &#8381;
 									<br/>
 									через {{state.urgentTime}} мин.
 								</h4>
@@ -122,7 +122,7 @@
 
 				<!-- выбор времени -->
 				<div class="list order-type-list">
-					<a class="item item-icon-right schedule" ng-click="gotoAdvance()"> <!-- ng-if="!order.type"-->
+					<div class="item item-icon-right schedule"> <!-- ng-if="!order.type"-->
 						<!--i class="icon -ion-calendar flaticon flaticon-set5"></i-->
 
 						<!-- список активных опций -->
@@ -139,8 +139,8 @@
 							Не выбраны
 						</div>
 
-						<i class="icon ion-ios-arrow-right item-note"></i>
-					</a>
+						<i class="icon ion-ios-arrow-right item-note rounded" ng-click="gotoAdvance()"></i>
+					</div>
 					<!--a class="item item-icon-left item-icon-right schedule" ng-click="gotoAdvance()" ng-if="order.type">
 						<i class="icon ion-calendar"></i>
 						{{order.getHumanDatetime(order.tme_drv)}}
@@ -152,14 +152,14 @@
 
         <div class="row-divider"><span>Карта/Промокод</span></div>
 
-				<div class="list order-type-list">
+        <div class="list order-type-list">
 					<!-- <a class="item item-icon-right schedule" ng-click="gotoPromo()">  -->
-          <a class="item item-icon-right schedule" ng-click="gotoCards()">
+          <div class="item item-icon-right schedule">
             <div ng-if="!app.card">
               <div class="options none" ng-if="!(app.promo.enabled && app.promo.text) || !order.usePromo && !order.badPromo && order.usePromo">
   							Не используется
   						</div>
-              <div class="options red-text" ng-if="order.badPromo">
+              <div class="options red-text" ng-if="app.promo.text && order.badPromo">
   							Не существует
   						</div>
               <div class="options orange-text" ng-if="(app.promo.enabled && app.promo.text) && !order.badPromo && !order.usePromo">
@@ -176,26 +176,11 @@
   						</div>
             </div>
 
-            <div ng-if="app.card">
-              <div class="options" ng-class="{'text-disabled': app.card.type == 3 && app.card.balance < order.wtd_cost}">
-                <span ng-if="app.card.type == 8">
-                  <!-- <i class="ion-ios-plus-outline" ng-if="!app.card.writeOff"></i> -->
-                  <!-- <i class="ion-ios-minus-outline" ng-if="app.card.writeOff"></i> -->
-                  <i class="material-icons vertical-align-bottom" ng-if="!app.card.writeOff">&#xE148;</i>
-                  <i class="material-icons vertical-align-bottom" ng-if="app.card.writeOff">&#xE15D;</i>
-                </span>
-  							{{app.card.title}}
-                <div class="small" ng-if="app.card.type == 8 || app.card.balance >= order.wtd_cost">
-                  {{app.card.typeMeta.title}} карта
-                </div>
-                <div class="small red-text" ng-if="app.card.type == 3 && app.card.balance < order.wtd_cost">
-                  недостаточно средств
-                </div>
-  						</div>
-            </div>
+            <div ng-if="app.card && app.card.type != 8" ng-include="'templates/mainCardInfo.html'"></div>
+            <div ng-if="app.card && app.card.type == 8" ng-include="'templates/mainCardInfo2.html'"></div>
 
-						<i class="icon ion-ios-arrow-right item-note"></i>
-					</a>
+						<i class="icon ion-ios-arrow-right item-note rounded" ng-click="gotoCards()"></i>
+					</div>
 				</div>
 
 				<div class="row-divider"></div>
@@ -238,20 +223,26 @@
 						ng-click="orderCreate()">
 						<span ng-if="!order.type">
 							Вызвать такси <span ng-if="order.wtd_cost">
-                <span ng-if="order.cash > 0 && order.complete">
-                  за {{order.cash}} р
+                <span ng-if="!app.card.writeOff && order.complete">
+                  за {{order.wtd_cost}} &#8381;
                 </span>
-                <span ng-if="order.cash == 0 && order.complete">
+                <span ng-if="app.card.writeOff && order.cash > 0 && order.complete">
+                  за {{app.card.writeOff ? order.cash : order.wtd_cost}} &#8381;
+                </span>
+                <span ng-if="app.card.writeOff && order.cash == 0 && order.complete">
                   бесплатно
                 </span>
               </span>
 						</span>
 						<span ng-if="order.type">
 							Разместить заказ <span ng-if="order.wtd_cost">
-                <span ng-if="order.cash > 0 && order.complete">
-                  за {{order.cash}} р
+                <span ng-if="!app.card.writeOff && order.complete">
+                  за {{order.wtd_cost}} &#8381;
                 </span>
-                <span ng-if="order.cash == 0 && order.complete">
+                <span ng-if="app.card.writeOff && order.cash > 0 && order.complete">
+                  за {{app.card.writeOff ? order.cash : order.wtd_cost}} &#8381;
+                </span>
+                <span ng-if="app.card.writeOff && order.cash == 0 && order.complete">
                   бесплатно
                 </span>
               </span>

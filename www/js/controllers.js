@@ -1,10 +1,10 @@
-angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage', 'app.filters'])
+angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage', 'app.filters', 'app.resources'])
 
-.controller('LoginCtrl', function($scope, $state, $ionicLoading, $localStorage, $timeout, pinRes, userRes, app, user, toast, _) {
+.controller('LoginCtrl', function($scope, $state, $ionicLoading, $localStorage, $timeout, pinRes, authRes, userRes, app, user, toast, _) {
     if (window.navigator && window.navigator.splashscreen) navigator.splashscreen.hide();
 
     user.profile = null;
-    userRes.delete(function() {
+    authRes.delete(function() {
       user.lgn = null;
       console.info("user deleted");
     });
@@ -22,9 +22,9 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
         sms: sms
       }).$promise.then(function(res) {
         // OK
-        console.log(res);
+        $scope.user.authMethod = "pin";
         if (DEBUG) {
-          toast(res.detail);
+          toast(res.details);
         } else {
           toast(sms ? "Дождитесь SMS с PIN-кодом" : "Дождитесь звонка автоинформатора");
         }
@@ -53,9 +53,10 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
       // вход пользователя
       user.error = false;
       $ionicLoading.show();
-      userRes.save({
-        lgn: $scope.user.canonicalPhone(),
-        pwd: $scope.user.pin
+      authRes.save({
+        login: $scope.user.canonicalPhone(),
+        secret: $scope.user.pin,
+        method: $scope.user.authMethod || "password"
       }).$promise.then(function(res) {
         $localStorage.userProfile = res;
         user.profile = $localStorage.userProfile;
@@ -83,7 +84,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
   .controller('AppCtrl', function($scope, $rootScope, $state, $ionicLoading, $timeout, $localStorage, toast, pinRes, geolocationRes, userRes, orderRes, Order, user, app) {
     $timeout(function() {
       if (window.navigator && window.navigator.splashscreen) navigator.splashscreen.hide();
-      toast("Здравствуйте, " + (user.profile.name.value || user.profile.lgn));
+      toast("Здравствуйте, " + (user.profile.name.title || user.profile.msisdn));
     }, SPLASHSCREEN_TIMEOUT);
     user.order = user.order ? user.order : user.newOrder();
     user.profile = $localStorage.userProfile || {};
@@ -105,8 +106,6 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     $scope.order = user.order;
     $scope.user = user;
     $scope.app = app;
-
-    console.warn(app.card);
 
     $scope.gotoTwnSelect = function() {
       $state.go('townSelect');
@@ -197,7 +196,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
           id: res.id
         });
       }, function(err) {
-        toast(err.data.detail);
+        toast(err.data.details);
         console.error(err);
       }).finally(function() {
         $ionicLoading.hide();
@@ -240,9 +239,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     };
     setActiveOptions();
   })
-  .controller('AddrCtrl', function($scope, $state, $stateParams, $ionicHistory, $http, $timeout, Addr, geolocationRes, user, app) {
-
-    console.warn($ionicHistory.backView() ? $ionicHistory.backView().stateName : null);
+  .controller('AddrCtrl', function($scope, $state, $stateParams, $ionicHistory, $http, $timeout, Addr, addsRes, geolocationRes, user, app) {
 
     $scope.id = $stateParams.id;
 
@@ -263,12 +260,12 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
         geolocationRes.get({
           lat: app.coords.lat,
           lon: app.coords.lon,
-          twn_id: app.twn_id,
+          townId: app.twn_id,
           quantity: n
         }).$promise.then(function(result) {
           $scope.geolocationAdds = _.map(result, function(item) {
-            var addr = new Addr();
-            addr.set(item);
+            var addr = new Addr(item);
+            // addr.set(item);
             return addr;
           });
           user.geolocationAdds = $scope.geolocationAdds;
@@ -284,12 +281,17 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
 
     $scope.favoriteAdds = [];
 
+    // console.warn("user.profile", user.profile);
+
     // =====================================
     // Заполнение списока избранных адресов
     // =====================================
+
+    // console.warn(user.profile.adds);
+
     if (user.profile.adds && user.profile.adds.length) {
       $scope.favoriteAdds = _.map(_.where(user.profile.adds.slice(0, GEOLOCATION_ADDS_QUANTITY), {
-        twn_id: String(app.twn_id)
+        twn_id: app.twn_id
       }), Addr);
     }
     // =====================================
@@ -305,6 +307,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     // =====================================
 
     user.arcAdds.then(function(res) {
+      // console.warn("arcAdds", res);
       $scope.historyAdds = _.map(res.slice(0, GEOLOCATION_ADDS_QUANTITY), Addr);
     });
 
@@ -346,22 +349,75 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
         // улица/место найдены!
         if (res && res.length >= SEARCH_MIN_LENGTH) {
           $scope.search.loading = true;
-          $http.get(API_URL + "/Adds/", {
-              params: {
-                nme: res,
-                limit: SEARCH_ADDS_QUANTITY,
-                twn_id: app.twn_id
-              }
-            })
-            .success(function(data, status) {
-              $scope.search.items = data;
-              $scope.search.loading = false;
-            })
-            .error(function(data, status) {
-              $scope.search.loading = false;
-              $scope.search.items = [];
-              console.error(status, data);
-            });
+          // $.ajax({
+          //   url: API3_URL + "/addresses/search/",
+          //   xhrFields: {
+          //     withCredentials: true
+          //   },
+          //   data: {
+          //     search: res,
+          //     townId: app.twn_id
+          //   },
+          //   dataType: "json",
+          //   success: function(data) {
+          //     $scope.search.items = _.map(data, function(i) {
+          //       return {
+          //         nme: i.title,
+          //         type: i.type == "street" ? 9 : 2,
+          //         twn_id: i.townId
+          //       }
+          //     });
+          //     $scope.search.loading = false;
+          //     $scope.apply();
+          //   },
+          //   error: function(err, status) {
+          //     $scope.search.loading = false;
+          //     $scope.search.items = [];
+          //     $scope.apply();
+          //     console.error(status, err);
+          //   }
+          // });
+
+
+          addsRes.query({
+            search: res,
+            townId: app.twn_id
+          }).$promise.then(function(data) {
+            $scope.search.items = data;
+            $scope.search.loading = false;
+          }, function(err, status) {
+            $scope.search.loading = false;
+            $scope.search.items = [];
+            console.error(status, err);
+          });
+
+          // $http.get(API3_URL + "/addresses/search/", {
+          //     params: {
+          //       search: res,
+          //       limit: SEARCH_ADDS_QUANTITY,
+          //       townId: app.twn_id
+          //     },
+          //     useXDomain: true,
+          //     withCredentials: true,
+          //     hearders: {
+          //       apikey: API_KEY
+          //     }
+          //   })
+          //   .success(function(data, status) {
+          //     $scope.search.items = _.map(data, function(i) {
+          //       return {
+          //         nme: i.title,
+          //         type: i.type == "street" ? 9 : 2,
+          //         twn_id: i.townId
+          //       }
+          //     });
+          //     $scope.search.loading = false;
+          //   })
+          //   .error(function(data, status) {
+          //     $scope.search.loading = false;
+          //     $scope.search.items = [];
+          //     console.error(status, data);
+          //   });
         }
       } else {
         $scope.search.items = [];
@@ -370,6 +426,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     $scope.selectAddr = function(addr) {
       // выбор адреса из выпадающего списка
       var addr = new Addr(addr);
+      console.log(addr);
       user.order.adds[$stateParams.id] = addr;
       if ($scope.id != 0 && addr.next() == null) {
         $state.go("app.main");
@@ -408,6 +465,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
   })
   .controller('AddrHistoryCtrl', function($scope, $state, $stateParams, app, user, _, Addr) {
     user.arcAdds.then(function(res) {
+      console.warn("arcAdds", res);
       $scope.adds = _.map(res, Addr);
     });
     $scope.addrSelect = function(addr) {
@@ -417,7 +475,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
   })
   .controller('AddrFavotitesCtrl', function($scope, $state, $stateParams, app, user, _, Addr) {
     $scope.adds = _.map(_.where(user.profile.adds, {
-      twn_id: String(app.twn_id)
+      twn_id: app.twn_id
     }), Addr);
     $scope.addrSelect = function(addr) {
       user.order.adds[$stateParams.id] = new Addr(addr);
@@ -425,7 +483,16 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     }
   })
   .controller('AddrEditCtrl', function($scope, $state, $stateParams, Addr, Order, user) {
+    var count = 0;
     $scope.addr = user.order.adds[$stateParams.id];
+    $scope.$watch("addr.hse", function(i) {
+      if (count++ && $scope.addr.type != 2) {
+        delete $scope.addr.adr_id;
+        delete $scope.addr.lat;
+        delete $scope.addr.lon;
+        console.log("addr changed", i);
+      }
+    });
     $scope.saveAddr = function() {
       delete $scope.addr.error;
       user.order.getCost();
@@ -439,10 +506,12 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
   })
   .controller('OrderCtrl', function($scope, $state, $stateParams, $interval, $ionicLoading, orderRes, Addr, Order, user, app) {
     $ionicLoading.show();
-    var order = _.findWhere(user.curOrders, {id: $stateParams.id}) || {id: $stateParams.id};
-    console.log(order);
+    var order = _.findWhere(user.curOrders, {
+      id: $stateParams.id
+    }) || {
+      id: $stateParams.id
+    };
     $scope.order = new Order(order);
-    console.log($scope.order);
     $scope.order.update(orderRes).then(function(res) {
       $ionicLoading.hide();
       if (res.wtd_cost <= 0) {
@@ -627,8 +696,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
       $state.go("app.orderCard", {
         id: card.id
       });
-    } else {
-    }
+    } else {}
   }
   $scope.cardSelect = function(card) {
     if (card == -1) {

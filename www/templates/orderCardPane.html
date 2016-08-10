@@ -21,8 +21,8 @@
 <div class="small">
 
   <div ng-if="card.type == 8">
-    Баланс: {{card.stay}} р.
-    Начисление: {{card.reit}}{{card.fl_prc ? '%' : 'р.'}}
+    Баланс: {{card.stay}} &#8381;
+    Начисление: {{card.reit}}{{card.isPercent ? '%' : ' &#8381;'}}
   </div>
 
   <div ng-if="card.type == 3">
@@ -31,9 +31,9 @@
     </span>
     <span ng-if="!card.entity">
       Счёт: &laquo;{{card.bill.rem}}&raquo; <br/>
-      Остаток: {{card.bill.stay}} р.
+      Остаток: {{card.bill.stay}} &#8381;
       <span ng-if="card.bill.debt > 0">
-        Кредит: {{card.bill.debt}} р.
+        Кредит: {{card.bill.debt}} &#8381;
       </span>
     </span>
   </div>

@@ -1,4 +1,4 @@
-angular.module('app.services', ['ngResource'])
+angular.module('app.services', ['ngResource', 'app.resources'])
 
 .factory('_', function() {
     return window._; // assumes underscore has already been loaded on the page
@@ -6,28 +6,30 @@ angular.module('app.services', ['ngResource'])
   .factory('moment', function() {
     return window.moment; // assumes underscore has already been loaded on the page
   })
-  .factory("app", function($state, $localStorage, $ionicHistory,  $ionicSideMenuDelegate, $q, twnRes, trfRes, optRes, locationRes, _, toast) {
+  .factory("app", function($state, $localStorage, $ionicHistory, $ionicSideMenuDelegate, $q, dataTransform, tariffsRes, locationRes, _, toast) {
 
     var app = {
       init: function() {
-        app.twns_ = twnRes.get({
-          rem: "true"
-        });
-        app.trfs_ = trfRes.get();
-        app.opts_ = optRes.get();
+        app._tariffs = tariffsRes.get();
+        // app.twns_ = twnRes.get({
+        //   rem: "true"
+        // });
+        // app.trfs_ = trfRes.get();
+        // app.opts_ = optRes.get();
       },
       promo: $localStorage.promo || {
         enabled: false,
         text: ""
       },
       // card: $localStorage.card || null,
-      twns_: twnRes.get({
-        rem: "true"
-      }),
+      // twns_: twnRes.get({
+      //   rem: "true"
+      // }),
       deviceready: $q.defer(),
       coordsDef: $q.defer(),
-      trfs_: trfRes.get(),
-      opts_: optRes.get(),
+      _tariffs: tariffsRes.get(),
+      // trfs_: trfRes.get(),
+      // opts_: optRes.get(),
       tel: OPERATOR_PHONE,
       supTel: SUPPORT_PHONE,
       twn_id: $localStorage.twn_id,
@@ -95,10 +97,10 @@ angular.module('app.services', ['ngResource'])
       }],
       getTwn: function(twn_id) {
         return $q(function(resolve, reject) {
-          app.twns_.$promise.then(function(res) {
-            app.twns = res;
+          app._tariffs.$promise.then(function(res) {
+            app.twns = _.map(res.towns, dataTransform.town);
             if (twn_id) {
-              resolve(_.findWhere(res, {
+              resolve(_.findWhere(app.twns, {
                 id: twn_id
               }));
               return;
@@ -168,6 +170,7 @@ angular.module('app.services', ['ngResource'])
         });
       },
       getTrfs: function(twn_id) {
+
         // возвращает Promise списка тарифов
         var self = this;
         if (!twn_id) {
@@ -176,6 +179,38 @@ angular.module('app.services', ['ngResource'])
         return $q(function(resolve, reject) {
           self.getTwn(twn_id).then(function(twn) {
             self.twn_id = twn.id;
+
+            // ====================================
+            self._tariffs.$promise.then(function(res) {
+              res = _.map(res.towns, dataTransform.tariffs);
+              var twn = _.findWhere(res, {
+                twn_id: app.twn_id
+              });
+              self.tel = twn ? twn.tel || OPERATOR_PHONE : OPERATOR_PHONE;
+              var tariffs = twn ? twn.trfs : null;
+              var optionsCost = twn ? twn.optionsCost : null;
+              tariffs = _.sortBy(_.map(tariffs, function(i, k) {
+                return {
+                  id: k + 1,
+                  tariffId: i.tariffId,
+                  level: i.level,
+                  mincost: i.mincost,
+                  time: i.time,
+                  icon: TARIFF_ICONS[i.level],
+                  srv_ids: i.srv_ids,
+                  name: i.nme,
+                  desc: i.desc,
+                  options: i.options,
+                  optionsCost: optionsCost,
+                  default: i.default || false
+                };
+              }), 'level');
+              resolve(tariffs);
+            });
+
+            return;
+
+            // =====================================
             self.trfs_.$promise.then(function(res) {
               var twn = _.findWhere(res, {
                 twn_id: app.twn_id
@@ -199,9 +234,10 @@ angular.module('app.services', ['ngResource'])
                   default: i.default || false
                 };
               }), 'level');
-
               resolve(tariffs);
             });
+            // ===================================
+
           });
         });
       },
@@ -251,8 +287,8 @@ angular.module('app.services', ['ngResource'])
         } else {
           return $q(function(resolve, reject) {
             self.getTrfs().then(function(tariffs) {
-              self.opts_.$promise.then(function(options) {
-
+              self._tariffs.$promise.then(function(res) {
+                var options = res.options;
                 var result = _.filter(options, function(i) {
                   return _.contains(_.findWhere(tariffs, {
                     id: trf_id
@@ -275,36 +311,70 @@ angular.module('app.services', ['ngResource'])
         }
       }
     };
-    app.twns_.$promise.then(function(res) {
-      app.twns = res;
+    app._tariffs.$promise.then(function(res) {
+      app.twns = res.towns;
     });
     return app;
   })
-  .service("user", function($interval, $localStorage, Addr, Order, orderRes, userRes, arcAddsRes, _, app) {
+  .service("user", function($interval, $localStorage, Addr, Order, orderRes, userRes, arcAddsRes, _, app, $q) {
     return {
       profile: null,
       arcOrders: null,
       curOrders: null,
       twn: null,
       historyUpdateFlag: true,
+      ordersDefer: $q.defer(),
       getCards: function() {
         var self = this;
         if (!self.eventOn) {
-          document.addEventListener('newCardEvent', function (e) {
+          document.addEventListener('newCardEvent', function(e) {
             self.addCard(e.detail);
           }, false);
 
-          document.addEventListener('setCardEvent', function (e) {
+          document.addEventListener('setCardEvent', function(e) {
             self.setCard(e.detail);
           }, false);
 
           self.eventOn = true;
         }
-        var tel = _.first(self.profile.tels);
-        var cards = tel ? tel.cards : [];
+
+        var cards = _.filter(self.profile.cards, function(i) {
+          return i.townId ? i.townId == app.twn_id : true;
+        });
         // cards = _.filter(cards, function(card) {
         //   return card.type == 3 ? card.bill.stay + card.bill.debt >= MIN_CARD_STAY: true;
         // });
+        // =====================================================
+        // преобразование карт
+
+        var town = _.find(app._tariffs.towns, {townId: app.twn_id}) || {};
+
+        cards = _.map(cards, function(i) {
+          return {
+            id: i.id,
+            defaultAccumCard: i.number == town.defaultAccumCard,
+            rem: i.remarks,
+            num: i.number,
+            trf_id: i.tariffId,
+            srv_id: i.officeId,
+            srv: {
+              nme: i.officeTitle
+            },
+            stay: i.balance,
+            type: i.type == "BONUS" ? 8 : (i.type == "DEBET" ? 3 : 2),
+            reit: i.reit,
+            isPercent: i.isPercent,
+            bill: {
+              rem: i.bill,
+              stay: i.balance,
+              clt: {
+                name: i.client,
+                inn: i.inn
+              }
+            }
+          }
+        });
+        // =====================================================
         cards = _.filter(cards, function(card) {
           return (card.twn_id ? card.twn_id == app.twn_id : true) && _.contains([3, 8], card.type) && (card.type == 8 ? (card.stay > 0 || card.reit > 0) : true);
         });
@@ -335,6 +405,9 @@ angular.module('app.services', ['ngResource'])
       },
       setCard: function(card) {
         var self = this;
+        var town = _.find(app._tariffs.towns, {townId: app.twn_id});
+        card.defaultAccumCard = card.number == town.defaultAccumCard;
+        console.log(card);
         card.writeOff = true;
         card.title = card.num;
         card.typeMeta = CARD_TYPES[card.type];
@@ -346,7 +419,9 @@ angular.module('app.services', ['ngResource'])
       },
       getCard: function(id) {
         var self = this;
-        return _.findWhere(self.getCards(), {id: parseInt(id)});
+        return _.findWhere(self.getCards(), {
+          id: parseInt(id)
+        });
       },
       newOrder: function() {
         var order = new Order();
@@ -367,14 +442,25 @@ angular.module('app.services', ['ngResource'])
       },
       arcAddsLoad: function() {
         var self = this;
-        self.arcAdds = arcAddsRes.query({
-          twn_id: app.twn_id
-        }).$promise;
+        var defer = $q.defer();
+        self.arcAdds = defer.promise;
+        self.ordersDefer.promise.then(function(res) {
+          var adds = _.map(self.arcOrders, function(i) {
+            return i.adds;
+          });
+          adds = _.flatten(adds);
+          adds = _.filter(adds, {twn_id: app.twn_id});
+          adds = _.uniq(adds, false, "adr_id");
+          defer.resolve(adds);
+        });
         return self.arcAdds;
       },
       historyUpdate: function() {
         var self = this;
+        // NEW
+        // =====================================================
         return orderRes.query().$promise.then(function(result) {
+          self.ordersDefer.resolve(result);
           var orderGroup = _.groupBy(result, function(order) {
             return order.st == 70 ? "arc" : "cur"
           });
@@ -581,6 +667,7 @@ angular.module('app.services', ['ngResource'])
         },
         getOrderTme: function() {
           var localTime = moment(this.tme_reg) + parseInt(this.tme_reg_period) * 1000;
+          console.log(moment(this.tme_reg), this.tme_reg_period, localTime);
           var duration = moment.duration(localTime - moment(this.tme_brd || this.tme_wait));
           duration = duration > 0 ? duration : moment.duration(0);
           return humanizeDuration(duration);
@@ -593,7 +680,7 @@ angular.module('app.services', ['ngResource'])
           return humanizeDuration(duration);
         },
         getTime: function(tme) {
-          return moment(tme, "YYYY.MM.DD HH:mm:ss").format("HH:mm");
+          return moment(tme).format("HH:mm");
         },
         getHumanDatetime: function(tme) {
           return moment(tme).format("D MMMM HH:mm");
@@ -656,6 +743,7 @@ angular.module('app.services', ['ngResource'])
           if (this.getState()) {
             return moment.duration(this.dist_km / AVERAGE_SPEED, 'hours').minutes(); //.humanize();
           } else {
+            // console.log(this.trf);
             return this.trf.time;
           }
         },
@@ -694,6 +782,7 @@ angular.module('app.services', ['ngResource'])
                 ord_type: self.type ? 1 : 0,
                 datetime: self.tme_drv,
                 options: self.options,
+                card: app.card,
                 promo: app.promo.enabled ? app.promo.text : null
               }).$promise;
 
@@ -704,6 +793,13 @@ angular.module('app.services', ['ngResource'])
                 if (res.error) {
                   throw res;
                 } else {
+                  // добавляем id адреса
+                  self.adrs = _.map(self.adrs, function(i, k) {
+                    i.id = res.route[k].id;
+                    i.adr_id = res.route[k].id;
+                    return i;
+                  });
+                  // ======================
                   self.optionsSum = res.optionsSum;
                   self.plusSum = res.plusSum;
                   self.pureCost = res.wtd_cost;
@@ -717,22 +813,28 @@ angular.module('app.services', ['ngResource'])
                     self.oldPromo = true;
                   } else {
                     if (res.card && !res.card.exist) {
-                      var event = new CustomEvent('newCardEvent', {detail: res.card});
+                      var event = new CustomEvent('newCardEvent', {
+                        detail: res.card
+                      });
                       document.dispatchEvent(event);
                     }
                     if (res.promo && res.card && res.card.exist) {
-                      var event = new CustomEvent('setCardEvent', {detail: res.card});
+                      var event = new CustomEvent('setCardEvent', {
+                        detail: res.card
+                      });
                       document.dispatchEvent(event);
                     }
                   }
 
-                  var balance = app.card ? (app.card.type == 8 && app.card.writeOff ? self.wtd_cost - app.card.balance : self.wtd_cost) : self.wtd_cost;
+                  var balance = app.card && app.card.type == 8 ? self.wtd_cost - app.card.balance : self.wtd_cost;
+                  // сколько спишется с накопительной карты
                   self.cash = balance > 0 ? balance : 0;
                 }
               }).catch(function(err) {
+                console.log("ERR:", err);
                 var error = {
-                  code: err.data.error.split(":")[0],
-                  text: err.data.error.split(":")[1],
+                  code: err.data.code,
+                  text: err.data.details,
                   data: err.data.error_data
                 };
                 // сообщение об ошибке
@@ -757,13 +859,13 @@ angular.module('app.services', ['ngResource'])
                     return res;
                   }, {});
                   self.error = info.free_dst_km ? "<h4>{0}</h4><h5>таксометр :</h5><dl>\
-  										 <dt>стоимость посадки</dt><dd>{1} руб</dd>\
-  										 <dt>стоимость километра</dt><dd>{2} руб</dd>\
+  										 <dt>стоимость посадки</dt><dd>{1} &#8381;</dd>\
+  										 <dt>стоимость километра</dt><dd>{2} &#8381;</dd>\
   										 <dt>бесплатное расстояние</dt><dd>{3} км</dd></dl>"
                     .format(error.text, info.prc_brd, info.prc_dst_km, info.free_dst_km) :
                     "<h4>{0}</h4><h5>таксометр :</h5><dl>\
-  										 <dt>стоимость посадки</dt><dd>{1} руб</dd>\
-  										 <dt>стоимость километра</dt><dd>{2} руб</dd>"
+  										 <dt>стоимость посадки</dt><dd>{1} &#8381;</dd>\
+  										 <dt>стоимость километра</dt><dd>{2} &#8381;</dd>"
                     .format(error.text, info.prc_brd, info.prc_dst_km);
                 } else {
                   self.error = error.text;
@@ -823,13 +925,14 @@ angular.module('app.services', ['ngResource'])
               // req.tariffId = app.card.trf_id == 31415 ? undefined : app.card.trf_id;
               // req.srv_id = app.card.srv_id || this.srv_id || app.getDefaultSrv() || undefined;
             }
-            if (DEBUG) req.srv_id = 254;
+            // if (DEBUG) req.srv_id = 254;
             return orderRes.save(req).$promise;
           });
         },
         delete: function() {
           return orderRes.remove({
-            id: this.id
+            id: this.id,
+            version: this.version
           }).$promise;
         },
         update: function() {
@@ -859,189 +962,256 @@ angular.module('app.services', ['ngResource'])
       }
     }
   })
-  .factory('mediaSrv', function($q, $ionicPlatform, $window) {
-    var service = {
-      loadMedia: loadMedia,
-      getStatusMessage: getStatusMessage,
-      getErrorMessage: getErrorMessage
-    };
-
-    function loadMedia(src, onError, onStatus, onStop) {
-      var defer = $q.defer();
-      $ionicPlatform.ready(function() {
-        var mediaSuccess = function() {
-          if (onStop) {
-            onStop();
-          }
-        };
-        var mediaError = function(err) {
-          _logError(src, err);
-          if (onError) {
-            onError(err);
-          }
-        };
-        var mediaStatus = function(status) {
-          if (onStatus) {
-            onStatus(status);
-          }
-        };
-
-        if ($ionicPlatform.is('android')) {
-          src = '/android_asset/www/' + src;
+  .factory('dataTransform', function() {
+    return {
+      pin: function(i) {
+        return {
+          msisdn: i.tel
         }
-        defer.resolve(new $window.Media(src, mediaSuccess, mediaError, mediaStatus));
-      });
-      return defer.promise;
-    }
+      },
+      addr0: function(i) {
+        i.title = i.title ? i.title : i.street + " " + (i.house || '');
+        return {
+          adr_id: i.id,
+          twn_id: i.townId,
+          type: i.type == "POI" ? 2 : 9,
+          nme: i.type == "POI" ? i.title : i.street,
+          rem: i.title,
+          stt: i.type == "POI" ? i.title : i.street,
+          value: i.name,
+          hse: i.house,
+          lat: i.lat,
+          lon: i.lon
+        }
+      },
+      addr: function(i) {
+        i.title = i.title ? i.title : i.street + " " + (i.house || '');
+        return {
+          adr_id: i.id ? i.id : i.adr_id,
+          twn_id: i.townId,
+          type: i.type == "street" ? 9 : 2,
+          nme: i.title,
+          rem: i.title,
+          stt: i.title,
+          hse: i.hse,
+          lat: i.lat,
+          lon: i.lon
+        }
+      },
+      addrReverse: function(i) {
+        return {
+          id: i.id ? i.id : i.adr_id,
+          townId: i.twn_id,
+          type: i.type == 2 ? 'POI' : 'BUILDING',
+          name: i.type == 2 ? i.adr : i.adr + ' ' + i.hse || '',
+          street: i.adr,
+          house: i.hse,
+          entrance: i.ent,
+          lat: i.lat,
+          lon: i.lon
+        };
+      },
+      order: function(i) {
+        return {
+          id: i.id,
+          st: _.contains(["DONE", "CANCELED"], i.state) ? 70 : 20,
+          cost: i.cost,
+          twn_id: i.townId,
+          tme_reg: moment(i.createdAt).format("DD MMM YYYY HH:mm"),
+          adds: [
+            {
+              adr_id: i.addressSourceId,
+              twn_id: i.townId,
+              type: i.addressSourceType == "POI" ? 2 : 9,
+              adr: i.addressSourceStreet,
+              hse: i.addressSourceHouse,
+              ent: i.addressSourceEntrance,
+              lat: i.addressSourceLat,
+              lon: i.addressSourceLon
+            },
+            {
+              adr_id: i.addressDestId,
+              twn_id: i.townId,
+              type: i.addressDestType == "POI" ? 2 : 9,
+              adr: i.addressDestStreet,
+              hse: i.addressDestHouse,
+              ent: i.addressDestEntrance,
+              lat: i.addressDestLat,
+              lon: i.addressDestLon
+            }
+          ]
+        };
+      },
 
-    function _logError(src, err) {
-      console.error('media error', {
-        code: err.code,
-        message: getErrorMessage(err.code)
-      });
-    }
+      orderOne: function(i) {
+        var states = {
+          "OFFERED":    0,
+          "REQUESTED":  1,
+          "ACCEPTED":   2,
+          "READY":      3,
+          "CANCELED":   4,
+          "STARTED":    6,
+          "DONE":       5,
+          "FINISHED":   7,
+          "RESERVED":   8
+        };
 
-    function getStatusMessage(status) {
-      if (status === 0) {
-        return 'Media.MEDIA_NONE';
-      } else if (status === 1) {
-        return 'Media.MEDIA_STARTING';
-      } else if (status === 2) {
-        return 'Media.MEDIA_RUNNING';
-      } else if (status === 3) {
-        return 'Media.MEDIA_PAUSED';
-      } else if (status === 4) {
-        return 'Media.MEDIA_STOPPED';
-      } else {
-        return 'Unknown status <' + status + '>';
-      }
-    }
+        // console.log((moment() - moment(i.createdAt)) / 1000);
 
-    function getErrorMessage(code) {
-      if (code === 1) {
-        return 'MediaError.MEDIA_ERR_ABORTED';
-      } else if (code === 2) {
-        return 'MediaError.MEDIA_ERR_NETWORK';
-      } else if (code === 3) {
-        return 'MediaError.MEDIA_ERR_DECODE';
-      } else if (code === 4) {
-        return 'MediaError.MEDIA_ERR_NONE_SUPPORTED';
-      } else {
-        return 'Unknown code <' + code + '>';
-      }
-    }
-
-    return service;
-  })
-  .factory("userRes", function($resource, $q, toast) {
-    return $resource(API_URL + "/User/", null, {
-      get: {
-        method: "GET",
-        timeout: HTTP_TIMEOUT,
-        interceptor: {
-          responseError: function(resp) {
-            toast("Вход не выполнен");
-            return $q.reject(resp);
-          }
+        return {
+          id: i.id,
+          version: i.version,
+          st: _.contains(["DONE", "CANCELED"], i.state) ? 70 : 20,
+          state: states[i.state],
+          cost: i.expectedCost,
+          wtd_cost: i.expectedCost,
+          pureCost: i.pureCost,
+          optionsSum: i.optionsSum,
+          navitaxCalc: i.navitaxCalc,
+          cash: i.cash,
+          tme_wait: i.waitedAt,
+          twn_id: i.town.id,
+          tme_reg: moment(i.createdAt),
+          tme_brd: moment(i.startedAt),
+          tme_wait: moment(i.waitedAt),
+          tme_reg_period: Math.round((moment() - moment(i.createdAt)) / 1000),
+          srv_id: i.office.id,
+          trf_id: i.tariff.id,
+          adds: _.map(i.route, this.addr),
+          auto: i.car ? i.car.model : "",
+          auto_nom: i.car ? i.car.nom : ""
+        };
+      },
+      makeOptionsRemarks: function(s, i, k) {
+        return s;
+      },
+      options: function(s, i, k) {
+        switch(i) {
+          case "nosmoke":
+            s.smoking = false;
+            break;
+          case "smoke":
+            s.smoking = true;
+            break;
+          case "ticket":
+            s.needTicket = true;
+            break;
+          case "bag":
+            s.baggage = {
+              remarks: "",
+              type: "LITTLE"
+            };
+            break;
+          case "largeBag":
+            s.baggage = {
+              remarks: "",
+              type: "LARGE"
+            };
+            break;
+          case "pet":
+            s.animal = {
+              remarks: "",
+              type: "BIG"
+            };
+            break;
+          case "cash5000":
+            s.bigNote = {
+              remarks: "",
+              value: 5000
+            };
+            break;
+          case "babyFix":
+            s.child = {
+              remarks: "",
+              fix: true,
+              age: 3
+            };
+            break;
+          default:
+            s.needTicket = false;
+            break;
+        }
+        return s;
+      },
+      orderReverse: function(i) {
+        // console.warn("ORDER:", i);
+        return {
+          townId: i.twn_id,
+          officeId: i.srv_id,
+          tariffId: i.trf_id,
+          cardId: i.crd_id,
+          cardMethod: _.first(i.crd_num) == "-" ? "WRITE-OFF" : "ACCUM",
+          promo: i.promo,
+          route: _.map(i.adds, this.addrReverse),
+          options: _.reduce(i.options, this.options, {}),
+          oldOptions: i.options,
+          remarks: i.rem
+        };
+      },
+      rater: function(i) {
+        return {
+          townId: i.twn_id,
+          officeId: i.srv_id,
+          tariffId: i.trf_id,
+          datetime: i.datetime,
+          promo: i.promo,
+          options: i.options,
+          cardId: i.card ? i.card.id : null,
+          route: _.map(i.adrs, this.addrReverse)
+        };
+      },
+      raterReverse: function(i) {
+        return {
+          wtd_cost: i.cost || i.wtd_cost,
+          dist_km: i.distance,
+          twn_id: i.townId,
+          srv_id: i.officeId,
+          trf_id: i.tariffId,
+          promo: i.card ? i.card.number : null,
+          cardMethod: i.cardMethod,
+          card: _.reduce(i.card, function(s, i, k) {
+            s.stay = k == "balance" ? i : s.stay || null;
+            s.num = k == "number" ? i : s.num || null;
+            s.type = k == "type" ? (i == "DEBET" ? 3 : 8) : s.type
+            return s;
+          }, i.card),
+          badPromo: i.promo == "USE" ? false : (i.card ? true : false),
+          usePromo: i.promo == "USE",
+          optionsSum: i.optionsCost,
+          // ===================
+          error: i.error,
+          details: i.error ? i.error.replace(/\d:/g, "") : "",
+          error_data: i.error_data,
+          taxom: i.taxom
+        }
+      },
+      town: function(i) {
+        return {
+          id: i.townId,
+          nme: i.townTitle
+        }
+      },
+      tariffs: function(i) {
+        return {
+          tel: i.tel,
+          twn_name: i.townTitle,
+          twn_id: i.townId,
+          mobileReservation: i.mobileReservation,
+          optionsCost: i.optionsCost,
+          trfs: _.map(i.tariffs, function(t) {
+            return {
+              srv_nme: t.officeTitle,
+              level: t.level,
+              srv_ids: [t.officeId],
+              mincost: t.mincost,
+              nme: t.title,
+              time: t.time,
+              options: t.options,
+              desc: t.desc,
+              default: t.default
+            }
+          })
         }
       }
-    });
-  })
-  .factory("pinRes", function($resource, $q) {
-    return $resource(API_URL + "/Pin/:pin/", {
-      pin: "@pin"
-    }, {
-      get: {
-        method: "GET",
-        timeout: HTTP_TIMEOUT
-      }
-    });
-  })
-  .factory("trfRes", function($resource, $q) {
-    return $resource(API_URL + "/Tariffs/", null, {
-      get: {
-        method: "GET",
-        timeout: HTTP_TIMEOUT,
-        interceptor: {
-          responseError: function(resp) {
-            return $q.reject(resp);
-          }
-        },
-        isArray: true
-      }
-    });
-  })
-  .factory("optRes", function($resource, $q) {
-    return $resource(API_URL + "/Options/", null, {
-      get: {
-        method: "GET",
-        timeout: HTTP_TIMEOUT,
-        interceptor: {
-          responseError: function(resp) {
-            return $q.reject(resp);
-          }
-        },
-        isArray: true
-      }
-    });
-  })
-  .factory("twnRes", function($resource) {
-    return $resource(API_URL + "/Towns/", null, {
-      get: {
-        method: "GET",
-        timeout: HTTP_TIMEOUT,
-        isArray: true
-      }
-    });
-  })
-  .factory("costRes", function($resource) {
-    return $resource(API_URL + "/Rater/", null, {
-      get: {
-        method: "POST",
-        timeout: HTTP_TIMEOUT
-      }
-    });
-  })
-  .factory("orderRes", function($resource, $localStorage) {
-    return $resource(API_URL + "/AllOrders/:id/", {
-      id: "@id",
-      weeks: ARC_ORDERS_WEEKS,
-      limit: ARC_ORDERS_LIMIT + ($localStorage.removedOrders ? $localStorage.removedOrders.length : 0)
-    }, {
-      getOne: {
-        method: "GET",
-        timeout: HTTP_TIMEOUT
-      }
-    });
-  })
-  .factory("arcAddsRes", function($resource) {
-    return $resource(API_URL + "/AddsHistory/", {
-      weeks: ARC_ORDERS_WEEKS
-    });
-  })
-  .factory("locationRes", function($resource) {
-    return $resource(API_URL + "/ReverseLocation/");
-  })
-  .factory("apiRes", function($resource) {
-    return $resource(API_URL + "/", null, {
-      get: {
-        method: "GET",
-        timeout: HTTP_TIMEOUT,
-        isArray: false
-      }
-    });
-  })
-  .factory("geolocationRes", function($resource, app) {
-    return $resource(API_URL + "/Geolocation/", {
-      quantity: 1,
-      method: 'radius',
-      type: 9,
-      radius: GEOLOCATION_ACCURACY
-    }, {
-      get: {
-        method: "GET",
-        timeout: HTTP_TIMEOUT,
-        isArray: true
-      }
-    });
+    }
   });
