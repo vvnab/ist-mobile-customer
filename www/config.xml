@@ -64,7 +64,7 @@
 
   <!-- platforms -->
 
-  <preference name="phonegap-version" value="cli-3.7.0"/>
+  <preference name="phonegap-version" value="3.7.0"/>
 
   <gap:platform name="ios"/>
 
