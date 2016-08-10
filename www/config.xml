@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.ionicframework.vsegda214536" version="3.3.19" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.ionicframework.vsegda214536" version="3.3.18" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
 
   <!-- basic -->
 
@@ -69,7 +69,7 @@
   <gap:platform name="android"/>
 
   <gap:platform name="ios"/>
-  <preference name="deployment-target" value="7.0"/>
+  <preference name="deployment-target" value="6.0"/>
   <preference name="target-device" value="handset"/>
 
   <!-- preferences -->
