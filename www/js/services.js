@@ -328,10 +328,12 @@ angular.module('app.services', ['ngResource', 'app.resources'])
         var self = this;
         if (!self.eventOn) {
           document.addEventListener('newCardEvent', function(e) {
+            console.warn("newCardEvent");
             self.addCard(e.detail);
           }, false);
 
           document.addEventListener('setCardEvent', function(e) {
+            console.warn("setCardEvent");
             self.setCard(e.detail);
           }, false);
 
@@ -404,10 +406,10 @@ angular.module('app.services', ['ngResource', 'app.resources'])
         cards.push(self.setCard(card));
       },
       setCard: function(card) {
+        console.warn("setCard:", card);
         var self = this;
         var town = _.find(app._tariffs.towns, {townId: app.twn_id});
         card.defaultAccumCard = card.number == town.defaultAccumCard;
-        console.log(card);
         card.writeOff = true;
         card.title = card.num;
         card.typeMeta = CARD_TYPES[card.type];
@@ -812,13 +814,13 @@ angular.module('app.services', ['ngResource', 'app.resources'])
                     self.badPromo = false;
                     self.oldPromo = true;
                   } else {
-                    if (res.card && !res.card.exist) {
+                    if (res.promo && res.card && !res.card.exist) {
                       var event = new CustomEvent('newCardEvent', {
                         detail: res.card
                       });
                       document.dispatchEvent(event);
                     }
-                    if (res.promo && res.card && res.card.exist) {
+                    if (res.card && res.card.exist) {
                       var event = new CustomEvent('setCardEvent', {
                         detail: res.card
                       });
@@ -1161,29 +1163,38 @@ angular.module('app.services', ['ngResource', 'app.resources'])
         };
       },
       raterReverse: function(i) {
-        return {
+        var result =  {
           wtd_cost: i.cost || i.wtd_cost,
           dist_km: i.distance,
           twn_id: i.townId,
           srv_id: i.officeId,
           trf_id: i.tariffId,
-          promo: i.card ? i.card.number : null,
+          promo: i.promo,
           cardMethod: i.cardMethod,
-          card: _.reduce(i.card, function(s, i, k) {
-            s.stay = k == "balance" ? i : s.stay || null;
-            s.num = k == "number" ? i : s.num || null;
-            s.type = k == "type" ? (i == "DEBET" ? 3 : 8) : s.type
-            return s;
-          }, i.card),
           badPromo: i.promo == "USE" ? false : (i.card ? true : false),
           usePromo: i.promo == "USE",
           optionsSum: i.optionsCost,
           // ===================
           error: i.error,
-          details: i.error ? i.error.replace(/\d:/g, "") : "",
+          details: i.error ? i.error.replace(/\d*:/g, "") : "",
           error_data: i.error_data,
           taxom: i.taxom
+        };
+        if (i.card) {
+          console.warn("rater card", i.card);
+          result.card = {
+            id: i.card.id,
+            stay: i.card.balance,
+            balance: i.card.balance,
+            num: i.card.number,
+            type: i.card.type == "DEBET" ? 3 : 8,
+            srv_id: i.card.officeId,
+            trf_id: i.card.officeId,
+            reit: i.card.reit,
+            exist: i.promo == "EMIT"
+          }
         }
+        return result;
       },
       town: function(i) {
         return {
@@ -1203,6 +1214,7 @@ angular.module('app.services', ['ngResource', 'app.resources'])
               srv_nme: t.officeTitle,
               level: t.level,
               srv_ids: [t.officeId],
+              tariffId: t.tariffId,
               mincost: t.mincost,
               nme: t.title,
               time: t.time,

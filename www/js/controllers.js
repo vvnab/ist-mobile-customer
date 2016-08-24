@@ -102,6 +102,8 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
   })
   .controller('MainCtrl', function($scope, $rootScope, $state, $stateParams, $timeout, $ionicLoading, geolocationRes, orderRes, Addr, Order, app, user, _, toast) {
 
+    console.warn("app.card", app.card);
+
     $scope._ = _;
     $scope.order = user.order;
     $scope.user = user;

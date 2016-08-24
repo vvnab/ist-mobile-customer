@@ -98,6 +98,7 @@ var CARD_TYPES = {
   }
 };
 
+var TARIFFS;
 
 function declOfNum(number, titles) {
   // русские окончания числительных [1, 2..4, 5..0]
