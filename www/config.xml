@@ -35,7 +35,7 @@
   <preference name="AutoHideSplashScreen" value="false"/>
   <preference name="FadeSplashScreen" value="false"/>
   <preference name="deployment-target" value="6.0" />
-  <preference name="target-device" value="handset" />
+  <preference name="target-device" value="universal" />
 
   <!--  spash & icons -->
   <icon src="resources/ios/icon/icon.png" platform="ios" width="57" height="57"/>
