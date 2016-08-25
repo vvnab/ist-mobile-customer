@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<widget id="com.ionicframework.vsegda214536" version="3.3.25" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+<widget id="com.ionicframework.vsegda214536" version="3.3.26" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
 
   <!-- basic -->
 
@@ -14,7 +14,7 @@
   <access origin="tel:*" launch-external="yes"/>
   <access origin="mailto:*" launch-external="yes"/>
   <content src="index.html"/>
-  <icon src="resources\icon.png"/>
+  <icon src="resources\icon-ios.png"/>
 
   <!--  spash & icons -->
 
@@ -68,7 +68,7 @@
 
   <gap:platform name="ios"/>
 
-  <preference name="deployment-target" value="7.0" />
+  <!-- <preference name="deployment-target" value="7.0" /> -->
   <!-- <preference name="target-device" value="handset" /> -->
 
   <!-- preferences -->
