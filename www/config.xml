@@ -3,7 +3,7 @@
   xmlns="http://www.w3.org/ns/widgets"
   xmlns:gap="http://phonegap.com/ns/1.0"
   id="com.ionicframework.vsegda214536"
-  version="3.3.27">
+  version="3.3.28">
 
   <!-- basic -->
 
@@ -34,8 +34,8 @@
   <preference name="ShowSplashScreenSpinner" value="true"/>
   <preference name="AutoHideSplashScreen" value="false"/>
   <preference name="FadeSplashScreen" value="false"/>
-  <!-- <preference name="deployment-target" value="7.0" /> -->
-  <!-- <preference name="target-device" value="handset" /> -->
+  <preference name="deployment-target" value="6.0" />
+  <preference name="target-device" value="handset" />
 
   <!--  spash & icons -->
   <icon src="resources/ios/icon/icon.png" platform="ios" width="57" height="57"/>
