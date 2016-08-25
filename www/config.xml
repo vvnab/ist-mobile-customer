@@ -23,7 +23,7 @@
   <access origin="mailto:*" launch-external="yes"/>
 
   <!-- preferences -->
-  <preference name="phonegap-version" value="6.3.0"/>
+  <preference name="phonegap-version" value="cli-6.3.0"/>
   <preference name="orientation" value="portrait"/>
   <preference name="fullscreen" value="false"/>
   <preference name="SplashScreenDelay" value="5000"/>
