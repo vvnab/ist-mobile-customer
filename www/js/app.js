@@ -304,7 +304,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
                 app.logged = true;
                 user.profile = $localStorage.userProfile;
                 app._tariffs.$promise.then(function(res) {
-                  app.getTwn().then(function(twn) {
+                  app.getTwn(3).then(function(twn) {
                       if (!twn) {
                         if (!app.twn_id) {
                           $state.go("townSelect");
