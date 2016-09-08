@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 
-var DEBUG = false;
+var DEBUG = true;
 var API_PING_INTERVAL = 3000;
 var GEOLOCATION_TIMEOUT = 5000;
 var GEOLOCATION_ACCURACY = 100;
@@ -163,6 +163,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
       }
       // app.deviceready.resolve();
       if (DEBUG) {
+        console.info("resolve DEVICE READY");
         app.deviceready.resolve();
       } else {
         document.addEventListener("deviceready", app.deviceready.resolve, false);
@@ -239,6 +240,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
         controller: 'LoginCtrl',
         onEnter: function() {
           if (window.navigator && navigator.splashscreen) {
+            console.info("HIDE SPLASH");
             navigator.splashscreen.hide();
           }
         },
@@ -275,6 +277,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
         templateUrl: "templates/menu.html",
         controller: "AppCtrl",
         onEnter: function(geolocationRes, app, Addr) {
+          console.info("state: app -> onEnter");
           var n = n || GEOLOCATION_ADDS_QUANTITY;
           var self = this;
           app.coordsDef.promise.then(function() {
@@ -298,13 +301,16 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
             // проверка логина пользователя
             if (!app.logged) {
               userRes.get().$promise.then(function(res) {
+                console.info("state: app -> resolve -> login -> userRes");
                 res.adds = _.map(res.addresses, dataTransform.addr0);
                 // установка промокода
                 $localStorage.userProfile = res;
                 app.logged = true;
                 user.profile = $localStorage.userProfile;
                 app._tariffs.$promise.then(function(res) {
+                  console.info("state: app -> resolve -> login -> _tariffs");
                   app.getTwn().then(function(twn) {
+                    console.info("state: app -> resolve -> login -> getTwn");
                       if (!twn) {
                         if (!app.twn_id) {
                           $state.go("townSelect");

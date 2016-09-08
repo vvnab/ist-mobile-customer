@@ -426,6 +426,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
       }
     });
     $scope.selectAddr = function(addr) {
+      //alert("selectAddr");
       // выбор адреса из выпадающего списка
       var addr = new Addr(addr);
       console.log(addr);
@@ -492,11 +493,11 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
         delete $scope.addr.adr_id;
         delete $scope.addr.lat;
         delete $scope.addr.lon;
-        console.log("addr changed", i);
+        // console.log("addr changed", i);
       }
     });
     $scope.saveAddr = function() {
-      delete $scope.addr.error;
+      if ($scope.addr && $scope.addr.error) delete $scope.addr.error;
       user.order.getCost();
       $state.go("app.main");
     };

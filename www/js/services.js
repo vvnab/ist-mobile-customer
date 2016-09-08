@@ -96,8 +96,11 @@ angular.module('app.services', ['ngResource', 'app.resources'])
         },
       }],
       getTwn: function(twn_id) {
+        console.info("app:  getTwn");
+        console.log("navigator.geolocation", navigator.geolocation);
         return $q(function(resolve, reject) {
           app._tariffs.$promise.then(function(res) {
+            console.info("app: getTwn -> _tariffs");
             app.twns = _.map(res.towns, dataTransform.town);
             if (twn_id) {
               resolve(_.findWhere(app.twns, {
@@ -111,66 +114,73 @@ angular.module('app.services', ['ngResource', 'app.resources'])
             // только после DEVICEDEADY
 
             app.deviceready.promise.then(function() {
-
+              console.info("app:  getTwn -> _tariffs -> geolocation 2");
               // примерное определение местоположения
               // используется для определения города в котором находится клиент
+              setTimeout(app.coordsDef.resolve, GEOLOCATION_TIMEOUT);
 
-              navigator.geolocation.getCurrentPosition(function(res) {
-                // console.log("get", res);
-                // setTimeout(app.coordsDef.resolve, GEOLOCATION_TIMEOUT);
-                app.coordsDef.resolve();
-                app.coords = {
-                  lat: res.coords.latitude,
-                  lon: res.coords.longitude,
-                  accuracy: res.coords.accuracy
-                };
-                locationRes.get({
-                  lat: app.coords.lat,
-                  lon: app.coords.lon
-                }).$promise.then(
-                  function(location) {
-                    var city = location.address.city || location.address.town;
-                    var twn = _.findWhere(app.twns, {
-                      nme: city
-                    });
-                    resolve(twn);
-                  }
-                );
-              }, function(err) {
-                console.log('Geolocation ERROR: ' + JSON.stringify(err));
-                reject(err);
-              }, {
-                maximumAge: 60 * 60 * 1000,
-                timeout: GEOLOCATION_TIMEOUT,
-                enableHighAccuracy: false
-              });
+              try {
+                navigator.geolocation.getCurrentPosition(function(res) {
+                  console.info("geolocation OK");
+                  console.log(res);
+                  app.coordsDef.resolve();
+                  app.coords = {
+                    lat: res.coords.latitude,
+                    lon: res.coords.longitude,
+                    accuracy: res.coords.accuracy
+                  };
+                  locationRes.get({
+                    lat: app.coords.lat,
+                    lon: app.coords.lon
+                  }).$promise.then(
+                    function(location) {
+                      console.info("locationRes OK");
+                      var city = location.address.city || location.address.town;
+                      var twn = _.findWhere(app.twns, {
+                        nme: city
+                      });
+                      resolve(twn);
+                    }
+                  );
+                }, function(err) {
+                  console.log('Geolocation ERROR: ' + JSON.stringify(err));
+                  reject(err);
+                }, {
+                  maximumAge: 60 * 60 * 1000,
+                  timeout: GEOLOCATION_TIMEOUT,
+                  enableHighAccuracy: false
+                });
 
-              // точное определение местоположения
-              // используется для определения адреса
+                // точное определение местоположения
+                // используется для определения адреса
 
-              navigator.geolocation.watchPosition(function(res) {
-                // console.log("watch", res);
-                app.coords = {
-                  lat: res.coords.latitude,
-                  lon: res.coords.longitude,
-                  accuracy: res.coords.accuracy
-                };
-                app.coordsDef.resolve();
-              }, function(err) {
-                console.log('Geolocation ERROR: ' + JSON.stringify(err));
-              }, {
-                maximumAge: 60 * 60 * 1000,
-                timeout: GEOLOCATION_TIMEOUT,
-                enableHighAccuracy: true
-              });
+                navigator.geolocation.watchPosition(function(res) {
+                  // console.log("watch", res);
+                  app.coords = {
+                    lat: res.coords.latitude,
+                    lon: res.coords.longitude,
+                    accuracy: res.coords.accuracy
+                  };
+                  app.coordsDef.resolve();
+                }, function(err) {
+                  console.log('Geolocation ERROR: ' + JSON.stringify(err));
+                }, {
+                  maximumAge: 60 * 60 * 1000,
+                  timeout: GEOLOCATION_TIMEOUT,
+                  enableHighAccuracy: true
+                });
+
+              } catch(err) {
+                console.error("navigator.geolocation ERROR");
+              }
 
             });
             // ================================================
           });
         });
       },
-      getTrfs: function(twn_id) {
 
+      getTrfs: function(twn_id) {
         // возвращает Promise списка тарифов
         var self = this;
         if (!twn_id) {
@@ -752,10 +762,12 @@ angular.module('app.services', ['ngResource', 'app.resources'])
 
         // стоимость
         getCost: function() {
+          //console.log("getCost");
           var self = this;
           var srv_id = app.getSrvId(self);
           var tariffId = app.getTrfId(self);
           delete self.error;
+
           if (self.complete) {
 
             // если адрес имеет adr_id, то "выбрасываем" всё остальное
