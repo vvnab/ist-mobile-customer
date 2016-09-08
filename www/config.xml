@@ -1,4 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<widget
+  xmlns="http://www.w3.org/ns/widgets"
+  xmlns:gap="http://phonegap.com/ns/1.0"
+  id="com.ionicframework.vsegda214536"
+  version="3.3.29">
+
+  <!-- basic -->
+
 <widget xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0" id="com.ionicframework.vsegda214536" version="3.3.28">
   <name>Такси Всегда</name>
   <description>
@@ -9,6 +17,28 @@
   </author>
   <content src="index.html"/>
   <icon src="resources/icon.png"/>
+
+  <!-- access -->
+  <access origin="*"/>
+  <access origin="tel:*" launch-external="yes"/>
+  <access origin="mailto:*" launch-external="yes"/>
+
+  <!-- platforms -->
+  <gap:platform name="ios"/>
+
+  <!-- preferences -->
+  <preference name="phonegap-version" value="cli-6.3.0"/>
+  <preference name="orientation" value="portrait"/>
+  <preference name="fullscreen" value="false"/>
+  <preference name="SplashScreenDelay" value="5000"/>
+  <preference name="SplashScreen" value="screen"/>
+  <preference name="ShowSplashScreenSpinner" value="true"/>
+  <preference name="AutoHideSplashScreen" value="false"/>
+  <preference name="FadeSplashScreen" value="false"/>
+  <preference name="deployment-target" value="6.0" />
+  <preference name="target-device" value="universal" />
+
+  <!--  spash & icons -->
   <icon src="resources/ios/icon/icon.png" platform="ios" width="57" height="57"/>
   <icon src="resources/ios/icon/icon@2x.png" platform="ios" width="114" height="114"/>
   <icon src="resources/ios/icon/icon-40.png" platform="ios" width="40" height="40"/>
@@ -49,15 +79,20 @@
   <splash src="resources/ios/splash/Default-Portrait~ipad.png" platform="ios" width="768" height="1024"/>
   <splash src="resources/ios/splash/Default@2x~iphone.png" platform="ios" width="640" height="960"/>
   <splash src="resources/ios/splash/Default~iphone.png" platform="ios" width="320" height="480"/>
+
+  <!-- plugins -->
   <plugin name="cordova-plugin-console" spec="1.0.2"/>
   <plugin name="cordova-plugin-device" spec="1.1.1"/>
   <plugin name="cordova-plugin-file" spec="4.1.0"/>
   <plugin name="cordova-plugin-geolocation" source="npm"/>
+  <plugin name="cordova-plugin-geolocation" spec="2.1.0" value="CDVLocation"/>
   <plugin name="cordova-plugin-media" spec="2.1.0"/>
   <plugin name="cordova-plugin-network-information" spec="1.2.0"/>
   <plugin name="cordova-plugin-splashscreen" spec="3.2.2"/>
   <plugin name="cordova-plugin-x-toast" spec="2.3.2"/>
   <!--plugin name="ionic-plugin-keyboard" spec="1.0.8"/-->
+  <plugin name="ionic-plugin-keyboard" spec="1.0.8"/>
   <plugin name="cordova-plugin-whitelist" source="npm"/>
   <plugin name="cordova-plugin-appversion" source="npm"/>
+
 </widget>
