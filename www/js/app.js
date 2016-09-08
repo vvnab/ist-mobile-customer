@@ -5,7 +5,6 @@
 // the 2nd parameter is an array of 'requires'
 
 var DEBUG = true;
-var DEBUG = false;
 var API_PING_INTERVAL = 3000;
 var GEOLOCATION_TIMEOUT = 5000;
 var GEOLOCATION_ACCURACY = 100;
@@ -309,7 +308,9 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
                 app.logged = true;
                 user.profile = $localStorage.userProfile;
                 app._tariffs.$promise.then(function(res) {
-                  app.getTwn(3).then(function(twn) {
+                  console.info("state: app -> resolve -> login -> _tariffs");
+                  app.getTwn().then(function(twn) {
+                    console.info("state: app -> resolve -> login -> getTwn");
                       if (!twn) {
                         if (!app.twn_id) {
                           $state.go("townSelect");
