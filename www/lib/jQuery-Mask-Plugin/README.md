@@ -3,10 +3,9 @@ A jQuery Plugin to make masks on form fields and HTML elements.
 
 [![Build Status](https://travis-ci.org/igorescobar/jQuery-Mask-Plugin.png)](https://travis-ci.org/igorescobar/jQuery-Mask-Plugin)
 [![Code Climate](https://codeclimate.com/github/igorescobar/jQuery-Mask-Plugin.png)](https://codeclimate.com/github/igorescobar/jQuery-Mask-Plugin)
-[![Total views](https://sourcegraph.com/api/repos/github.com/igorescobar/jQuery-Mask-Plugin/counters/views.png)](https://sourcegraph.com/github.com/igorescobar/jQuery-Mask-Plugin) 
 
 #Documentation, Demos & Usage Examples
-http://igorescobar.github.io/jQuery-Mask-Plugin/
+https://igorescobar.github.io/jQuery-Mask-Plugin/
 
 ##Features
 
@@ -33,13 +32,13 @@ http://igorescobar.github.io/jQuery-Mask-Plugin/
 ### English
   * [Masks with jQuery Mask Plugin](http://bit.ly/masks-with-jquery-mask-plugin)
   * [Using jQuery Mask Plugin With Zepto.js](http://bit.ly/using-jquery-mask-plugin-with-zeptojs)
-  
+
 ### Portuguese
   * [Mascaras com JQuery Mask Plugin](http://bit.ly/mascaras-com-jquery-mask-plugin)
   * [Mascara Javascript para os novos telefones de São Paulo](http://bit.ly/mascara-javascript-para-os-novos-telefones-de-sao-paulo)
 
 ### Russian
-  * [jQuery Mask Plugin](http://zencoder.ru/jquery-mask-plugin/)
+  * [jQuery Mask Plugin](http://zencoder.ru/javascript/jquery-mask-plugin/)
 
 ## Compatibility
 jQuery Mask Plugin has been tested with jQuery 1.7+ on all major browsers:
@@ -51,7 +50,7 @@ jQuery Mask Plugin has been tested with jQuery 1.7+ on all major browsers:
  * Opera 8+ (Win, Mac, Linux, Android, iPhone).
 
 ## Problems & Bugs?
-Did you read our [docs](http://igorescobar.github.io/jQuery-Mask-Plugin/)? Yes? Cool! So now... make sure that you have a *functional* [jsfiddle](http://jsfiddle.net/) exemplifying your problem and open an [issue](https://github.com/igorescobar/jQuery-Mask-Plugin/issues) for us. Don't know how to do it? Use this [fiddle example](http://jsfiddle.net/igorescobar/6pco4om7/).
+Did you read our [docs](https://igorescobar.github.io/jQuery-Mask-Plugin/)? Yes? Cool! So now... make sure that you have a *functional* [jsfiddle](http://jsfiddle.net/) exemplifying your problem and open an [issue](https://github.com/igorescobar/jQuery-Mask-Plugin/issues) for us. Don't know how to do it? Use this [fiddle example](http://jsfiddle.net/igorescobar/6pco4om7/).
 
 ## Contributing
  * **Bug Reporting**: Yes! You can contribute opening [issues](https://github.com/igorescobar/jQuery-Mask-Plugin/issues)!
@@ -60,10 +59,19 @@ Did you read our [docs](http://igorescobar.github.io/jQuery-Mask-Plugin/)? Yes? 
  * **Improving**: Open an [issue](https://github.com/igorescobar/jQuery-Mask-Plugin/issues) and lets discuss it. Just to make sure that you're on the right track.
  * **Sharing**: Yes! Have we saved some of your time? Are you enjoying our mask plugin? Sharing is caring! Tweet it! Facebook it! Linkedin It(?!) :D
  * **Donating**: Hey, now that you don't need to worry about masks again... buy me a coffee, beer or a PlayStation 4 (Xbox One also accepted!) :o)
- 
+
 ### Unit Tests
-We use [QUnit](http://qunitjs.com/) and [GruntJS](http://gruntjs.com/). Do run our test suit is just run: ```grunt test``` in your console or you can open those ```test-for*.html``` files inside of our ```test/``` folder. 
- 
+We use [QUnit](http://qunitjs.com/) and [GruntJS](http://gruntjs.com/). To run our test suit is just run: ```grunt test``` in your console or you can open those ```test-for*.html``` files inside of our ```test/``` folder.
+
+In case you're familiar with [Docker](https://www.docker.com/) here is how you can use it:
+```bash
+docker build -t jquery-mask .
+CONTAINER_ID=$(docker run -d -v $PWD:/app/jquery-mask-plugin jquery-mask)
+docker exec $CONTAINER_ID sh -c "npm install"
+docker exec -it $CONTAINER_ID /bin/bash
+grunt test
+```
+
 ## Contributors
  * [Igor Lima](https://github.com/igorlima)
  * [Mark Simmons](https://github.com/Markipelago)

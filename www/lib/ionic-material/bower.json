@@ -1,7 +1,8 @@
 {
   "name": "ionic-material",
-  "version": "0.2.3",
+  "version": "0.4.2",
   "authors": [
+    "Rai Butera",
     "Zach Fitzgerald"
   ],
   "description": "Ionic Material - Material Design for the Ionic Framework",
@@ -33,6 +34,7 @@
     "node_modules"
   ],
   "dependencies": {
-    "ionic": "~1.0.0"
+    "ionic": "~1.0.0",
+    "waves": "0.6"
   }
 }
