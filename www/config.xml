@@ -12,7 +12,7 @@
     <preference name="webviewbounce" value="false" />
     <preference name="UIWebViewBounce" value="false" />
     <preference name="DisallowOverscroll" value="true" />
-    <preference name="SplashScreenDelay" value="15000" />
+    <preference name="SplashScreenDelay" value="10000" />
     <preference name="FadeSplashScreen" value="false" />
     <preference name="ShowSplashScreenSpinner" value="true" />
     <preference name="android-minSdkVersion" value="16" />
@@ -65,4 +65,5 @@
     <plugin name="cordova-plugin-media" spec="~2.4.0" />
     <plugin name="ionic-plugin-keyboard" spec="~2.2.1" />
     <plugin name="com.appmetrica.cordova.plugins.appmetrica" spec="https://github.com/slogger/AppMetricaCordovaPlugin.git" />
+    <plugin name="cordova-plugin-x-toast" spec="~2.5.2" />
 </widget>
