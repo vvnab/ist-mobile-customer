@@ -64,5 +64,4 @@
     <plugin name="cordova-plugin-whitelist" spec="~1.2.2" />
     <plugin name="cordova-plugin-media" spec="~2.4.0" />
     <plugin name="ionic-plugin-keyboard" spec="~2.2.1" />
-    <plugin name="com.appmetrica.cordova.plugins.appmetrica" spec="~0.0.1" />
 </widget>
