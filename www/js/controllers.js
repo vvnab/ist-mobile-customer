@@ -56,12 +56,14 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
       authRes.save({
         login: $scope.user.canonicalPhone(),
         secret: $scope.user.pin,
-        method: $scope.user.authMethod || "password"
+        method: $scope.user.pin.length > 4 ? "password" : ($scope.user.authMethod || "password")
       }).$promise.then(function(res) {
         $localStorage.userProfile = res;
         user.profile = $localStorage.userProfile;
         $localStorage.card = null;
         app.card = $localStorage.card;
+        user.arcOrders = [];
+        user.historyUpdate();
         loginOk();
       }, function(err) {
         //  ERROR
@@ -76,6 +78,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     };
 
     var loginOk = function() {
+      toast("Здравствуйте, " + (user.profile.name.title || user.profile.msisdn));
       $state.go("app.main", null, {
         reload: true
       });

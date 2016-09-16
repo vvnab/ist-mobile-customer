@@ -2,14 +2,14 @@
   <ion-content>
 
     <div class="card">
-      <div class="item item-divider">
+      <div class="item item-divider" style="padding-top: 0">
         <h2>
           <i class="icon {{card.typeMeta.icon}}" ></i>
           <span ng-if="card.type == 8">
             <!-- <i class="ion-ios-plus-outline" ng-if="!card.writeOff"></i> -->
             <!-- <i class="ion-ios-minus-outline" ng-if="card.writeOff"></i> -->
-            <i class="material-icons vertical-align-bottom" ng-if="!app.card.writeOff">&#xE148;</i>
-            <i class="material-icons vertical-align-bottom" ng-if="app.card.writeOff">&#xE15D;</i>
+            <!-- <i class="material-icons vertical-align-bottom" ng-if="!app.card.writeOff">&#xE148;</i> -->
+            <!-- <i class="material-icons vertical-align-bottom" ng-if="app.card.writeOff">&#xE15D;</i> -->
           </span>
           {{card.num}}
         </h2>

@@ -980,7 +980,8 @@ angular.module('app.services', ['ngResource', 'app.resources'])
     return {
       pin: function(i) {
         return {
-          msisdn: i.tel
+          msisdn: i.tel,
+          sms: i.sms
         }
       },
       addr0: function(i) {

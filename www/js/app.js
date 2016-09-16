@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 
-var DEBUG = false;
+var DEBUG = true;
 var API_PING_INTERVAL = 3000;
 var GEOLOCATION_TIMEOUT = 5000;
 var GEOLOCATION_ACCURACY = 100;
@@ -213,7 +213,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
       ionic.Platform.isFullScreen = true;
 
       $ionicPlatform.registerBackButtonAction(function(e) {
-        if ($state.is("app.main") || $state.is("error")) {
+        if ($state.is("app.main") || $state.is("error") || $state.is("login")) {
           // выход
           // требуем двойного нажатия
           if (BACK_BUTTON_COUNT >= 1) {
@@ -236,6 +236,7 @@ angular.module('app', ['ionic', 'app.controllers', 'app.directives', 'app.provid
     $stateProvider
       .state('login', {
         url: "/login",
+        cache: false,
         templateUrl: "templates/login.html",
         controller: 'LoginCtrl',
         onEnter: function() {
