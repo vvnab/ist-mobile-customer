@@ -2,7 +2,7 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
 
 .controller('LoginCtrl', function($scope, $state, $ionicLoading, $localStorage, $timeout, pinRes, authRes, userRes, app, user, toast, _) {
     if (window.navigator && window.navigator.splashscreen) navigator.splashscreen.hide();
-
+    user.seenHello = false;
     user.profile = null;
     authRes.delete(function() {
       user.lgn = null;
@@ -78,7 +78,8 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
     };
 
     var loginOk = function() {
-      toast("Здравствуйте, " + (user.profile.name.title || user.profile.msisdn));
+      toast("Здравствуйте, " + (user.profile.name ? (user.profile.name.title || user.profile.msisdn) : user.profile.msisdn));
+      user.seenHello = true;
       $state.go("app.main", null, {
         reload: true
       });
@@ -87,7 +88,9 @@ angular.module('app.controllers', ['app.services', 'app.providers', 'ngStorage',
   .controller('AppCtrl', function($scope, $rootScope, $state, $ionicLoading, $timeout, $localStorage, toast, pinRes, geolocationRes, userRes, orderRes, Order, user, app) {
     $timeout(function() {
       if (window.navigator && window.navigator.splashscreen) navigator.splashscreen.hide();
-      toast("Здравствуйте, " + (user.profile.name.title || user.profile.msisdn));
+      if (!user.seenHello) {
+        toast("Здравствуйте, " + (user.profile.name ? (user.profile.name.title || user.profile.msisdn) : user.profile.msisdn));
+      }
     }, SPLASHSCREEN_TIMEOUT);
     user.order = user.order ? user.order : user.newOrder();
     user.profile = $localStorage.userProfile || {};
