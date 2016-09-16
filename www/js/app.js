@@ -4,7 +4,7 @@
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
 
-var DEBUG = true;
+var DEBUG = false;
 var API_PING_INTERVAL = 3000;
 var GEOLOCATION_TIMEOUT = 5000;
 var GEOLOCATION_ACCURACY = 100;
