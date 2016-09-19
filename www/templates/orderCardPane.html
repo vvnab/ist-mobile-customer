@@ -6,17 +6,19 @@
   <!-- <i class="material-icons vertical-align-bottom" ng-if="card.writeOff">&#xE15D;</i> -->
 </span>
 
-<span ng-if="card.type == 3">
-  {{card.bill.clt.name}}
-</span>
+<div style="overflow: hidden; text-overflow: ellipsis">
+  <span ng-if="card.type == 3">
+    {{card.bill.clt.name}}
+  </span>
 
-<span ng-if="card.type == 8">
-  {{card.num}}
-</span>
+  <span ng-if="card.type == 8">
+    {{card.num}}
+  </span>
 
-<span class="small">
-  ({{card.typeMeta.title}}<span ng-if="card.writeOff">/списание</span>)
-</span>
+  <span class="small">
+    ({{card.typeMeta.title}}<span ng-if="card.writeOff">/списание</span>)
+  </span>
+</div>
 
 <div class="small">
 
