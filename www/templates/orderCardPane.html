@@ -27,7 +27,7 @@
     Начисление: {{card.reit}}{{card.isPercent ? '%' : ' &#8381;'}}
   </div>
 
-  <div ng-if="card.type == 3">
+  <div ng-if="card.type == 3" style="overflow: hidden; text-overflow: ellipsis">
     <span ng-if="card.entity">
       Счёт: &laquo;{{card.bill.rem}}&raquo;
     </span>
