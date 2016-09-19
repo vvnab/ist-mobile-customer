@@ -9851,6 +9851,9 @@ body {
 .scroll-bar-indicator {
   display: none; }
 
+.button.button-clear {
+  color: #444; }
+
 label.item {
   margin: 0 12px;
   width: auto; }
