@@ -2,7 +2,7 @@
 	<!-- <ion-header-bar class="bar-header bar-light" align-title="center">
 		<h1 class="title">Вход/регистрация</h1>
 	</ion-header-bar> -->
-	<ion-content style="height:100% !important;">
+	<ion-content class="login-ion-content">
 		<div class="login-page">
 
 			<div class="logo-container">
@@ -65,7 +65,7 @@
 			<label class="item item-input item-floating-label phonenumber">
 				<i class="material-icons placeholder-icon">&#xE0CD;</i>
 				<input type="tel" ng-focus="user.lgn ? true : user.lgn='+7 ('" autocomplete="off" ng-model="user.lgn" input-mask/>
-		</label>
+			</label>
 			<label class="item item-input item-floating-label pincode">
 				<i class="material-icons placeholder-icon">&#xE897;</i>
 				<input type=password autocomplete="off" placeholder="ПАРОЛЬ или ПИН-КОД" ng-model="user.pin" />

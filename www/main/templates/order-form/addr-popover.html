@@ -6,10 +6,10 @@
     <div class="item text-right" ng-click="gotoSelect(sources[2])">
       Указать на карте
     </div>
-    <div class="item text-right" ng-click="gotoSelect(sources[1])">
+    <div class="item text-right" ng-click="gotoSelect(sources[1])" ng-if="!app.askPrice">
       Избранные адреса
     </div>
-    <div class="item text-right" ng-click="gotoSelect(sources[0])">
+    <div class="item text-right" ng-click="gotoSelect(sources[0])" ng-if="!app.askPrice">
       История заказов
     </div>
     <div class="item item-with-icons text-right" ng-click="callAction(action)">

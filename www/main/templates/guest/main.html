@@ -1,0 +1,21 @@
+<ion-side-menus enable-menu-with-back-views="true">
+  <ion-side-menu-content drag-content="false" edge-drag-threshold="0">
+    <!-- nav bar -->
+    <ion-nav-bar class="bar-light" align-title="center">
+
+      <ion-nav-back-button class="button-clear">
+        <i class="icon ion-chevron-left"></i>
+      </ion-nav-back-button>
+
+      <ion-nav-buttons side="left">
+        <a href="tel:{{app.tel}}" class="button button-icon button-clear hidden" ng-show="showTel">
+          <i class="material-icons icon md-icon">&#xE0CD;</i>
+        </a>
+      </ion-nav-buttons>
+
+    </ion-nav-bar>
+    <!-- END or nav bar -->
+
+    <ion-nav-view name="menuContent"></ion-nav-view>
+  </ion-side-menu-content>
+</ion-side-menus>

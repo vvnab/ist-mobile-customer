@@ -1,0 +1,14 @@
+<div class="list location-list">
+
+  <!-- список адресов -->
+    <div class="item item-icon-left item-icon-right- location-item"
+      ng-repeat="twn in app.twns"
+      ng-click="twnSelect(twn)"
+      ng-class="twn.id == app.twn_id ? 'selected' : ''"
+      >
+      <!-- <i class="icon ion-location"></i> -->
+      <i class="icon material-icons animate-hide red-text" ng-show="twn.id == app.twn_id">&#xE52D;</i>
+      <h2>{{twn.nme}}</h2>
+      <!-- <i ng-if="twn.id == app.twn_id" class="icon ion-ios-checkmark-outline"></i> -->
+    </div>
+</div>

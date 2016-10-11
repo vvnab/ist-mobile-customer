@@ -2202,11 +2202,11 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
       user.order.options = _.pluck(_.where(_.flatten($scope.groupedOpts), {
         enabled: true
       }), "name");
-      app.askPrice ? $state.go("askPrice") : $state.go("app.main");
+      $state.go("^.main");
     };
 
     $scope.back = function() {
-      $state.go("app.main");
+      $state.go("^.main");
     };
 
     $scope.toggleOpt = function(opt) {
@@ -2531,14 +2531,8 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
     };
 
     app.getTrfs().then(function(res) {
-      var newIcons = {
-        'flaticon-pig': 'ca-tcheap',
-        'flaticon-set5': 'ca-tfast',
-        'icon-vip': 'ca-tcomfort',
-        '': 'ca-turgent'
-      };
       res.forEach(function(t) {
-        t.icon = newIcons[t.icon];
+        // t.icon = newIcons[t.icon];
         if ((t.desc || t.name) == 'Комфортно') {
           t.desc = 'Комфорт';
         }
@@ -2707,7 +2701,6 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
     if (window.navigator && window.navigator.splashscreen) navigator.splashscreen.hide();
 
 
-    app.askPrice = false;
     user.profile = null;
     authRes.delete(function() {
       user.lgn = null;
@@ -2793,7 +2786,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
         app.twn_id = 3;
       }
       $ionicPopup.show({
-        templateUrl:'main/templates/townsDialog.html',
+        templateUrl:'main/templates/dialogs/townsDialog.html',
         title: 'Выберите город',
         scope: $scope,
         buttons: [{
@@ -2803,7 +2796,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
           type:'button-clear button-ok',
           text: 'Далее',
           onTap:function(e) {
-            $state.go("askPrice");
+            $state.go("guest.main");
           }
         }]
       }).then(function(popup) {
@@ -2942,6 +2935,27 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
   'use strict';
   angular
     .module('app.controllers')
+    .controller('GuestCtrl', GuestCtrl);
+
+
+  function GuestCtrl(Config, $scope, $rootScope, $state, $ionicLoading, $timeout, $localStorage, toast, pinRes, geolocationRes, userRes, orderRes, Order, user, app) {
+    $timeout(function() {
+      if (window.navigator && window.navigator.splashscreen) navigator.splashscreen.hide();
+      toast("Здравствуйте, " + (user.profile.name.title || user.profile.msisdn));
+    }, Config.SPLASHSCREEN_TIMEOUT);
+    user.order = user.order ? user.order : user.newOrder();
+    user.profile = {};
+
+    $scope.user = user;
+    $scope.app = app;
+    $scope.appVersion = window.AppVersion ? "(v{0})".format(AppVersion.version) : "";
+  }
+})();
+
+(function() {
+  'use strict';
+  angular
+    .module('app.controllers')
     .controller('ErrorCtrl', ErrorCtrl);
 
   function ErrorCtrl($scope, $state, $stateParams, $localStorage, app, $window, toast) {
@@ -2969,6 +2983,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
 
 
   function AskPrice(
+    Config,
     $scope,
     $rootScope,
     $state,
@@ -2976,21 +2991,21 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
     $timeout,
     $ionicLoading,
     $ionicPopover,
+    $ionicPopup,
+    $localStorage,
     geolocationRes,
     orderRes,
+    authRes,
     Addr,
     Order,
     app,
     user,
     _,
     toast,
+    pinRes,
     utils) {
 
 
-
-    console.log('Start askPrice ctrl');
-
-    app.askPrice = true;
     app.promo.enabled = false;
     app.card = null;
 
@@ -3002,7 +3017,6 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
     }).then(function(popover) {
       $scope.optionsPopover = popover;
     });
-    $scope.title = 'asdasd';
     $scope.goBack = function() {
       $state.go('login');
     };
@@ -3024,7 +3038,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
 
     $scope.reportEvent = function(e) {
       console.log(e);
-    }
+    };
     $scope._ = _;
     $scope.order = user.order;
     $scope.user = user;
@@ -3035,7 +3049,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
     $scope.loadingCost = false;
 
     $scope.gotoTwnSelect = function() {
-      $state.go('app.townSelect');
+      $state.go('^.townSelect');
     };
 
     $scope.state = {
@@ -3047,15 +3061,8 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
     };
 
     app.getTrfs().then(function(res) {
-      console.log('start get cost')
-      var newIcons = {
-        'flaticon-pig': 'ca-tcheap',
-        'flaticon-set5': 'ca-tfast',
-        'icon-vip': 'ca-tcomfort',
-        '': 'ca-turgent'
-      };
+      console.log('start get cost');
       res.forEach(function(t) {
-        t.icon = newIcons[t.icon];
         if ((t.desc || t.name) == 'Комфортно') {
           t.desc = 'Комфорт';
         }
@@ -3076,7 +3083,6 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
         }).time;
       }
       $scope.loadingCost = true;
-      console.log('start get cost')
       user.order.getCost()
         .then(function() {
           $scope.loadingCost = false;
@@ -3110,79 +3116,167 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
         });
     };
 
+    $scope.login = function() {
+      $ionicPopup.show({
+        template: '<div class="login">\
+                        <label class="item item-input item-floating-label phonenumber">\
+                          <i class="material-icons placeholder-icon">&#xE0CD;</i>\
+                          <input type="tel" ng-focus="user.lgn ? true : user.lgn=\'+7 (\'" autocomplete="off" ng-model="user.lgn" input-mask/>\
+                        </label>\
+                      </div>',
+        title: 'Введите номер телефона',
+        scope: $scope,
+        buttons: [{
+          type: 'button-clear',
+          text: 'Отмена'
+        }, {
+          type: 'button-clear button-ok',
+          text: 'Далее',
+          onTap: function(e) {
+            if ($scope.user.lgn) {
+              $scope.getPin({
+                sms: true
+              });
+              $scope.promtPin();
+            } else {
+              e.preventDefault();
+              toast('Введите корректный номер телефона');
+            }
 
-
-
-
-
-
-
-
-    $scope.toggleUrgentShow = function() {
-      var urgentTrfId = _.findWhere(app.trfs, {
-        level: 5
-      }).id;
-      if (!urgentTrfId) return;
-      console.log("toggleUrgentShow");
-      $scope.state.urgentShow = !$scope.state.urgentShow;
-      if ($scope.state.urgentShow) {
-        // срочный заказ, устанавливаем тариф и тип заказа
-        $scope.state.order_trf = $scope.order.trf.id;
-        $scope.state.order_type = $scope.order.type;
-        $scope.order.trf = urgentTrfId;
-        $scope.order.type = 0;
-        $scope.loadingCost = true;
-        user.order.getCost()
-          .then(function() {
-            $scope.loadingCost = false;
-          }).catch(function() {
-            $scope.loadingCost = false;
-          });
-      } else {
-        $scope.order.trf = $scope.state.order_trf || _.findWhere(app.trfs, {
-          default: true
-        }).id;
-        $scope.order.type = $scope.state.order_type || 0;
-        $scope.loadingCost = true;
-        user.order.getCost()
-          .then(function() {
-            $scope.loadingCost = false;
-          }).catch(function() {
-            $scope.loadingCost = false;
-          });
-        setActiveOptions();
-      }
+          }
+        }]
+      }).then(function(popup) {
+        $scope.townsPopup = popup;
+      });
+    };
+    $scope.promtPin = function() {
+      $scope.pinPopup = $ionicPopup.show({
+        template: '<div class="login">\
+                        <label class="item item-input item-floating-label phonenumber">\
+                          <i class="material-icons placeholder-icon">&#xE0CD;</i>\
+                          <input type=password autocomplete="off" placeholder="ПАРОЛЬ/ПИН-КОД" ng-model="user.pin" />\
+                        </label>\
+                      </div>',
+        title: 'Введите номер телефона',
+        scope: $scope,
+        buttons: [{
+          type: 'button-clear',
+          text: 'Отмена'
+        }, {
+          type: 'button-clear button-ok',
+          text: 'Пин не пришел',
+          onTap: function(e) {
+            e.preventDefault();
+            $scope.getPin({
+              sms: false
+            });
+          }
+        }, {
+          type: 'button-clear button-ok',
+          text: 'Далее',
+          onTap: function(e) {
+            e.preventDefault();
+            $scope.doLogin()
+          }
+        }]
+      });
     };
 
 
+    $scope.getPin = function(opts) {
+      // запрос ПИН кода
+      user.error = false;
+      $ionicLoading.show();
+      var sms = opts ? !!opts.sms : Config.SMS_PIN
+      pinRes.save({
+        tel: $scope.user.canonicalPhone(),
+        sms: sms
+      }).$promise.then(function(res) {
+        // OK
+        $scope.user.authMethod = "pin";
+        if (Config.ENV.DEBUG) {
+          toast(res.details);
+        } else {
+          toast(sms ? "Дождитесь SMS с PIN-кодом" : "Дождитесь звонка автоинформатора");
+        }
+        $scope.user.smsSended = true;
+        if (window.SMS) {
+          SMS.startWatch(null, null);
+          //     	toast("SMS Ok");
+          window.document.addEventListener("onSMSArrive", function(e) {
+            var sms = e.data ? e.data.body : "";
+            if (sms.match(/PIN/)) {
+              SMS.stopWatch(null, null);
+              var pin = _.first(sms.match(/\d{4}/g)) || "";
+              $scope.user.pin = pin;
+              $scope.doLogin();
+            }
+          });
+        }
+      }, function(err) {
+        //  ERROR
+        console.error(err);
+      }).finally(function() {
+        $ionicLoading.hide();
+      });
+    };
 
+    $scope.doLogin = function() {
+      // вход пользователя
+      user.error = false;
+      $ionicLoading.show();
+      var authMethod = $scope.user.authMethod;
+      if ($scope.user.pin.length > 4) {
+        authMethod = 'password';
+      }
+      authRes.save({
+        login: $scope.user.canonicalPhone(),
+        secret: $scope.user.pin,
+        method: authMethod
+      }).$promise.then(function(res) {
+        $localStorage.userProfile = res;
+        user.profile = $localStorage.userProfile;
+        $localStorage.card = null;
+        app.card = $localStorage.card;
+        loginOk();
+      }, function(err) {
+        //  ERROR
+        user.error = "Неверный логин/пароль";
+        $ionicLoading.hide();
+        toast(user.error);
+        console.error(err);
+      }).finally(function() {
+        user.pin = "";
+        // $ionicLoading.hide();
+      });
+    };
+
+    var loginOk = function() {
+      console.log($scope.pinPopup)
+      if ($scope.pinPopup) {
+        $scope.pinPopup.close();
+      }
+      $state.go("app.main", null, {
+        reload: true
+      });
+    };
 
     $scope.gotoAdvance = function() {
-      $state.go("app.orderAdvance")
+      $state.go("^.orderAdvance");
       $scope.optionsPopover.hide();
     };
-
-    $scope.gotoPromo = function() {
-      $state.go("app.orderPromo");
-    };
-
-    $scope.gotoCards = function() {
-      $state.go("app.orderCards")
-      $scope.cardsPopover.hide();
-    };
-
 
     $scope.clearOptions = function() {
       user.order.options = [];
       setActiveOptions();
       $scope.optionsPopover.hide();
-    }
+    };
 
     $scope.clearPromo = function() {
       app.promo.enabled = false;
       app.card = null;
       $scope.cardsPopover.hide();
-    }
+    };
     $scope.activeOptions = [];
 
     $scope.deviceWidth = window.screen.width;
@@ -3190,7 +3284,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
     var setActiveOptions = function() {
       return app.getOpts(user.order.trf ? user.order.trf.id : null).then(function(opts) {
         return user.order.reduceOptions().then(function(res) {
-          console.log(opts,res)
+          console.log(opts, res);
           $scope.activeOptions = _.filter(opts, function(i) {
             return _.contains(res, i.name);
           });
@@ -3286,7 +3380,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
     $scope.addrSelect = function(addr) {
       user.order.adds[$stateParams.id] = new Addr(addr);
       user.order.getCost();
-      app.askPrice ? $state.go("askPrice") : $state.go("app.main");
+      $state.go("^.main");
     };
   }
 })();
@@ -3317,7 +3411,10 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
 
 
   function AddrForm($scope, $ionicPopover, $state, $stateParams, app, user, _, Addr) {
+
+    $scope.app = app;
     // addr-popover
+
     $scope.sources = [{
       icon: "ion-clock",
       name: "История",
@@ -3335,17 +3432,17 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
       $scope.popover.hide();
       switch (i.href) {
         case "history":
-          $state.go("app.addrHistory", {
+          $state.go("^.addrHistory", {
             id: $scope.popover_addr_id
           });
           break;
         case "favorites":
-          $state.go("app.addrFavotites", {
+          $state.go("^.addrFavotites", {
             id: $scope.popover_addr_id
           });
           break;
         case "map":
-          $state.go("app.addrMap", {
+          $state.go("^.addrMap", {
             id: $scope.popover_addr_id
           });
           break;
@@ -3377,7 +3474,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
       $scope.popover.hide();
     };
     $scope.toAddressSelect = function() {
-      $state.go("app.addr", {
+      $state.go("^.addr", {
         id: $scope.popover_addr_id,
         focus: true
       });
@@ -3392,18 +3489,18 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
     };
 
     $scope.addrAdd = function(id) {
-      $state.go("app.addr", {
+      $state.go("^.addr", {
         id: (id || id ===0) ? id : user.order.adds.length
       });
     };
 
     $scope.addrEdit = function(addr, index) {
       if (addr.type) {
-        $state.go("app.addrEdit", {
+        $state.go("^.addrEdit", {
           id: index
         });
       } else {
-        $state.go("app.addr", {
+        $state.go("^.addr", {
           id: index
         });
       }
@@ -3456,6 +3553,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
 
   function AddrEditCtrl($scope, $state, $stateParams, Addr, Order, user, app) {
     var count = 0;
+    console.log(user.order.adds);
     $scope.addr = user.order.adds[$stateParams.id];
     $scope.$watch("addr.hse", function(i) {
       if (count++ && $scope.addr.type != 2) {
@@ -3468,10 +3566,10 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
     $scope.saveAddr = function() {
       if ($scope.addr && $scope.addr.error) delete $scope.addr.error;
       user.order.getCost();
-      app.askPrice ? $state.go("askPrice") : $state.go("app.main");
+      $state.go("^.main");
     };
     $scope.gotoAddrSelect = function() {
-      $state.go("app.addr", {
+      $state.go("^.addr", {
         id: $stateParams.id
       });
     };
@@ -3667,37 +3765,36 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
         $scope.search.items = [];
       }
     });
-    $scope.selectAddr = function(addr) {
+    $scope.selectAddr = function(a) {
       //alert("selectAddr");
       // выбор адреса из выпадающего списка
-      var addr = new Addr(addr);
-      console.log(addr);
+      var addr = new Addr(a);
       user.order.adds[$stateParams.id] = addr;
-      if ($scope.id != 0 && addr.next() == null) {
+      if ($scope.id !== 0 && addr.next() === null) {
         user.order.getCost();
-        app.askPrice ? $state.go("askPrice") : $state.go("app.main");
+        $state.go("^.main");
       } else {
-        $state.go("app.addrEdit", {
+        $state.go("^.addrEdit", {
           id: $stateParams.id
         });
       }
-    }
+    };
     $scope.gotoSelect = function(i) {
       switch (i.href) {
         case "history":
-          $state.go("app.addrHistory", {
+          $state.go("^.addrHistory", {
             id: $scope.id
           });
           break;
         case "favorites":
-          $state.go("app.addrFavotites", {
+          $state.go("^.addrFavotites", {
             id: $scope.id
           });
           break;
         case "map":
           //событие клика ловится лефлетом
           setTimeout(function(e) {
-            $state.go("app.addrMap", {
+            $state.go("^.addrMap", {
               id: $scope.id
             });
           },0);
@@ -3714,7 +3811,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
         type: 2,
         twn_id: app.twn_id
       });
-      $state.go("app.main");
+      $state.go("^.main");
     }
   }
 })();
@@ -3763,13 +3860,12 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
       '420': [61.0722461, 50.0645454], //визинга
     },
     "TARIFF_ICONS": {
-      1: "flaticon-pig",
-      2: "flaticon-set5",
-      3: "",
-      4: "icon-vip",
-      5: ""
+      1: "ca-tcheap",
+      2: "ca-tfast",
+      3: "ca-turgent",
+      4: "ca-tcomfort",
+      5: "ca-turgent"
     },
-
     "OPTION_ICONS": {
       "smoke": "ca-ismoke",
       "nosmoke": "ca-nosmoke",
@@ -4018,17 +4114,91 @@ angular.module('app', ['ionic','ngCordova','leaflet-directive', 'app.directives'
           }
         },
       })
-      .state('askPrice', {
+      //гостевой доступ
+      .state('guest', {
+        url: "/guest",
+        controller: "GuestCtrl",
+        templateUrl: "main/templates/guest/main.html",
+        abstract: true,
+        onEnter: function($state,$ionicNavBarDelegate, $rootScope, $localStorage, $ionicLoading, app, user) {
+          app.askPrice = true;
+        },
+        onExit: function($ionicNavBarDelegate, $rootScope, app) {
+          app.askPrice = false;
+        },
+      })
+      .state('guest.main', {
         url: "/askPrice",
         cache: false,
-        templateUrl: "main/templates/askPrice.html",
-        controller: 'AskPrice',
+        views: {
+          "menuContent": {
+            templateUrl: "main/templates/guest/askPrice.html",
+            controller: 'AskPrice',
+          }
+        },
         onEnter: function() {
           if (window.navigator && navigator.splashscreen) {
             console.info("HIDE SPLASH");
             navigator.splashscreen.hide();
           }
         },
+      })
+      .state('guest.townSelect', {
+        url: "/townSelect",
+        views: {
+          "menuContent": {
+            controller: 'TownSelectCtrl',
+            templateUrl: "main/templates/townSelect.html",
+          }
+        },
+        cache: false,
+        onEnter: function(app) {
+          if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
+          app.card = null;
+        }
+      })
+      .state('guest.addr', {
+        url: "/addr/:id",
+        cache: false,
+        views: {
+          "menuContent": {
+            templateUrl: "main/templates/addrSelect.html",
+            controller: 'AddrCtrl',
+          }
+        },
+        params: {
+          focus: false
+        }
+      })
+      .state('guest.addrMap', {
+        url: "/addr/:id/select/map",
+        cache: false,
+        views: {
+          "menuContent": {
+            templateUrl: "main/templates/addrMap.html",
+            controller: 'AddrMapController'
+          }
+        }
+      })
+      .state('guest.addrEdit', {
+        url: "/addr/edit/:id",
+        cache: false,
+        views: {
+          "menuContent": {
+            templateUrl: "main/templates/addrEdit.html",
+            controller: 'AddrEditCtrl'
+          }
+        }
+      })
+      .state('guest.orderAdvance', {
+        url: "/order/advance",
+        cache: false,
+        views: {
+          "menuContent": {
+            templateUrl: "main/templates/orderAdvance.html",
+            controller: 'OrderAdvanceCtrl'
+          }
+        }
       })
       .state('error', {
         url: "/error",
@@ -4074,11 +4244,7 @@ angular.module('app', ['ionic','ngCordova','leaflet-directive', 'app.directives'
           login: function($state, $q, $localStorage, $window, app, user, userRes, locationRes, $ionicLoading, toast, dataTransform) {
             var def = $q.defer();
             // проверка логина пользователя
-            console.log('app.askPrice',app.askPrice)
-            if (app.askPrice) {
-              console.log('Resolve login check!');
-              def.resolve();
-            } else if (!app.logged) {
+            if (!app.logged) {
               userRes.get().$promise.then(function(res) {
                 console.info("state: app -> resolve -> login -> userRes");
                 res.adds = _.map(res.addresses, dataTransform.addr0);
@@ -4149,9 +4315,6 @@ angular.module('app', ['ionic','ngCordova','leaflet-directive', 'app.directives'
         onEnter: function($state,$ionicNavBarDelegate, $rootScope, $localStorage, $ionicLoading, app, user) {
 
           if (window.navigator && navigator.splashscreen) navigator.splashscreen.hide();
-          if (app.askPrice) {
-            return $state.go("askPrice");
-          }
           $ionicLoading.hide();
           $rootScope.showTel = true;
           $ionicNavBarDelegate.showBackButton(false);
