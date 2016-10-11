@@ -48,39 +48,41 @@
     </platform>
 
     <platform name="ios">
-      <icon src="resources/iOS/Resources/icons/Icon.png"/>
+      <icon src="res/iOS/Resources/icons/Icon.png"/>
 
-      <icon height="57" src="resources/iOS/Resources/icons/icon.png" width="57"/>
-      <icon height="114" src="resources/iOS/Resources/icons/icon@2x.png" width="114"/>
-      <icon height="40" src="resources/iOS/Resources/icons/icon-40.png" width="40"/>
-      <icon height="80" src="resources/iOS/Resources/icons/icon-40@2x.png" width="80"/>
-      <icon height="120" src="resources/iOS/Resources/icons/icon-40@3x.png" width="120"/>
-      <icon height="50" src="resources/iOS/Resources/icons/icon-50.png" width="50"/>
-      <icon height="100" src="resources/iOS/Resources/icons/icon-50@2x.png" width="100"/>
-      <icon height="60" src="resources/iOS/Resources/icons/icon-60.png" width="60"/>
-      <icon height="120" src="resources/iOS/Resources/icons/icon-60@2x.png" width="120"/>
-      <icon height="180" src="resources/iOS/Resources/icons/icon-60@3x.png" width="180"/>
-      <icon height="72" src="resources/iOS/Resources/icons/icon-72.png" width="72"/>
-      <icon height="144" src="resources/iOS/Resources/icons/icon-72@2x.png" width="144"/>
-      <icon height="76" src="resources/iOS/Resources/icons/icon-76.png" width="76"/>
-      <icon height="152" src="resources/iOS/Resources/icons/icon-76@2x.png" width="152"/>
-      <icon height="167" src="resources/iOS/Resources/icons/icon-83.5@2x.png" width="167"/>
-      <icon height="29" src="resources/iOS/Resources/icons/icon-small.png" width="29"/>
-      <icon height="58" src="resources/iOS/Resources/icons/icon-small@2x.png" width="58"/>
-      <icon height="87" src="resources/iOS/Resources/icons/icon-small@3x.png" width="87"/>
+      <icon height="57" src="res/iOS/Resources/icons/icon.png" width="57"/>
+      <icon height="114" src="res/iOS/Resources/icons/icon@2x.png" width="114"/>
+      <icon height="40" src="res/iOS/Resources/icons/icon-40.png" width="40"/>
+      <icon height="80" src="res/iOS/Resources/icons/icon-40@2x.png" width="80"/>
+      <icon height="120" src="res/iOS/Resources/icons/icon-40@3x.png" width="120"/>
+      <icon height="50" src="res/iOS/Resources/icons/icon-50.png" width="50"/>
+      <icon height="100" src="res/iOS/Resources/icons/icon-50@2x.png" width="100"/>
+      <icon height="60" src="res/iOS/Resources/icons/icon-60.png" width="60"/>
+      <icon height="120" src="res/iOS/Resources/icons/icon-60@2x.png" width="120"/>
+      <icon height="180" src="res/iOS/Resources/icons/icon-60@3x.png" width="180"/>
+      <icon height="72" src="res/iOS/Resources/icons/icon-72.png" width="72"/>
+      <icon height="144" src="res/iOS/Resources/icons/icon-72@2x.png" width="144"/>
+      <icon height="76" src="res/iOS/Resources/icons/icon-76.png" width="76"/>
+      <icon height="152" src="res/iOS/Resources/icons/icon-76@2x.png" width="152"/>
+      <icon height="167" src="res/iOS/Resources/icons/icon-83.5@2x.png" width="167"/>
+      <icon height="29" src="res/iOS/Resources/icons/icon-small.png" width="29"/>
+      <icon height="58" src="res/iOS/Resources/icons/icon-small@2x.png" width="58"/>
+      <icon height="87" src="res/iOS/Resources/icons/icon-small@3x.png" width="87"/>
 
-      <splash height="1136" src="resources/iOS/Resources/splash/Default@2x~iphone_640x960.png" width="640"/>
-      <splash height="1334" src="resources/iOS/Resources/splash/Default-750@2x~iphone6-portrait_750x1334.png" width="750"/>
-      <splash height="2208" src="resources/iOS/Resources/splash/Default-1242@3x~iphone6s-portrait_1242x2208.png" width="1242"/>
-      <splash height="1242" src="resources/iOS/Resources/splash/Default-1242@3x~iphone6s-landscape_2208x1242.png" width="2208"/>
-      <splash height="1536" src="resources/iOS/Resources/splash/Default-Landscape@2x~ipad_2048x1536.png" width="2048"/>
-      <splash height="768"  src="resources/iOS/Resources/splash/Default-Landscape~ipad_1024x768.png" width="1024"/>
-      <splash height="2048" src="resources/iOS/Resources/splash/Default-Portrait@2x~ipad_1536x2048.png" width="1536"/>
-      <splash height="1024" src="resources/iOS/Resources/splash/Default-Portrait~ipad_768x1024.png" width="768"/>
-      <splash height="960"  src="resources/iOS/Resources/splash/Default@2x~iphone_640x960.png" width="640"/>
-      <splash height="480"  src="resources/iOS/Resources/splash/Default~iphone.png" width="320"/>
+      <splash height="1136" src="res/iOS/Resources/splash/Default@2x~iphone_640x960.png" width="640"/>
+      <splash height="1334" src="res/iOS/Resources/splash/Default-750@2x~iphone6-portrait_750x1334.png" width="750"/>
+      <splash height="2208" src="res/iOS/Resources/splash/Default-1242@3x~iphone6s-portrait_1242x2208.png" width="1242"/>
+      <splash height="1242" src="res/iOS/Resources/splash/Default-1242@3x~iphone6s-landscape_2208x1242.png" width="2208"/>
+      <splash height="1536" src="res/iOS/Resources/splash/Default-Landscape@2x~ipad_2048x1536.png" width="2048"/>
+      <splash height="768"  src="res/iOS/Resources/splash/Default-Landscape~ipad_1024x768.png" width="1024"/>
+      <splash height="2048" src="res/iOS/Resources/splash/Default-Portrait@2x~ipad_1536x2048.png" width="1536"/>
+      <splash height="1024" src="res/iOS/Resources/splash/Default-Portrait~ipad_768x1024.png" width="768"/>
+      <splash height="960"  src="res/iOS/Resources/splash/Default@2x~iphone_640x960.png" width="640"/>
+      <splash height="480"  src="res/iOS/Resources/splash/Default~iphone.png" width="320"/>
 
     </platform>
+
+    <icon src="res/iOS/Resources/icons/Icon.png"/>
 
     <plugin name="cordova-plugin-file" spec="~4.3.0" />
     <plugin name="cordova-plugin-network-information" spec="~1.3.0" />
