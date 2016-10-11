@@ -1,0 +1,22 @@
+<ion-view can-swipe-back="false" view-title="Адреса в истории">
+	<ion-content>
+		<div class="list history-favorites-addrs history">
+	        <a class="item item-icon-right"
+	        	ng-repeat="addr in adds"
+	        	ng-click="addrSelect(addr)">
+	        	<!-- <i class="icon ion-clock"></i> -->
+	        	<div class="addr">
+	        		<span ng-bind-html="addr.text()"></span>
+							<i class="icon icon-right material-icons">&#xE061;</i>
+	        	</div>
+	        </a>
+		</div>
+		<div class="card" ng-if="adds.length == 0">
+  			<div class="item item-text-wrap">
+  				<p>
+  					Вы ещё не совершали поездок в г.&nbsp;{{app.twn_nme}}, поэтому список адресов пока пуст.
+  				</p>
+  			</div>
+		</div>
+	</ion-content>
+</ion-view>

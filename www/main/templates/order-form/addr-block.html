@@ -1,0 +1,26 @@
+<!-- список адресов -->
+
+  <div class="item item-icon-left item-icon-right location"
+    ng-repeat="addr in order.adds"
+    ng-class="{assertive: addr.error}">
+    <div data-icon="x" class="icon icon-right" ng-if="!addr.error"></div>
+    <i class="icon ion-alert" ng-if="addr.error"></i>
+    <!-- <div class="swap-arrow" ng-if="!$first" ng-click="order.swapAdds($index)">
+      <i class="icon ion-arrow-swap orange-text"></i>
+    </div> -->
+    <div ng-click="addrEdit(addr, $index)">
+      <h2 ng-bind-html="addr.text($first)"></h2>
+    </div>
+    <i class="icon icon-left more material-icons" ng-click="addrMore($event,addr,$index)">&#xE5D4;</i>
+    <!-- <i class="icon ion-ios-arrow-right item-note" ng-if="addr.next()"></i> -->
+    <!-- <i class="icon ion-ios-close-empty item-note" ng-if="!addr.next()" ng-click="addrRemove($index)"></i> -->
+  </div>
+
+<!-- END OF список адресов -->
+
+<!-- кнопка добавления адреса -->
+  <div class="add-adr item item-icon-left" ng-if="order.canAdd" ng-click="addrAdd()">
+    <i class="icon ion-plus-circled icon-medium energized"></i>
+    Добавить адрес
+  </div>
+<!-- END OF кнопка добавления адреса -->

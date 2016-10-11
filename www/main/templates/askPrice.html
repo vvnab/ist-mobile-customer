@@ -1,0 +1,150 @@
+<ion-view can-swipe-back="false">
+  <ion-nav-bar class="bar-light" align-title="center">
+
+    <ion-nav-title ng-click="gotoTwnSelect()">
+      {{app.twn_nme}}
+    </ion-nav-title>
+
+
+
+    <ion-nav-buttons side="left">
+      <a  class="button button-icon button-clear hidden" ng-click="goBack()">
+        <!-- <i class="material-icons icon md-icon">&#xE0CD;</i> -->
+        <i class="icon ion-chevron-left"></i>
+      </a>
+    </ion-nav-buttons>
+
+  </ion-nav-bar>
+
+  <ion-content>
+    <div class="list location-list order-form">
+
+      <div ng-include="'main/templates/order-form/addr-block.html'" ng-controller="AddrForm">
+
+      </div>
+
+      <!-- <div class="row-divider"><span>Тариф</span></div> -->
+      <div class="row text-center tariffs-row" ng-if="!app.showTrfChoice(order)">
+        <div class="col selected" style="margin-left: 2em; margin-right: 2em; color: white; display: block; width: auto; font-size: 1.2em;">
+          {{app.card.srv.nme || app.card.trf.rem || "srv_id: " + app.card.srv_id}}
+        </div>
+      </div>
+      <!-- выбор тарифа -->
+      <div class="row text-center tariffs-row" on-swipe-left="toggleUrgentShow()" ng-if="app.showTrfChoice(order)">
+
+        <!-- список обычных тарифов -->
+        <div class="col" ng-repeat="i in app.trfs" ng-click="trfChange(i)">
+          <div style="max-width:{{deviceWidth/4-10}}px;max-height:{{deviceWidth/4-10}}px;" ng-class="{selected: i.id == order.trf.id}" class="tariff">
+            <i class="icon {{i.icon}}"></i>
+            <div>
+              {{i.desc || i.name}}
+            </div>
+          </div>
+        </div>
+        <!-- END OF список обычных тарифов -->
+
+        <div class="urgent-box" ng-if="state.urgent"></div>
+
+
+
+      </div>
+      <!-- END OF выбор тарифа -->
+
+
+      <div class="clearfix"></div>
+
+
+
+      <!-- блок выбора опций -->
+      <div>
+        <!-- опции заказа -->
+
+        <!-- <div class="row-divider"><span>Опции</span></div> -->
+
+        <!-- выбор времени -->
+        <div class="list order-type-list options">
+          <div class="item item-icon-right item-icon-left">
+            <i class="icon material-icons" ng-click="gotoAdvance()">&#xE429;</i>
+            <!-- список активных опций -->
+
+            <div class="options" ng-click="gotoAdvance()">
+              <div ng-if="activeOptions.length >0 && activeOptions.length < 5">
+                <i ng-repeat="opt in activeOptions" class="icon-option {{opt.icon}}"></i>
+              </div>
+            </div>
+            <div class="options none" ng-if="activeOptions.length > 0 && activeOptions.length >= 5">
+              Выбрано {{ activeOptions.length }} {{ utils.declOfNum(activeOptions.length,['опция','опции','опций'])}}
+            </div>
+            <div class="options none" ng-click="gotoAdvance()" ng-if="!(activeOptions.length || order.type)">
+              ОПЦИИ ЗАКАЗА
+            </div>
+            <i class="icon icon-left more material-icons" ng-click="showOptionsPopover($event)">&#xE5D4;</i>
+          </div>
+        </div>
+        <div class="logo-container">
+          <img src="main/assets/images/210-tv-logo-dull.png" alt="">
+        </div>
+        <div class="row-divider"></div>
+      </div>
+    </div>
+  </ion-content>
+  <div class="bottom-block">
+    <div class="row" ng-if="!loadingCost && (order.cash || order.wtd_cost || order.error)">
+      <div class="col" ng-class="order.error ? 'has-error' : ''">
+        <div class="cost" ng-if="!order.error">
+          <span ng-if="(order.cash || order.wtd_cost) && !app.card.writeOff && order.complete">
+            {{order.wtd_cost}} &#8381;
+          </span>
+          <span ng-if="(order.cash || order.wtd_cost) && app.card.writeOff && order.cash > 0 && order.complete">
+            {{app.card.writeOff ? order.cash : order.wtd_cost}} &#8381;
+          </span>
+          <span ng-if="app.card.writeOff && order.cash == 0 && order.complete">
+            бесплатно
+          </span>
+        </div>
+        <div class="error" ng-bind-html="order.error" ng-if="order.error">
+
+
+        </div>
+        <div ng-if="order.optionsSum" class="options-cost">
+          <span>
+            {{order.optionsSum}} &#8381; опции
+          </span>
+        </div>
+        <div class="card-cost" ng-if="app.card.type == 8 && app.card.writeOff" class="card-cost">
+          <span>
+            - {{ order.wtd_cost - order.cash }} &#8381; с карты
+          </span>
+        </div>
+
+        <div class="card-cost" ng-if="app.card.type == 8 && !app.card.writeOff" class="card-cost">
+          <span>
+            + {{app.card.reit}} &#8381; на карту
+          </span>
+        </div>
+      </div>
+      <div class="col">
+        <button class="button button-block order-button" ng-class="{'disabled': !order.complete}" ng-click="orderCreate()">
+          Вызвать <br> такси
+        </button>
+        <div class="order-info">
+          <span ng-if="order.dist_km">
+            {{ order.dist_km }} км
+          </span>
+          <span ng-if="order.duration">
+            {{order.duration}} мин
+          </span>
+        </div>
+      </div>
+
+    </div>
+    <div class="info" ng-if="!loadingCost && !order.error && !(order.cash || order.wtd_cost)">
+      <i class="icon material-icons">&#xE88E;</i> Для начала укажите откуда и куда поедем, выберите тариф. Добавьте опции, промокод или карту.
+
+    </div>
+    <div ng-if="loadingCost" class="loading">
+      <ion-spinner icon="android"></ion-spinner>
+      Секундочку! Идет расчет точной стоимости поездки
+    </div>
+  </div>
+</ion-view>

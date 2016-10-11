@@ -1,0 +1,96 @@
+<ion-view can-swipe-back="false" view-title="{{ title || 'Адрес'}}">
+	<ion-content>
+		<!-- поле ввода адреса -->
+		<div class="list list-adds-search">
+			<div class="item-icon-left item   ">
+
+				<div class="input-spinner" ng-if-="search.loading">
+					<i class="icon ca-locpoint icon-right" ng-if="!search.loading"></i>
+					<ion-spinner icon="android" class="icon-right icon" ng-if="search.loading"></ion-spinner>
+				</div>
+				<input ng-if="id == 0 && focus" auto-focus="true" type="text" autocomplete="off" placeholder="Начните вводить адрес" ng-model="search.text" ng-model-options="{debounce: {'default': 500, 'blur': 0}}" auto-focus="false" />
+
+				<input ng-if="!(id == 0 && focus)" type="text" autocomplete="off" placeholder="Начните вводить адрес" ng-model="search.text" ng-model-options="{debounce: {'default': 500, 'blur': 0}}" auto-focus="false" />
+			</div>
+		</div>
+		<!-- END OF поле ввода адреса -->
+
+
+
+		<!-- список адресов по маске -->
+		<div class="list  list-search addr-dropdown" ng-if="search.items.length">
+			<a class="item item-light"
+					ng-repeat="addr in search.items"
+					ng-click="selectAddr(addr)">
+				<!--i class="icon flaticon flaticon-address"></i-->
+				<small>
+	        		{{addr.nme}}
+		        	<h4>
+		        		{{search.types[addr.type]}}
+		        	</h4>
+      	</small>
+			</a>
+		</div>
+		<!-- END OF список адресов по маске -->
+
+		<!-- блок кнопок -->
+		<div class="list list-adds-search">
+			<div class="item buttons">
+				<button class="button"  ng-if="id != 0" ng-click="byVoice()">
+					Сообщу <br> водителю
+				</button>
+				<button class="button" ng-click="gotoSelect(sources[2]);$event.stopPropagation();">
+					Указать <br> на карте
+				</button>
+			</div>
+		</div>
+		<!-- END OF блок кнопок -->
+
+		<!-- список ближайших адресов -->
+		<div class="list list-adds-search" ng-if="geolocationAdds.length && id == 0">
+			<div class="item title item-divider2 item item-icon-right">
+				<span>Адреса поблизости</span>
+				<!-- <i class="icon icon-right more material-icons">&#xE5D3;</i> -->
+			</div>
+			<a class="item adress-item" ng-repeat="addr in geolocationAdds" ng-click="selectAddr(addr)">
+				<span ng-bind-html="addr.text()"></span>
+			</a>
+		</div>
+		<!-- END OF список ближайших адресов -->
+
+		<!-- список любимых адресов -->
+		<div class="list list-adds-search" ng-if="favoriteAdds.length">
+			<div class="item title item-divider2 item item-icon-right" ng-click="gotoSelect(sources[1])">
+				<span>Избранные адреса</span>
+				<i class="icon icon-right more material-icons">&#xE5D3;</i>
+			</div>
+			<a class="item adress-item" ng-repeat="addr in favoriteAdds" ng-click="selectAddr(addr)">
+				<span ng-bind-html="addr.text()"></span>
+			</a>
+		</div>
+		<!-- END OF список любимых адресов -->
+
+		<!-- список адресов из истории-->
+		<div class="list list-adds-search" ng-if="historyAdds.length">
+			<div class="item title item-divider2 item item-icon-right" ng-click="gotoSelect(sources[0])">
+				<span>История заказов</span>
+				<i class="icon icon-right more material-icons">&#xE5D3;</i>
+			</div>
+			<a class="item adress-item" ng-repeat="addr in historyAdds" ng-click="selectAddr(addr)">
+				<span ng-bind-html="addr.text()"></span>
+			</a>
+		</div>
+		<!-- END OF список адресов из истории-->
+
+		<!-- меню быстрого выбора -->
+		<div class="list list-inset-" ng-if="false">
+			<a class="item item-icon-left item-icon-right" ng-repeat="i in sources" ng-click="gotoSelect(i)">
+				<i class="icon {{i.icon}}"></i> {{i.name}}
+				<i class="icon ion-ios-arrow-right item-note"></i>
+			</a>
+		</div>
+		<!-- END OF меню быстрого выбора -->
+
+
+	</ion-content>
+</ion-view>

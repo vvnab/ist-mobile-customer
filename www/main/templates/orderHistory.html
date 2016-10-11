@@ -1,0 +1,102 @@
+<ion-view can-swipe-back="false" view-title="История">
+	<ion-content>
+
+		<div class="orders-history">
+
+			<div class="loader text-center" ng-show="loading">
+				<ion-spinner icon="android"></ion-spinner>
+				<div>
+					Секундочку! Загружаю
+				</div>
+			</div>
+
+			<div class="content animate-hide" ng-hide="loading">
+				<div class="list" ng-show="user.curOrders.length">
+					<div class="item title">
+						Текущие заказы
+					</div>
+					<div class="item" ng-repeat="order in user.curOrders track by order.track">
+						<div class="content" ng-click="orderShowState(order)">
+							<div class="row">
+								<div class="col time">
+									{{ order.createdDate }}
+									<span>
+									{{ order.createdTime }}
+								</span>
+								</div>
+								<div class="col cost">
+									{{ order.cost || order.wtd_cost }}
+									<span>
+									₽
+								</span>
+								</div>
+							</div>
+							<div class="order-addr">
+								{{_.first(order.adds).text()}}
+							</div>
+							<div class="order-addr">
+								{{_.last(order.adds).text()}}
+							</div>
+							<!-- <div class="car">
+							<span class="color">
+								Цвет
+							</span>
+							<span class="name">
+								БТР 321
+							</span>
+						</div> -->
+						</div>
+						<i class="icon icon-right more material-icons" ng-click="openPopover($event,order)">&#xE5D4;</i>
+
+					</div>
+				</div>
+
+				<div class="list" ng-show="user.arcOrders.length">
+					<div class="item title">
+						Архивные заказы
+						<span>
+						(
+							{{ user.arcOrders.length }}
+						)
+					</span>
+					</div>
+
+					<div class="item " ng-repeat="order in user.arcOrders | removedOrders track by order.track">
+						<div class="content" ng-click="orderShowState(order)">
+							<div class="row">
+								<div class="col time">
+									{{ order.createdDate }}
+									<span>
+									{{ order.createdTime }}
+								</span>
+								</div>
+								<div class="col cost">
+									{{ order.cost }}
+									<span>
+									₽
+								</span>
+								</div>
+							</div>
+							<div class="order-addr">
+								{{_.first(order.adds).text()}}
+							</div>
+							<div class="order-addr">
+								{{_.last(order.adds).text()}}
+							</div>
+							<!-- <div class="car">
+							<span class="color">
+								Цвет
+							</span>
+							<span class="name">
+								БТР 321
+							</span>
+						</div> -->
+						</div>
+						<i class="icon icon-right more material-icons"
+							 ng-click="openPopover($event,order)">&#xE5D4;</i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</ion-content>
+</ion-view>

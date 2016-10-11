@@ -1,0 +1,36 @@
+<ion-view can-swipe-back="false" view-title="Ошибка">
+	<ion-header-bar class="bar-light" align-title="center">
+		<h1 class="title">{{error.title}}</h1>
+	</ion-header-bar>
+	<ion-content>
+		<div class="error">
+
+
+			<div class="img-holder">
+				<img src="main/assets/images/960-disconnect.png" alt="" />
+			</div>
+			<div class="content">
+				{{error.text}}
+			</div>
+
+
+			<div class="actions">
+		    <div class="row">
+		    	<div class="col">
+						<button class="button button-block" ng-click="exit()">
+				      Выход
+				    </button>
+		    	</div>
+					<div class="col">
+
+				    <button class="button button-block" ng-click="repeat()">
+				      Повторить
+				    </button>
+					</div>
+		    </div>
+		  </div>
+
+		</div>
+
+	</ion-content>
+</ion-view>

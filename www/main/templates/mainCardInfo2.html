@@ -1,0 +1,26 @@
+<div class="title">
+  Карта
+  <span>
+   {{app.card.defaultAccumCard ? "" : app.card.title}}
+ </span>
+  <!-- {{app.card.title}} -->
+</div>
+
+<div class="content" on-swipe-left="console.log('left');app.card.writeOff = false" on-swipe-right="console.log('right');app.card.writeOff = true" >
+  <i class="material-icons vertical-align-bottom" ng-class="app.card.writeOff ? '':'active'">&#xE148;</i>
+  <span ng-class="app.card.writeOff ? '':'active'">
+    {{app.card.reit}} &#8381;
+  </span>
+  <div class="checker">
+    <label class="toggle">
+      <input type="checkbox" ng-model="app.card.writeOff">
+      <div class="track">
+        <div class="handle"></div>
+      </div>
+    </label>
+  </div>
+  <i class="material-icons vertical-align-bottom" ng-class="app.card.writeOff ? 'active':''" >&#xE15D;</i>
+  <span ng-class="app.card.writeOff ? 'active':''">
+      {{order.wtd_cost ? order.wtd_cost - order.cash || '--' : '--'}} &#8381;
+  </span>
+</div>

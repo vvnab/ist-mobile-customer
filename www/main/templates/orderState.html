@@ -1,0 +1,17 @@
+<ion-view can-swipe-back="false" view-title="{{ title || 'Заказ'}}">
+  <ion-content>
+    <!-- {{ order.state }} -->
+    <div ng-include="'main/templates/order/searchCar.html'"
+         ng-if="[0,1].indexOf(order.state) > -1 && !summary"></div>
+    <div ng-include="'main/templates/order/accepted.html'"
+         ng-if="order.state == 2 && !summary"></div>
+    <div ng-include="'main/templates/order/started.html'"
+         ng-if="order.state == 6 && !summary"></div>
+    <div ng-include="'main/templates/order/ready.html'"
+      ng-if="order.state == 3 && !summary"></div>
+    <!-- <div ng-include="'main/templates/order/ready.html'" ng-if="[5,6,7].indexOf(order.state) > -1"></div> -->
+
+    <div ng-include="'main/templates/order/summary.html'" ng-if="order.isArchive() || summary"></div>
+
+  </ion-content>
+</ion-view>

@@ -1,0 +1,23 @@
+<ion-popover-view class="addr-more-popover">
+  <!-- <ion-content> -->
+    <div class="item text-right" ng-click="toAddressSelect()">
+      Ручной ввод
+    </div>
+    <div class="item text-right" ng-click="gotoSelect(sources[2])">
+      Указать на карте
+    </div>
+    <div class="item text-right" ng-click="gotoSelect(sources[1])">
+      Избранные адреса
+    </div>
+    <div class="item text-right" ng-click="gotoSelect(sources[0])">
+      История заказов
+    </div>
+    <div class="item item-with-icons text-right" ng-click="callAction(action)">
+      <i ng-click="addrAddPopup()" class="material-icons">&#xE145;</i>
+      <i ng-click="addrRemovePopup()"  class="material-icons">&#xE15B;</i>
+      <i class="material-icons" ng-click="moveAddr('up')" ng-if="popover_addr_id != 0">&#xE5D8;</i>
+      <i class="material-icons" ng-click="moveAddr('down')" ng-if="popover_addr_id != (order.adds.length - 1)">&#xE5DB;</i>
+    </div>
+
+  <!-- </ion-content> -->
+</ion-popover-view>

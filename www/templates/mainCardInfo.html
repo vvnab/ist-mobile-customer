@@ -1,9 +1,0 @@
-<div class="options" ng-class="{'text-disabled': app.card.type == 3 && app.card.balance < order.wtd_cost}">
-  {{app.card.client || app.card.title}}
-  <div class="small" ng-if="app.card.type == 8 || app.card.balance >= order.wtd_cost">
-    {{app.card.typeMeta.title}} карта
-  </div>
-  <div class="small red-text" ng-if="app.card.type == 3 && app.card.balance < order.wtd_cost">
-    недостаточно средств
-  </div>
-</div>

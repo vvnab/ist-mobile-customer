@@ -1,59 +1,33 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
   <head>
     <meta charset="utf-8">
+    <meta name="description" content="">
+    <!-- ionic meta tags -->
     <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width">
-    <meta http-equiv="Content-Security-Policy"
-      content="
-        default-src *;
-          style-src &apos;self&apos; &apos;unsafe-inline&apos;;
-          script-src &apos;self&apos; &apos;unsafe-inline&apos; &apos;unsafe-eval&apos; *.taxi21.ru localhost:*">
+    <!-- custom meta tags -->
+    <meta name="format-detection" content="telephone=no"> <!-- no auto telephone linking -->
 
-    <title></title>
+    <meta name="apple-mobile-web-app-capable" content="yes"> <!-- can be saved to home screen on ios -->
+    <title>TaxiVsegda</title>
 
-    <link href="lib/ionic-material/dist/ionic.material.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles/vendor.css">
 
-    <!--link href="http://fonts.googleapis.com/css?family=Roboto%3A400%2C300%2C300italic%2C400italic%2C500%2C500italic%2C700%2C700italic&amp;subset=latin%2Ccyrillic-ext%2Ccyrillic" rel="stylesheet" type="text/css"-->
-
-    <link href="lib/roboto-fontface/css/roboto/roboto-fontface.css" rel="stylesheet">
-
-    <link href="lib/flaticon/flaticon.css" rel="stylesheet">
-
-    <!-- compiled css output -->
-    <link href="css/ionic.app.css" rel="stylesheet">
-
-    <!-- ionic/angularjs js -->
-    <script src="lib/jquery/dist/jquery.min.js"></script>
-    <script src="lib/ionic/js/ionic.bundle.js"></script>
-    <script src="lib/ionic-material/dist/ionic.material.js"></script>
-    <script src="lib/underscore/underscore-min.js"></script>
-    <script src="lib/moment/min/moment-with-locales.min.js"></script>
-    <script src="lib/angular-resource/angular-resource.js"></script>
-    <script src="lib/ngstorage/ngStorage.js"></script>
-    <script src="lib/formatnet/dist/formatnet.min.js"></script>
-    <script src="lib/jquery.mask.min.js"></script>
-
-    <!-- cordova script (this will be a 404 during development) -->
-    <script src="cordova.js"></script>
-    <script src="lib/Toast.js"></script>
-
-    <!-- your app's js -->
-    <script src="js/directives.js"></script>
-    <script src="js/resources.js"></script>
-    <script src="js/services.js"></script>
-    <script src="js/controllers.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/providers.js"></script>
-    <script src="js/filters.js"></script>
+    <link rel="stylesheet" href="main/styles/app.css">
   </head>
   <body ng-app="app">
 
-    <!--ion-nav-bar class="bar-dark" align-title="center">
-    </ion-nav-bar-->
+    <!-- the nav bar will be updated as we navigate between views -->
+    <!-- <ion-nav-bar> can be removed when using sidemenu (contained in menu.html) -->
+
+    <!-- the current view will be rendered in the <ion-nav-view> directive -->
     <ion-nav-view></ion-nav-view>
 
-        <!--button class="button button-fab button-energized icon flaticon-car223 call-button">
-        </button-->
+    <!-- will be a 404 during development -->
+    <script src="cordova.js"></script>
 
+    <script src="scripts/vendor.js"></script>
+
+    <script src="scripts/app.js"></script>
   </body>
 </html>

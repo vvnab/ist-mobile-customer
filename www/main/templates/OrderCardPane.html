@@ -1,0 +1,34 @@
+
+<span ng-if="card.type == 3">
+  {{card.bill.clt.name}}
+</span>
+
+<span ng-if="card.type == 8">
+  {{card.num}}
+</span>
+
+<span class="small">
+  ({{card.typeMeta.title}}<span ng-if="card.writeOff">/списание</span>)
+</span>
+
+<div class="small">
+
+  <div ng-if="card.type == 8">
+    Баланс: {{card.stay}} &#8381;
+    Начисление: {{card.reit}}{{card.isPercent ? '%' : ' &#8381;'}}
+  </div>
+
+  <div ng-if="card.type == 3">
+    <span ng-if="card.entity">
+      Счёт: &laquo;{{card.bill.rem}}&raquo;
+    </span>
+    <span ng-if="!card.entity">
+      Счёт: &laquo;{{card.bill.rem}}&raquo; <br/>
+      Остаток: {{card.bill.stay}} &#8381;
+      <span ng-if="card.bill.debt > 0">
+        Кредит: {{card.bill.debt}} &#8381;
+      </span>
+    </span>
+  </div>
+
+</div>

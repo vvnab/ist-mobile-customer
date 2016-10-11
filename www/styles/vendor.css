@@ -1,0 +1,1510 @@
+/*!
+ * Waves v0.7.5
+ * http://fian.my.id/Waves 
+ * 
+ * Copyright 2014-2016 Alfiana E. Sibuea and other contributors 
+ * Released under the MIT license 
+ * https://github.com/fians/Waves/blob/master/LICENSE 
+ */.waves-effect{position:relative;cursor:pointer;display:inline-block;overflow:hidden;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent}.waves-effect .waves-ripple{position:absolute;border-radius:50%;width:100px;height:100px;margin-top:-50px;margin-left:-50px;opacity:0;background:rgba(0,0,0,.2);background:-webkit-radial-gradient(rgba(0,0,0,.2) 0,rgba(0,0,0,.3) 40%,rgba(0,0,0,.4) 50%,rgba(0,0,0,.5) 60%,rgba(255,255,255,0) 70%);background:-o-radial-gradient(rgba(0,0,0,.2) 0,rgba(0,0,0,.3) 40%,rgba(0,0,0,.4) 50%,rgba(0,0,0,.5) 60%,rgba(255,255,255,0) 70%);background:-moz-radial-gradient(rgba(0,0,0,.2) 0,rgba(0,0,0,.3) 40%,rgba(0,0,0,.4) 50%,rgba(0,0,0,.5) 60%,rgba(255,255,255,0) 70%);background:radial-gradient(rgba(0,0,0,.2) 0,rgba(0,0,0,.3) 40%,rgba(0,0,0,.4) 50%,rgba(0,0,0,.5) 60%,rgba(255,255,255,0) 70%);-webkit-transition:all .5s ease-out;-moz-transition:all .5s ease-out;-o-transition:all .5s ease-out;transition:all .5s ease-out;-webkit-transition-property:-webkit-transform,opacity;-moz-transition-property:-moz-transform,opacity;-o-transition-property:-o-transform,opacity;transition-property:transform,opacity;-webkit-transform:scale(0) translate(0,0);-moz-transform:scale(0) translate(0,0);-ms-transform:scale(0) translate(0,0);-o-transform:scale(0) translate(0,0);transform:scale(0) translate(0,0);pointer-events:none}.waves-effect.waves-light .waves-ripple{background:rgba(255,255,255,.4);background:-webkit-radial-gradient(rgba(255,255,255,.2) 0,rgba(255,255,255,.3) 40%,rgba(255,255,255,.4) 50%,rgba(255,255,255,.5) 60%,rgba(255,255,255,0) 70%);background:-o-radial-gradient(rgba(255,255,255,.2) 0,rgba(255,255,255,.3) 40%,rgba(255,255,255,.4) 50%,rgba(255,255,255,.5) 60%,rgba(255,255,255,0) 70%);background:-moz-radial-gradient(rgba(255,255,255,.2) 0,rgba(255,255,255,.3) 40%,rgba(255,255,255,.4) 50%,rgba(255,255,255,.5) 60%,rgba(255,255,255,0) 70%);background:radial-gradient(rgba(255,255,255,.2) 0,rgba(255,255,255,.3) 40%,rgba(255,255,255,.4) 50%,rgba(255,255,255,.5) 60%,rgba(255,255,255,0) 70%)}.waves-effect.waves-classic .waves-ripple{background:rgba(0,0,0,.2)}.waves-effect.waves-classic.waves-light .waves-ripple{background:rgba(255,255,255,.4)}.waves-notransition{-webkit-transition:none!important;-moz-transition:none!important;-o-transition:none!important;transition:none!important}.waves-button,.waves-circle{-webkit-transform:translateZ(0);-moz-transform:translateZ(0);-ms-transform:translateZ(0);-o-transform:translateZ(0);transform:translateZ(0);-webkit-mask-image:-webkit-radial-gradient(circle,#fff 100%,#000 100%)}.waves-button,.waves-button:hover,.waves-button:visited,.waves-button-input{white-space:nowrap;vertical-align:middle;cursor:pointer;border:none;outline:0;color:inherit;background-color:transparent;font-size:1em;line-height:1em;text-align:center;text-decoration:none;z-index:1}.waves-button{padding:.85em 1.1em;border-radius:.2em}.waves-button-input{margin:0;padding:.85em 1.1em}.waves-input-wrapper{border-radius:.2em;vertical-align:bottom}.waves-input-wrapper.waves-button{padding:0}.waves-input-wrapper .waves-button-input{position:relative;top:0;left:0;z-index:1}.waves-circle{text-align:center;width:2.5em;height:2.5em;line-height:2.5em;border-radius:50%}.waves-float{-webkit-mask-image:none;-webkit-box-shadow:0 1px 1.5px 1px rgba(0,0,0,.12);box-shadow:0 1px 1.5px 1px rgba(0,0,0,.12);-webkit-transition:all 300ms;-moz-transition:all 300ms;-o-transition:all 300ms;transition:all 300ms}.waves-float:active{-webkit-box-shadow:0 8px 20px 1px rgba(0,0,0,.3);box-shadow:0 8px 20px 1px rgba(0,0,0,.3)}.waves-block{display:block}
+/* required styles */
+
+.leaflet-map-pane,
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow,
+.leaflet-tile-pane,
+.leaflet-tile-container,
+.leaflet-overlay-pane,
+.leaflet-shadow-pane,
+.leaflet-marker-pane,
+.leaflet-popup-pane,
+.leaflet-overlay-pane svg,
+.leaflet-zoom-box,
+.leaflet-image-layer,
+.leaflet-layer {
+	position: absolute;
+	left: 0;
+	top: 0;
+	}
+.leaflet-container {
+	overflow: hidden;
+	-ms-touch-action: none;
+	touch-action: none;
+	}
+.leaflet-tile,
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	-webkit-user-select: none;
+	   -moz-user-select: none;
+	        user-select: none;
+	-webkit-user-drag: none;
+	}
+.leaflet-marker-icon,
+.leaflet-marker-shadow {
+	display: block;
+	}
+/* map is broken in FF if you have max-width: 100% on tiles */
+.leaflet-container img {
+	max-width: none !important;
+	}
+/* stupid Android 2 doesn't understand "max-width: none" properly */
+.leaflet-container img.leaflet-image-layer {
+	max-width: 15000px !important;
+	}
+.leaflet-tile {
+	filter: inherit;
+	visibility: hidden;
+	}
+.leaflet-tile-loaded {
+	visibility: inherit;
+	}
+.leaflet-zoom-box {
+	width: 0;
+	height: 0;
+	}
+/* workaround for https://bugzilla.mozilla.org/show_bug.cgi?id=888319 */
+.leaflet-overlay-pane svg {
+	-moz-user-select: none;
+	}
+
+.leaflet-tile-pane    { z-index: 2; }
+.leaflet-objects-pane { z-index: 3; }
+.leaflet-overlay-pane { z-index: 4; }
+.leaflet-shadow-pane  { z-index: 5; }
+.leaflet-marker-pane  { z-index: 6; }
+.leaflet-popup-pane   { z-index: 7; }
+
+.leaflet-vml-shape {
+	width: 1px;
+	height: 1px;
+	}
+.lvml {
+	behavior: url(#default#VML);
+	display: inline-block;
+	position: absolute;
+	}
+
+
+/* control positioning */
+
+.leaflet-control {
+	position: relative;
+	z-index: 7;
+	pointer-events: auto;
+	}
+.leaflet-top,
+.leaflet-bottom {
+	position: absolute;
+	z-index: 1000;
+	pointer-events: none;
+	}
+.leaflet-top {
+	top: 0;
+	}
+.leaflet-right {
+	right: 0;
+	}
+.leaflet-bottom {
+	bottom: 0;
+	}
+.leaflet-left {
+	left: 0;
+	}
+.leaflet-control {
+	float: left;
+	clear: both;
+	}
+.leaflet-right .leaflet-control {
+	float: right;
+	}
+.leaflet-top .leaflet-control {
+	margin-top: 10px;
+	}
+.leaflet-bottom .leaflet-control {
+	margin-bottom: 10px;
+	}
+.leaflet-left .leaflet-control {
+	margin-left: 10px;
+	}
+.leaflet-right .leaflet-control {
+	margin-right: 10px;
+	}
+
+
+/* zoom and fade animations */
+
+.leaflet-fade-anim .leaflet-tile,
+.leaflet-fade-anim .leaflet-popup {
+	opacity: 0;
+	-webkit-transition: opacity 0.2s linear;
+	   -moz-transition: opacity 0.2s linear;
+	     -o-transition: opacity 0.2s linear;
+	        transition: opacity 0.2s linear;
+	}
+.leaflet-fade-anim .leaflet-tile-loaded,
+.leaflet-fade-anim .leaflet-map-pane .leaflet-popup {
+	opacity: 1;
+	}
+
+.leaflet-zoom-anim .leaflet-zoom-animated {
+	-webkit-transition: -webkit-transform 0.25s cubic-bezier(0,0,0.25,1);
+	   -moz-transition:    -moz-transform 0.25s cubic-bezier(0,0,0.25,1);
+	     -o-transition:      -o-transform 0.25s cubic-bezier(0,0,0.25,1);
+	        transition:         transform 0.25s cubic-bezier(0,0,0.25,1);
+	}
+.leaflet-zoom-anim .leaflet-tile,
+.leaflet-pan-anim .leaflet-tile,
+.leaflet-touching .leaflet-zoom-animated {
+	-webkit-transition: none;
+	   -moz-transition: none;
+	     -o-transition: none;
+	        transition: none;
+	}
+
+.leaflet-zoom-anim .leaflet-zoom-hide {
+	visibility: hidden;
+	}
+
+
+/* cursors */
+
+.leaflet-clickable {
+	cursor: pointer;
+	}
+.leaflet-container {
+	cursor: -webkit-grab;
+	cursor:    -moz-grab;
+	}
+.leaflet-popup-pane,
+.leaflet-control {
+	cursor: auto;
+	}
+.leaflet-dragging .leaflet-container,
+.leaflet-dragging .leaflet-clickable {
+	cursor: move;
+	cursor: -webkit-grabbing;
+	cursor:    -moz-grabbing;
+	}
+
+
+/* visual tweaks */
+
+.leaflet-container {
+	background: #ddd;
+	outline: 0;
+	}
+.leaflet-container a {
+	color: #0078A8;
+	}
+.leaflet-container a.leaflet-active {
+	outline: 2px solid orange;
+	}
+.leaflet-zoom-box {
+	border: 2px dotted #38f;
+	background: rgba(255,255,255,0.5);
+	}
+
+
+/* general typography */
+.leaflet-container {
+	font: 12px/1.5 "Helvetica Neue", Arial, Helvetica, sans-serif;
+	}
+
+
+/* general toolbar styles */
+
+.leaflet-bar {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.65);
+	border-radius: 4px;
+	}
+.leaflet-bar a,
+.leaflet-bar a:hover {
+	background-color: #fff;
+	border-bottom: 1px solid #ccc;
+	width: 26px;
+	height: 26px;
+	line-height: 26px;
+	display: block;
+	text-align: center;
+	text-decoration: none;
+	color: black;
+	}
+.leaflet-bar a,
+.leaflet-control-layers-toggle {
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	display: block;
+	}
+.leaflet-bar a:hover {
+	background-color: #f4f4f4;
+	}
+.leaflet-bar a:first-child {
+	border-top-left-radius: 4px;
+	border-top-right-radius: 4px;
+	}
+.leaflet-bar a:last-child {
+	border-bottom-left-radius: 4px;
+	border-bottom-right-radius: 4px;
+	border-bottom: none;
+	}
+.leaflet-bar a.leaflet-disabled {
+	cursor: default;
+	background-color: #f4f4f4;
+	color: #bbb;
+	}
+
+.leaflet-touch .leaflet-bar a {
+	width: 30px;
+	height: 30px;
+	line-height: 30px;
+	}
+
+
+/* zoom control */
+
+.leaflet-control-zoom-in,
+.leaflet-control-zoom-out {
+	font: bold 18px 'Lucida Console', Monaco, monospace;
+	text-indent: 1px;
+	}
+.leaflet-control-zoom-out {
+	font-size: 20px;
+	}
+
+.leaflet-touch .leaflet-control-zoom-in {
+	font-size: 22px;
+	}
+.leaflet-touch .leaflet-control-zoom-out {
+	font-size: 24px;
+	}
+
+
+/* layers control */
+
+.leaflet-control-layers {
+	box-shadow: 0 1px 5px rgba(0,0,0,0.4);
+	background: #fff;
+	border-radius: 5px;
+	}
+.leaflet-control-layers-toggle {
+	background-image: url(images/layers.png);
+	width: 36px;
+	height: 36px;
+	}
+.leaflet-retina .leaflet-control-layers-toggle {
+	background-image: url(images/layers-2x.png);
+	background-size: 26px 26px;
+	}
+.leaflet-touch .leaflet-control-layers-toggle {
+	width: 44px;
+	height: 44px;
+	}
+.leaflet-control-layers .leaflet-control-layers-list,
+.leaflet-control-layers-expanded .leaflet-control-layers-toggle {
+	display: none;
+	}
+.leaflet-control-layers-expanded .leaflet-control-layers-list {
+	display: block;
+	position: relative;
+	}
+.leaflet-control-layers-expanded {
+	padding: 6px 10px 6px 6px;
+	color: #333;
+	background: #fff;
+	}
+.leaflet-control-layers-selector {
+	margin-top: 2px;
+	position: relative;
+	top: 1px;
+	}
+.leaflet-control-layers label {
+	display: block;
+	}
+.leaflet-control-layers-separator {
+	height: 0;
+	border-top: 1px solid #ddd;
+	margin: 5px -10px 5px -6px;
+	}
+
+
+/* attribution and scale controls */
+
+.leaflet-container .leaflet-control-attribution {
+	background: #fff;
+	background: rgba(255, 255, 255, 0.7);
+	margin: 0;
+	}
+.leaflet-control-attribution,
+.leaflet-control-scale-line {
+	padding: 0 5px;
+	color: #333;
+	}
+.leaflet-control-attribution a {
+	text-decoration: none;
+	}
+.leaflet-control-attribution a:hover {
+	text-decoration: underline;
+	}
+.leaflet-container .leaflet-control-attribution,
+.leaflet-container .leaflet-control-scale {
+	font-size: 11px;
+	}
+.leaflet-left .leaflet-control-scale {
+	margin-left: 5px;
+	}
+.leaflet-bottom .leaflet-control-scale {
+	margin-bottom: 5px;
+	}
+.leaflet-control-scale-line {
+	border: 2px solid #777;
+	border-top: none;
+	line-height: 1.1;
+	padding: 2px 5px 1px;
+	font-size: 11px;
+	white-space: nowrap;
+	overflow: hidden;
+	-moz-box-sizing: content-box;
+	     box-sizing: content-box;
+
+	background: #fff;
+	background: rgba(255, 255, 255, 0.5);
+	}
+.leaflet-control-scale-line:not(:first-child) {
+	border-top: 2px solid #777;
+	border-bottom: none;
+	margin-top: -2px;
+	}
+.leaflet-control-scale-line:not(:first-child):not(:last-child) {
+	border-bottom: 2px solid #777;
+	}
+
+.leaflet-touch .leaflet-control-attribution,
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	box-shadow: none;
+	}
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+	border: 2px solid rgba(0,0,0,0.2);
+	background-clip: padding-box;
+	}
+
+
+/* popup */
+
+.leaflet-popup {
+	position: absolute;
+	text-align: center;
+	}
+.leaflet-popup-content-wrapper {
+	padding: 1px;
+	text-align: left;
+	border-radius: 12px;
+	}
+.leaflet-popup-content {
+	margin: 13px 19px;
+	line-height: 1.4;
+	}
+.leaflet-popup-content p {
+	margin: 18px 0;
+	}
+.leaflet-popup-tip-container {
+	margin: 0 auto;
+	width: 40px;
+	height: 20px;
+	position: relative;
+	overflow: hidden;
+	}
+.leaflet-popup-tip {
+	width: 17px;
+	height: 17px;
+	padding: 1px;
+
+	margin: -10px auto 0;
+
+	-webkit-transform: rotate(45deg);
+	   -moz-transform: rotate(45deg);
+	    -ms-transform: rotate(45deg);
+	     -o-transform: rotate(45deg);
+	        transform: rotate(45deg);
+	}
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+	background: white;
+
+	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
+	}
+.leaflet-container a.leaflet-popup-close-button {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 4px 4px 0 0;
+	text-align: center;
+	width: 18px;
+	height: 14px;
+	font: 16px/14px Tahoma, Verdana, sans-serif;
+	color: #c3c3c3;
+	text-decoration: none;
+	font-weight: bold;
+	background: transparent;
+	}
+.leaflet-container a.leaflet-popup-close-button:hover {
+	color: #999;
+	}
+.leaflet-popup-scrolled {
+	overflow: auto;
+	border-bottom: 1px solid #ddd;
+	border-top: 1px solid #ddd;
+	}
+
+.leaflet-oldie .leaflet-popup-content-wrapper {
+	zoom: 1;
+	}
+.leaflet-oldie .leaflet-popup-tip {
+	width: 24px;
+	margin: 0 auto;
+
+	-ms-filter: "progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678)";
+	filter: progid:DXImageTransform.Microsoft.Matrix(M11=0.70710678, M12=0.70710678, M21=-0.70710678, M22=0.70710678);
+	}
+.leaflet-oldie .leaflet-popup-tip-container {
+	margin-top: -1px;
+	}
+
+.leaflet-oldie .leaflet-control-zoom,
+.leaflet-oldie .leaflet-control-layers,
+.leaflet-oldie .leaflet-popup-content-wrapper,
+.leaflet-oldie .leaflet-popup-tip {
+	border: 1px solid #999;
+	}
+
+
+/* div icon */
+
+.leaflet-div-icon {
+	background: #fff;
+	border: 1px solid #666;
+	}
+
+/**
+ * angular-motion
+ * @version v0.4.4 - 2016-03-31
+ * @link http://mgcrea.github.io/angular-motion
+ * @author Olivier Louvignes <olivier@mg-crea.com> (https://github.com/mgcrea)
+ * @license MIT License, http://www.opensource.org/licenses/MIT
+ */
+.am-collapse {
+  -webkit-animation-duration: 0.3s;
+          animation-duration: 0.3s;
+  -webkit-animation-timing-function: ease;
+          animation-timing-function: ease;
+  -webkit-animation-fill-mode: backwards;
+          animation-fill-mode: backwards;
+  overflow: hidden;
+  opacity: 1;
+}
+.am-collapse.am-collapse-add,
+.am-collapse.ng-hide-remove,
+.am-collapse.ng-move {
+  -webkit-animation-name: expand;
+          animation-name: expand;
+}
+.am-collapse.am-collapse-remove,
+.am-collapse.ng-hide {
+  -webkit-animation-name: collapse;
+          animation-name: collapse;
+}
+.am-collapse.ng-enter {
+  visibility: hidden;
+  -webkit-animation-name: expand;
+          animation-name: expand;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-collapse.ng-enter.ng-enter-active {
+  visibility: visible;
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-collapse.ng-leave {
+  -webkit-animation-name: collapse;
+          animation-name: collapse;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-collapse.ng-leave.ng-leave-active {
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+@-webkit-keyframes expand {
+  from {
+    max-height: 0px;
+  }
+  to {
+    max-height: 500px;
+  }
+}
+@keyframes expand {
+  from {
+    max-height: 0px;
+  }
+  to {
+    max-height: 500px;
+  }
+}
+@-webkit-keyframes collapse {
+  from {
+    max-height: 500px;
+  }
+  to {
+    max-height: 0px;
+  }
+}
+@keyframes collapse {
+  from {
+    max-height: 500px;
+  }
+  to {
+    max-height: 0px;
+  }
+}
+.panel-collapse.am-collapse.in-remove {
+  -webkit-animation-name: collapse;
+          animation-name: collapse;
+  display: block;
+}
+.panel-collapse.am-collapse.in-add {
+  -webkit-animation-name: expand;
+          animation-name: expand;
+}
+
+.am-fade {
+  -webkit-animation-duration: 0.3s;
+          animation-duration: 0.3s;
+  -webkit-animation-timing-function: linear;
+          animation-timing-function: linear;
+  -webkit-animation-fill-mode: backwards;
+          animation-fill-mode: backwards;
+  opacity: 1;
+}
+.am-fade.am-fade-add,
+.am-fade.ng-hide-remove,
+.am-fade.ng-move {
+  -webkit-animation-name: fadeIn;
+          animation-name: fadeIn;
+}
+.am-fade.am-fade-remove,
+.am-fade.ng-hide {
+  -webkit-animation-name: fadeOut;
+          animation-name: fadeOut;
+}
+.am-fade.ng-enter {
+  visibility: hidden;
+  -webkit-animation-name: fadeIn;
+          animation-name: fadeIn;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-fade.ng-enter.ng-enter-active {
+  visibility: visible;
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-fade.ng-leave {
+  -webkit-animation-name: fadeOut;
+          animation-name: fadeOut;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-fade.ng-leave.ng-leave-active {
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+@-webkit-keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+.tab-pane.am-fade.active-remove {
+  display: none !important;
+}
+.tab-pane.am-fade.active-add {
+  -webkit-animation-name: fadeIn;
+          animation-name: fadeIn;
+}
+.modal-backdrop.am-fade,
+.aside-backdrop.am-fade {
+  background: rgba(0, 0, 0, 0.5);
+  -webkit-animation-duration: 0.15s;
+          animation-duration: 0.15s;
+}
+
+.am-fade-and-scale {
+  -webkit-animation-duration: 0.3s;
+          animation-duration: 0.3s;
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
+  -webkit-animation-fill-mode: backwards;
+          animation-fill-mode: backwards;
+}
+.am-fade-and-scale.ng-enter,
+.am-fade-and-scale.am-fade-and-scale-add,
+.am-fade-and-scale.ng-hide-remove,
+.am-fade-and-scale.ng-move {
+  -webkit-animation-name: fadeAndScaleIn;
+          animation-name: fadeAndScaleIn;
+}
+.am-fade-and-scale.ng-leave,
+.am-fade-and-scale.am-fade-and-scale-remove,
+.am-fade-and-scale.ng-hide {
+  -webkit-animation-name: fadeAndScaleOut;
+          animation-name: fadeAndScaleOut;
+}
+.am-fade-and-scale.ng-enter {
+  visibility: hidden;
+  -webkit-animation-name: fadeAndScaleIn;
+          animation-name: fadeAndScaleIn;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-fade-and-scale.ng-enter.ng-enter-active {
+  visibility: visible;
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-fade-and-scale.ng-leave {
+  -webkit-animation-name: fadeAndScaleOut;
+          animation-name: fadeAndScaleOut;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-fade-and-scale.ng-leave.ng-leave-active {
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+@-webkit-keyframes fadeAndScaleIn {
+  from {
+    opacity: 0;
+    -webkit-transform: scale(0.7);
+            transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeAndScaleIn {
+  from {
+    opacity: 0;
+    -webkit-transform: scale(0.7);
+            transform: scale(0.7);
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes fadeAndScaleOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    -webkit-transform: scale(0.7);
+            transform: scale(0.7);
+  }
+}
+@keyframes fadeAndScaleOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    -webkit-transform: scale(0.7);
+            transform: scale(0.7);
+  }
+}
+
+.am-fade-and-slide-top {
+  -webkit-animation-duration: 0.3s;
+          animation-duration: 0.3s;
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
+  -webkit-animation-fill-mode: backwards;
+          animation-fill-mode: backwards;
+}
+.am-fade-and-slide-top.am-fade-and-slide-top-add,
+.am-fade-and-slide-top.ng-hide-remove,
+.am-fade-and-slide-top.ng-move {
+  -webkit-animation-name: fadeAndSlideFromTop;
+          animation-name: fadeAndSlideFromTop;
+}
+.am-fade-and-slide-top.am-fade-and-slide-top-remove,
+.am-fade-and-slide-top.ng-hide {
+  -webkit-animation-name: fadeAndSlideToTop;
+          animation-name: fadeAndSlideToTop;
+}
+.am-fade-and-slide-top.ng-enter {
+  visibility: hidden;
+  -webkit-animation-name: fadeAndSlideFromTop;
+          animation-name: fadeAndSlideFromTop;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-fade-and-slide-top.ng-enter.ng-enter-active {
+  visibility: visible;
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-fade-and-slide-top.ng-leave {
+  -webkit-animation-name: fadeAndSlideToTop;
+          animation-name: fadeAndSlideToTop;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-fade-and-slide-top.ng-leave.ng-leave-active {
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-fade-and-slide-right {
+  -webkit-animation-duration: 0.3s;
+          animation-duration: 0.3s;
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
+  -webkit-animation-fill-mode: backwards;
+          animation-fill-mode: backwards;
+}
+.am-fade-and-slide-right.am-fade-and-slide-right-add,
+.am-fade-and-slide-right.ng-hide-remove,
+.am-fade-and-slide-right.ng-move {
+  -webkit-animation-name: fadeAndSlideFromRight;
+          animation-name: fadeAndSlideFromRight;
+}
+.am-fade-and-slide-right.am-fade-and-slide-right-remove,
+.am-fade-and-slide-right.ng-hide {
+  -webkit-animation-name: fadeAndSlideToRight;
+          animation-name: fadeAndSlideToRight;
+}
+.am-fade-and-slide-right.ng-enter {
+  visibility: hidden;
+  -webkit-animation-name: fadeAndSlideFromRight;
+          animation-name: fadeAndSlideFromRight;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-fade-and-slide-right.ng-enter.ng-enter-active {
+  visibility: visible;
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-fade-and-slide-right.ng-leave {
+  -webkit-animation-name: fadeAndSlideToRight;
+          animation-name: fadeAndSlideToRight;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-fade-and-slide-right.ng-leave.ng-leave-active {
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-fade-and-slide-bottom {
+  -webkit-animation-duration: 0.3s;
+          animation-duration: 0.3s;
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
+  -webkit-animation-fill-mode: backwards;
+          animation-fill-mode: backwards;
+}
+.am-fade-and-slide-bottom.am-fade-and-slide-bottom-add,
+.am-fade-and-slide-bottom.ng-hide-remove,
+.am-fade-and-slide-bottom.ng-move {
+  -webkit-animation-name: fadeAndSlideFromBottom;
+          animation-name: fadeAndSlideFromBottom;
+}
+.am-fade-and-slide-bottom.am-fade-and-slide-bottom-remove,
+.am-fade-and-slide-bottom.ng-hide {
+  -webkit-animation-name: fadeAndSlideToBottom;
+          animation-name: fadeAndSlideToBottom;
+}
+.am-fade-and-slide-bottom.ng-enter {
+  visibility: hidden;
+  -webkit-animation-name: fadeAndSlideFromBottom;
+          animation-name: fadeAndSlideFromBottom;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-fade-and-slide-bottom.ng-enter.ng-enter-active {
+  visibility: visible;
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-fade-and-slide-bottom.ng-leave {
+  -webkit-animation-name: fadeAndSlideToBottom;
+          animation-name: fadeAndSlideToBottom;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-fade-and-slide-bottom.ng-leave.ng-leave-active {
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-fade-and-slide-left {
+  -webkit-animation-duration: 0.3s;
+          animation-duration: 0.3s;
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
+  -webkit-animation-fill-mode: backwards;
+          animation-fill-mode: backwards;
+}
+.am-fade-and-slide-left.am-fade-and-slide-left-add,
+.am-fade-and-slide-left.ng-hide-remove,
+.am-fade-and-slide-left.ng-move {
+  -webkit-animation-fill-mode: backwards;
+          animation-fill-mode: backwards;
+  -webkit-animation-name: fadeAndSlideFromLeft;
+          animation-name: fadeAndSlideFromLeft;
+}
+.am-fade-and-slide-left.am-fade-and-slide-left-remove,
+.am-fade-and-slide-left.ng-hide {
+  -webkit-animation-name: fadeAndSlideToLeft;
+          animation-name: fadeAndSlideToLeft;
+}
+.am-fade-and-slide-left.ng-enter {
+  visibility: hidden;
+  -webkit-animation-name: fadeAndSlideFromLeft;
+          animation-name: fadeAndSlideFromLeft;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-fade-and-slide-left.ng-enter.ng-enter-active {
+  visibility: visible;
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-fade-and-slide-left.ng-leave {
+  -webkit-animation-name: fadeAndSlideToLeft;
+          animation-name: fadeAndSlideToLeft;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-fade-and-slide-left.ng-leave.ng-leave-active {
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+@-webkit-keyframes fadeAndSlideFromTop {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(-20%);
+            transform: translateY(-20%);
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeAndSlideFromTop {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(-20%);
+            transform: translateY(-20%);
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes fadeAndSlideToTop {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    -webkit-transform: translateY(-20%);
+            transform: translateY(-20%);
+  }
+}
+@keyframes fadeAndSlideToTop {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    -webkit-transform: translateY(-20%);
+            transform: translateY(-20%);
+  }
+}
+@-webkit-keyframes fadeAndSlideFromRight {
+  from {
+    opacity: 0;
+    -webkit-transform: translateX(20%);
+            transform: translateX(20%);
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeAndSlideFromRight {
+  from {
+    opacity: 0;
+    -webkit-transform: translateX(20%);
+            transform: translateX(20%);
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes fadeAndSlideToRight {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    -webkit-transform: translateX(20%);
+            transform: translateX(20%);
+  }
+}
+@keyframes fadeAndSlideToRight {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    -webkit-transform: translateX(20%);
+            transform: translateX(20%);
+  }
+}
+@-webkit-keyframes fadeAndSlideFromBottom {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(20%);
+            transform: translateY(20%);
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeAndSlideFromBottom {
+  from {
+    opacity: 0;
+    -webkit-transform: translateY(20%);
+            transform: translateY(20%);
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes fadeAndSlideToBottom {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    -webkit-transform: translateY(20%);
+            transform: translateY(20%);
+  }
+}
+@keyframes fadeAndSlideToBottom {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    -webkit-transform: translateY(20%);
+            transform: translateY(20%);
+  }
+}
+@-webkit-keyframes fadeAndSlideFromLeft {
+  from {
+    opacity: 0;
+    -webkit-transform: translateX(-20%);
+            transform: translateX(-20%);
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fadeAndSlideFromLeft {
+  from {
+    opacity: 0;
+    -webkit-transform: translateX(-20%);
+            transform: translateX(-20%);
+  }
+  to {
+    opacity: 1;
+  }
+}
+@-webkit-keyframes fadeAndSlideToLeft {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    -webkit-transform: translateX(-20%);
+            transform: translateX(-20%);
+  }
+}
+@keyframes fadeAndSlideToLeft {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    -webkit-transform: translateX(-20%);
+            transform: translateX(-20%);
+  }
+}
+
+.am-flip-x {
+  -webkit-animation-duration: 0.4s;
+          animation-duration: 0.4s;
+  -webkit-animation-timing-function: ease;
+          animation-timing-function: ease;
+  -webkit-animation-fill-mode: backwards;
+          animation-fill-mode: backwards;
+}
+.am-flip-x.am-flip-x-add,
+.am-flip-x.ng-hide-remove,
+.am-flip-x.ng-move {
+  -webkit-animation-name: flipInXBounce;
+          animation-name: flipInXBounce;
+}
+.am-flip-x.am-flip-x-remove,
+.am-flip-x.ng-hide {
+  -webkit-animation-name: flipOutX;
+          animation-name: flipOutX;
+}
+.am-flip-x.ng-enter {
+  visibility: hidden;
+  -webkit-animation-name: flipInXBounce;
+          animation-name: flipInXBounce;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-flip-x.ng-enter.ng-enter-active {
+  visibility: visible;
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-flip-x.ng-leave {
+  -webkit-animation-name: flipOutX;
+          animation-name: flipOutX;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-flip-x.ng-leave.ng-leave-active {
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-flip-x-linear {
+  -webkit-animation-duration: 0.4s;
+          animation-duration: 0.4s;
+  -webkit-animation-timing-function: ease;
+          animation-timing-function: ease;
+  -webkit-animation-fill-mode: backwards;
+          animation-fill-mode: backwards;
+}
+.am-flip-x-linear.am-flip-x-add,
+.am-flip-x-linear.ng-hide-remove,
+.am-flip-x-linear.ng-move {
+  -webkit-animation-name: flipInX;
+          animation-name: flipInX;
+}
+.am-flip-x-linear.am-flip-x-remove,
+.am-flip-x-linear.ng-hide {
+  -webkit-animation-name: flipOutX;
+          animation-name: flipOutX;
+}
+.am-flip-x-linear.ng-enter {
+  visibility: hidden;
+  -webkit-animation-name: flipInX;
+          animation-name: flipInX;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-flip-x-linear.ng-enter.ng-enter-active {
+  visibility: visible;
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-flip-x-linear.ng-leave {
+  -webkit-animation-name: flipOutX;
+          animation-name: flipOutX;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-flip-x-linear.ng-leave.ng-leave-active {
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+@-webkit-keyframes flipInX {
+  from {
+    opacity: 0;
+    -webkit-transform: perspective(400px) rotateX(90deg);
+            transform: perspective(400px) rotateX(90deg);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: perspective(400px) rotateX(0deg);
+            transform: perspective(400px) rotateX(0deg);
+  }
+}
+@keyframes flipInX {
+  from {
+    opacity: 0;
+    -webkit-transform: perspective(400px) rotateX(90deg);
+            transform: perspective(400px) rotateX(90deg);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: perspective(400px) rotateX(0deg);
+            transform: perspective(400px) rotateX(0deg);
+  }
+}
+@-webkit-keyframes flipInXBounce {
+  from {
+    opacity: 0;
+    -webkit-transform: perspective(400px) rotateX(90deg);
+            transform: perspective(400px) rotateX(90deg);
+  }
+  40% {
+    -webkit-transform: perspective(400px) rotateX(-10deg);
+            transform: perspective(400px) rotateX(-10deg);
+  }
+  70% {
+    -webkit-transform: perspective(400px) rotateX(10deg);
+            transform: perspective(400px) rotateX(10deg);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: perspective(400px) rotateX(0deg);
+            transform: perspective(400px) rotateX(0deg);
+  }
+}
+@keyframes flipInXBounce {
+  from {
+    opacity: 0;
+    -webkit-transform: perspective(400px) rotateX(90deg);
+            transform: perspective(400px) rotateX(90deg);
+  }
+  40% {
+    -webkit-transform: perspective(400px) rotateX(-10deg);
+            transform: perspective(400px) rotateX(-10deg);
+  }
+  70% {
+    -webkit-transform: perspective(400px) rotateX(10deg);
+            transform: perspective(400px) rotateX(10deg);
+  }
+  to {
+    opacity: 1;
+    -webkit-transform: perspective(400px) rotateX(0deg);
+            transform: perspective(400px) rotateX(0deg);
+  }
+}
+@-webkit-keyframes flipOutX {
+  from {
+    opacity: 1;
+    -webkit-transform: perspective(400px) rotateX(0deg);
+            transform: perspective(400px) rotateX(0deg);
+  }
+  to {
+    opacity: 0;
+    -webkit-transform: perspective(400px) rotateX(90deg);
+            transform: perspective(400px) rotateX(90deg);
+  }
+}
+@keyframes flipOutX {
+  from {
+    opacity: 1;
+    -webkit-transform: perspective(400px) rotateX(0deg);
+            transform: perspective(400px) rotateX(0deg);
+  }
+  to {
+    opacity: 0;
+    -webkit-transform: perspective(400px) rotateX(90deg);
+            transform: perspective(400px) rotateX(90deg);
+  }
+}
+
+.am-slide-top {
+  -webkit-animation-duration: 0.3s;
+          animation-duration: 0.3s;
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
+  -webkit-animation-fill-mode: backwards;
+          animation-fill-mode: backwards;
+}
+.am-slide-top.am-slide-top-add,
+.am-slide-top.ng-hide-remove,
+.am-slide-top.ng-move {
+  -webkit-animation-name: slideFromTop;
+          animation-name: slideFromTop;
+}
+.am-slide-top.am-slide-top-remove,
+.am-slide-top.ng-hide {
+  -webkit-animation-name: slideToTop;
+          animation-name: slideToTop;
+}
+.am-slide-top.ng-enter {
+  visibility: hidden;
+  -webkit-animation-name: slideFromTop;
+          animation-name: slideFromTop;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-slide-top.ng-enter.ng-enter-active {
+  visibility: visible;
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-slide-top.ng-leave {
+  -webkit-animation-name: slideToTop;
+          animation-name: slideToTop;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-slide-top.ng-leave.ng-leave-active {
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-slide-right {
+  -webkit-animation-duration: 0.3s;
+          animation-duration: 0.3s;
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
+  -webkit-animation-fill-mode: backwards;
+          animation-fill-mode: backwards;
+}
+.am-slide-right.am-slide-right-add,
+.am-slide-right.ng-hide-remove,
+.am-slide-right.ng-move {
+  -webkit-animation-name: slideFromRight;
+          animation-name: slideFromRight;
+}
+.am-slide-right.am-slide-right-remove,
+.am-slide-right.ng-hide {
+  -webkit-animation-name: slideToRight;
+          animation-name: slideToRight;
+}
+.am-slide-right.ng-enter {
+  visibility: hidden;
+  -webkit-animation-name: slideFromRight;
+          animation-name: slideFromRight;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-slide-right.ng-enter.ng-enter-active {
+  visibility: visible;
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-slide-right.ng-leave {
+  -webkit-animation-name: slideToRight;
+          animation-name: slideToRight;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-slide-right.ng-leave.ng-leave-active {
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-slide-bottom {
+  -webkit-animation-duration: 0.3s;
+          animation-duration: 0.3s;
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
+  -webkit-animation-fill-mode: backwards;
+          animation-fill-mode: backwards;
+}
+.am-slide-bottom.am-slide-bottom-add,
+.am-slide-bottom.ng-hide-remove,
+.am-slide-bottom.ng-move {
+  -webkit-animation-name: slideFromBottom;
+          animation-name: slideFromBottom;
+}
+.am-slide-bottom.am-slide-bottom-remove,
+.am-slide-bottom.ng-hide {
+  -webkit-animation-name: slideToBottom;
+          animation-name: slideToBottom;
+}
+.am-slide-bottom.ng-enter {
+  visibility: hidden;
+  -webkit-animation-name: slideFromBottom;
+          animation-name: slideFromBottom;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-slide-bottom.ng-enter.ng-enter-active {
+  visibility: visible;
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-slide-bottom.ng-leave {
+  -webkit-animation-name: slideToBottom;
+          animation-name: slideToBottom;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-slide-bottom.ng-leave.ng-leave-active {
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-slide-left {
+  -webkit-animation-duration: 0.3s;
+          animation-duration: 0.3s;
+  -webkit-animation-timing-function: ease-in-out;
+          animation-timing-function: ease-in-out;
+  -webkit-animation-fill-mode: backwards;
+          animation-fill-mode: backwards;
+}
+.am-slide-left.am-slide-left-add,
+.am-slide-left.ng-hide-remove,
+.am-slide-left.ng-move {
+  -webkit-animation-name: slideFromLeft;
+          animation-name: slideFromLeft;
+}
+.am-slide-left.am-slide-left-remove,
+.am-slide-left.ng-hide {
+  -webkit-animation-name: slideToLeft;
+          animation-name: slideToLeft;
+}
+.am-slide-left.ng-enter {
+  visibility: hidden;
+  -webkit-animation-name: slideFromLeft;
+          animation-name: slideFromLeft;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-slide-left.ng-enter.ng-enter-active {
+  visibility: visible;
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+.am-slide-left.ng-leave {
+  -webkit-animation-name: slideToLeft;
+          animation-name: slideToLeft;
+  -webkit-animation-play-state: paused;
+          animation-play-state: paused;
+}
+.am-slide-left.ng-leave.ng-leave-active {
+  -webkit-animation-play-state: running;
+          animation-play-state: running;
+}
+@-webkit-keyframes slideFromTop {
+  from {
+    -webkit-transform: translateY(-100%);
+            transform: translateY(-100%);
+  }
+}
+@keyframes slideFromTop {
+  from {
+    -webkit-transform: translateY(-100%);
+            transform: translateY(-100%);
+  }
+}
+@-webkit-keyframes slideToTop {
+  to {
+    -webkit-transform: translateY(-100%);
+            transform: translateY(-100%);
+  }
+}
+@keyframes slideToTop {
+  to {
+    -webkit-transform: translateY(-100%);
+            transform: translateY(-100%);
+  }
+}
+@-webkit-keyframes slideFromRight {
+  from {
+    -webkit-transform: translateX(100%);
+            transform: translateX(100%);
+  }
+}
+@keyframes slideFromRight {
+  from {
+    -webkit-transform: translateX(100%);
+            transform: translateX(100%);
+  }
+}
+@-webkit-keyframes slideToRight {
+  to {
+    -webkit-transform: translateX(100%);
+            transform: translateX(100%);
+  }
+}
+@keyframes slideToRight {
+  to {
+    -webkit-transform: translateX(100%);
+            transform: translateX(100%);
+  }
+}
+@-webkit-keyframes slideFromBottom {
+  from {
+    -webkit-transform: translateY(100%);
+            transform: translateY(100%);
+  }
+}
+@keyframes slideFromBottom {
+  from {
+    -webkit-transform: translateY(100%);
+            transform: translateY(100%);
+  }
+}
+@-webkit-keyframes slideToBottom {
+  to {
+    -webkit-transform: translateY(100%);
+            transform: translateY(100%);
+  }
+}
+@keyframes slideToBottom {
+  to {
+    -webkit-transform: translateY(100%);
+            transform: translateY(100%);
+  }
+}
+@-webkit-keyframes slideFromLeft {
+  from {
+    -webkit-transform: translateX(-100%);
+            transform: translateX(-100%);
+  }
+}
+@keyframes slideFromLeft {
+  from {
+    -webkit-transform: translateX(-100%);
+            transform: translateX(-100%);
+  }
+}
+@-webkit-keyframes slideToLeft {
+  to {
+    -webkit-transform: translateX(-100%);
+            transform: translateX(-100%);
+  }
+}
+@keyframes slideToLeft {
+  to {
+    -webkit-transform: translateX(-100%);
+            transform: translateX(-100%);
+  }
+}

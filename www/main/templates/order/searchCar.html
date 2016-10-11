@@ -1,0 +1,25 @@
+<div class="order-card-current search">
+
+  <ion-content>
+    <div class="img-holder">
+      <img src="main/assets/images/910-matchcar.png" alt="" />
+    </div>
+    <div class="content">
+      Подождите немного
+      <br> Мы ищем свободный автомобиль для вашего заказа...
+    </div>
+    <div class="load">
+      <ion-spinner icon="android"></ion-spinner>
+    </div>
+  </ion-content>
+
+  <div class="actions">
+    <div class="row">
+      <div class="col col-50 col-offset-25">
+        <button class="button" ng-class="{disabled: !order.canCancel()}" ng-click="orderCancel()">
+          Отменить заказ
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

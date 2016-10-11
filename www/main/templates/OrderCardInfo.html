@@ -1,0 +1,116 @@
+<ion-view can-swipe-back="false" view-title="Карта">
+  <ion-content>
+
+    <div class="card">
+      <div class="item item-divider">
+        <h2>
+          <i class="icon {{card.typeMeta.icon}}" ></i>
+          <span ng-if="card.type == 8">
+            <!-- <i class="ion-ios-plus-outline" ng-if="!card.writeOff"></i> -->
+            <!-- <i class="ion-ios-minus-outline" ng-if="card.writeOff"></i> -->
+            <i class="material-icons vertical-align-bottom" ng-if="!app.card.writeOff">&#xE148;</i>
+            <i class="material-icons vertical-align-bottom" ng-if="app.card.writeOff">&#xE15D;</i>
+          </span>
+          {{card.num}}
+        </h2>
+      </div>
+
+      <div class="item item-text-wrap item-body" ng-if="card.type == 3">
+        <dl class="auto-info">
+
+          <dt>
+            Тип карты:
+          </dt>
+          <dd>
+            {{card.typeMeta.title}}
+          </dd>
+
+          <dt>
+            Владелец:
+          </dt>
+          <dd>
+            {{card.bill.clt.name}}
+          </dd>
+
+          <dt>
+            Счёт:
+          </dt>
+          <dd>
+            "{{card.bill.rem}}"
+          </dd>
+
+          <span ng-if="!card.entity">
+            <dt>
+              Баланс:
+            </dt>
+            <dd>
+              {{card.bill.stay}}р.
+            </dd>
+
+            <!-- <dt>
+              Кредит:
+            </dt>
+            <dd>
+              {{card.bill.debt}}р.
+            </dd> -->
+          </span>
+
+          <dt>
+            Примечание:
+          </dt>
+          <dd>
+            <i class="small">{{card.rem}}</i>
+          </dd>
+
+        </dl>
+      </div>
+
+      <div class="item item-text-wrap item-body" ng-if="card.type == 8">
+        <dl class="auto-info">
+
+          <dt>
+            Тип карты:
+          </dt>
+          <dd>
+            {{card.typeMeta.title}}
+          </dd>
+
+          <dt>
+            Остаток:
+          </dt>
+          <dd>
+            {{card.stay}} &#8381;
+          </dd>
+
+          <dt>
+            Начисление:
+          </dt>
+          <dd>
+            {{card.reit}}{{card.fl_prc ? '%' : ' &#8381;'}}
+          </dd>
+
+          <dt>
+            Примечание:
+          </dt>
+          <dd>
+            <i class="small">{{card.rem}}</i>
+          </dd>
+
+        </dl>
+        <div ng-if="card.canWriteOff">
+          <br>
+          <ion-checkbox ng-model="card.writeOff">Использовать накопление</ion-checkbox>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col">
+        <button class="button button-block" ng-click="orderSetCard()">
+          Использовать карту
+        </button>
+      </div>
+    </div>
+
+  </ion-content>
+</ion-view>

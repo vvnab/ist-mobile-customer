@@ -1,0 +1,35 @@
+<ion-view can-swipe-back="false" view-title="Адрес на карте">
+	<ion-content  scroll="false" data-tap-disabled="true">
+
+		<div class="head-box-shadow">
+
+		</div>
+   <div class="map-container">
+   		<leaflet defaults="map.defaults"  markers="markers" height="100%" width="100%"></leaflet>
+   </div>
+
+	</ion-content>
+		<div class="bottom-block">
+	    <div class="info big" ng-if="!loadingAdresses && !geolocationAdds">
+	      <i class="icon material-icons" ng-click="gotoCards()">&#xE88E;</i>
+	      Отметьте на карте, <br> {{ id == 0 ? 'откуда вас забрать' : 'куда поедем'}}
+			</div>
+			<div ng-if="!loadingAdresses && geolocationAdds" class="select-geo-adress" ng-click="addrSelect(geolocationAdds[0])">
+				<div class="title">
+					Выбрать адрес
+				</div>
+				<div class="content item-icon-right">
+					<span>
+						{{ geolocationAdds[0].text() }}
+					</span>
+					<i class="material-icons icon icon-left">&#xE5CA;</i>
+				</div>
+
+			</div>
+			<div ng-if="loadingAdresses" class="loading">
+	      <ion-spinner icon="android"></ion-spinner>
+	      Секундочку! Идет поиск объектов поблизости
+	    </div>
+
+	  </div>
+</ion-view>

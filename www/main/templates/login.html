@@ -1,0 +1,108 @@
+<ion-view can-swipe-back="false" view-title="Вход/регистрация">
+	<!-- <ion-header-bar class="bar-header bar-light" align-title="center">
+		<h1 class="title">Вход/регистрация</h1>
+	</ion-header-bar> -->
+	<ion-content style="height:100% !important;">
+		<div class="login-page">
+
+			<div class="logo-container">
+				<img src="main/assets/images/100-tv-logo-red.png" alt="">
+			</div>
+
+			<div class="main-buttons-group">
+
+				<div class="icon-holder" ng-class="!askPrice ? 'selected' : ''" ng-click="askPrice=false">
+					<!-- <i class="material-icons">account_circle</i> -->
+					<div class="icon enter">
+						<img ng-if="!askPrice" src="main/assets/images/vhod-register-active.png" alt="" />
+						<img ng-if="askPrice" src="main/assets/images/vhod-register-icon.png" alt="" />
+					</div>
+					<div class="text">
+						Вход / <br> Регистрация
+					</div>
+				</div>
+				<div class="icon-holder " ng-click="askPrice=true" ng-class="askPrice ? 'selected' : ''">
+					<!-- <i class="material-icons">exposure</i> -->
+					<div class="icon cost">
+						<img ng-if="!askPrice" src="main/assets/images/uznat-stoimost-icon.png" alt="" />
+						<img ng-if="askPrice" src="main/assets/images/uznat-stoimost-active.png" alt="" />
+					</div>
+					<div class="text">
+						Узнать <br> стоимость
+					</div>
+				</div>
+			</div>
+
+			<!-- <div class="list">
+			<div class="item item-divider">
+				<div style="margin-top: -0.8em">
+					Вход / Регистрация
+				</div>
+			</div>
+			<form autocomplete="off">
+				<label class="item item-input item-floating-label phonenumber">
+				<span class="input-label">Телефон</span>
+				<i class="material-icons placeholder-icon">phone</i>
+				<input type="tel" autocomplete="off" ng-model="user.lgn" input-mask/>
+			</label>
+				<label class="item item-input item-floating-label pincode">
+				<span class="input-label">Пароль или PIN код</span>
+				<i class="material-icons placeholder-icon">lock</i>
+				<input type="password" autocomplete="off" placeholder="Пароль или PIN код" ng-model="user.pin" />
+			</label>
+			</form>
+				-->
+
+
+
+			<!-- сообщения об ошибке
+		<div class="item- assertive text-center" ng-if="user.error">
+			<br/> {{user.error}}
+		</div>
+		<!-- END OF сообщения об ошибке -->
+
+		<form class="login-form" autocomplete='off' ng-submit="doLogin()" ng-show="!askPrice">
+			<label class="item item-input item-floating-label phonenumber">
+				<i class="material-icons placeholder-icon">&#xE0CD;</i>
+				<input type="tel" ng-focus="user.lgn ? true : user.lgn='+7 ('" autocomplete="off" ng-model="user.lgn" input-mask/>
+		</label>
+			<label class="item item-input item-floating-label pincode">
+				<i class="material-icons placeholder-icon">&#xE897;</i>
+				<input type=password autocomplete="off" placeholder="ПАРОЛЬ или ПИН-КОД" ng-model="user.pin" />
+		</label>
+			<div class="buttons">
+				<button ng-class="{'disabled': !user.completeLgn}" type="button" class="button button-stable" ng-click="getPin({sms: true})" ng-if="!user.smsSended">
+				ПОЛУЧИТЬ<br>ПИН
+				</button>
+				<button type="button" class="button button-stable" ng-click="getPin({sms: false})" ng-class="{'disabled': !user.completeLgn}" ng-if="user.smsSended">
+				ПИН<br>НЕ ПРИШЕЛ
+				</button>
+				<button class="button button-positive" ng-class="{'disabled': !user.completeLgn || !user.pin}">
+				ОФОРМИТЬ<br>ЗАКАЗ ТАКСИ
+			</button>
+			</div>
+		</form>
+
+		<div class="ask-towm" ng-show="askPrice">
+			<div class="list">
+				<div class="item item item-icon-left">
+					<i class="icon material-icons">&#xE88E;</i>
+					Выберите <b>город</b>, для которого <br>хотите узнать стоимость заказа
+				</div>
+
+				<div class="item select" ng-click="townsDialog()">
+						<div class="holder">
+							<i class="icon icon-left material-icons">&#xE894;</i>
+							<div class="content">
+								Выбор города
+							</div>
+							<i class="icon icon-right material-icons">&#xE5C5;</i>
+						</div>
+					</label>
+				</div>
+			</div>
+		</div>
+
+		</div>
+	</ion-content>
+</ion-view>

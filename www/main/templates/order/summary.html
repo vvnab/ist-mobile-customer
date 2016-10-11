@@ -1,0 +1,132 @@
+<div class="order-card">
+
+  <ion-content>
+    <div class="order-content">
+      <div class="row">
+        <div class="col">
+          <div class="title">
+            Вызов такси
+          </div>
+          <div class="content">
+            <b>
+              {{ order.createdDate }}
+            </b>
+            {{ order.createdTime }}
+          </div>
+        </div>
+        <div class="col text-right">
+          <div class="title">
+            {{ order.isArchive() ? 'В пути' : 'Поиск машины' }}
+          </div>
+          <div class="content">
+            {{ order.isArchive() ? order.getOrderTme() : order.getWaitDuration() }}
+          </div>
+        </div>
+      </div>
+      <div class="row" ng-if="order.auto_model">
+        <div class="col">
+          <div class="title">
+            Автомобиль
+          </div>
+          <div class="content">
+            <div class="car">
+              <span class="color">
+                {{ order.auto_color }}
+              </span>
+              <span class="name">
+                {{ order.auto_model }} <br> {{ order.auto_nom }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="title">
+            Маршрут
+            <div class="distance">
+              12 Км
+            </div>
+          </div>
+          <div class="content">
+            <div class="adress"
+                 ng-repeat="addr in order.adds">
+                 <p>
+                   {{ addr.text() }}
+                 </p>
+                 <i class="icon material-icons">&#xE061;</i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row options-promo">
+        <div class="col" ng-if="order.options.length">
+          <div class="title">
+            Опции заказа
+          </div>
+
+          <div class="content">
+            <div class="icons">
+              <i ng-repeat="opt in order.options" class="icon-option {{opt.icon}}"></i>
+            </div>
+            <div class="summ">
+              Всего на {{ order.optionsSum }} &#8381;
+            </div>
+          </div>
+        </div>
+        <div class="col text-right">
+          <div class="title" ng-if="order.promo">
+            Карта/Промо
+          </div>
+          <div class="content">
+
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col">
+          <div class="title">
+            {{ order.isArchive() ? 'Оплачено' : 'Предварительная стоимость'}}
+          </div>
+          <div class="content">
+            <b>
+              {{ order.isArchive() ? order.cost : (order.optionsSum + order.wtd_cost )}}
+            </b>
+               &#8381;
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ion-content>
+
+  <div class="actions">
+    <div class="row">
+      <div class="col">
+        <button class="button" ng-click="orderRepeat(order)">
+          Повторить
+        </button>
+      </div>
+      <div class="col">
+        <button class="button" ng-click="orderRepeatBack(order)">
+          Повторить <br> обратный
+        </button>
+      </div>
+      <div ng-if="!summary && order.canCancel()" class="col">
+        <button class="button" ng-click="orderCancel()">
+          Отменить
+        </button>
+      </div>
+      <div ng-if="summary" class="col">
+        <button class="button" ng-click="cancelSummary()">
+          Назад
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

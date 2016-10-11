@@ -1,0 +1,59 @@
+<ion-view can-swipe-back="false" view-title="Карта/промокод">
+	<ion-content>
+		<div class="list cards-list">
+
+			<div class="item no-card" ng-click="cardSelect(-1)" ng-class="{selected: selectedCard == -1}">
+				<div class="item-icon-left item-icon-right content">
+					<i class="icon icon-left ion-close-circled"></i>
+					<p>
+						Не использовать
+					</p>
+					<div class="small">
+						Поездка без карты/промокода
+					</div>
+					<i class="icon icon-right ion-ios-checkmark-outline" ng-if="selectedCard == -1"></i>
+				</div>
+			</div>
+
+			<div class="item" ng-click="cardSelect(0)" ng-class="{selected: selectedCard == 0}">
+				<div class="item-icon-left item-icon-right content">
+					<i class="icon icon-left material-icons">&#xE89A;</i>
+					<p>
+						Промокод
+					</p>
+					<div class="small">
+						{{ promo.text || '<Введите номер>' }}
+					</div>
+					<i class="icon icon-right material-icons" ng-click="cardEdit(0); $event.stopPropagation()">&#xE150;</i>
+				</div>
+				<!-- <i class="icon ion-ios-checkmark-outline" ng-if="selectedCard == 0"></i> -->
+			</div>
+
+			<div class="item"
+					 ng-repeat="card in cards"
+					 ng-click="cardSelect(card)"
+					 ng-class="{selected: selectedCard.id == card.id}"
+					 ng-if="!card.defaultAccumCard">
+				<div class="item-icon-left item-icon-right content">
+
+					<i class="icon {{card.typeMeta.icon}} icon-left" ng-if="card.type != 8"></i>
+
+					<span ng-if="card.type == 8">
+					  <!-- <i class="ion-ios-plus-outline" ng-if="!card.writeOff"></i> -->
+					  <!-- <i class="ion-ios-minus-outline" ng-if="card.writeOff"></i> -->
+					  <i class="material-icons icon  icon-left" ng-if="!card.writeOff">&#xE148;</i>
+					  <i class="material-icons icon  icon-left" ng-if="card.writeOff">&#xE15D;</i>
+					</span>
+
+
+					<div class="order-card" ng-include="'main/templates/OrderCardPane.html'"></div>
+					<!-- <i class="icon ion-ios-checkmark-outline" ng-if="selectedCard.id == card.id"></i> -->
+					<i class="icon icon-right material-icons" ng-click="cardEdit(card); $event.stopPropagation()">&#xE150;</i>
+
+				</div>
+			</div>
+
+		</div>
+
+	</ion-content>
+</ion-view>

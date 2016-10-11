@@ -1,0 +1,145 @@
+<ion-view can-swipe-back="false" view-title="Опции заказа">
+	<ion-content>
+		<div class="options-list">
+			<div class="item">
+				<div class="info" ng-if="!lastOption">
+					Выберите опции
+				</div>
+				<div class="option-info row" ng-if="lastOption">
+					<div class="col-50 left">
+						{{ lastOption.title }}
+					</div>
+					<div class="col-50 right" ng-if="lastOption.cost">
+						<span>{{ lastOption.cost }}</span> &#8381;
+					</div>
+				</div>
+			</div>
+			<div class="list">
+				<div class="row text-center" ng-repeat="opts in groupedOpts">
+					<div class="col col-25" ng-repeat="opt in opts">
+						<div class="option" ng-click="clickOption(opt)" ng-class="opt.enabled ? 'selected' : ''">
+							<i class="icon {{opt.icon}}"></i>
+						</div>
+					</div>
+				</div>
+
+
+			</div>
+
+
+			<div class="list check-options">
+				<label class="item item-icon-left item-toggle text-center-" ng-repeat="opt in opts">
+				    <span ng-class="{'opt-title': opt.cost}"> {{opt.title}} </span>
+						<small ng-if="opt.cost" class="opt-cost" ng-class="{active: opt.enabled}">
+							Стоимость услуги {{opt.cost}} &#8381;
+						</small>
+				    <i class="icon {{opt.icon}}"></i>
+				    <label class="toggle toggle-energized">
+			        	<input type="checkbox" ng-model="opt.enabled" name="{{opt.name}}">
+			        	<div class="track">
+			         		<div class="handle"></div>
+			        	</div>
+				    </label>
+				</label>
+
+
+
+			</div>
+
+			<!-- <div class="shedule-block">
+				<div class="title">
+					Когда подать машину?
+				</div>
+				<div class="select-datetime">
+					<a class="date">
+						{{ dates[moment.day] }}
+					</a>
+					в
+					<a class="time">
+						{{ moment.hour + ':' + moment.minute}}
+					</a>
+				</div>
+			</div> -->
+			<div class="moment">
+				<div ng-show="moment.enabled">
+					<div class="item" ng-if="moment.enabled">
+						Время подачи автомобиля:
+					</div>
+					<div class="days list">
+						<a class="item  text-center" ng-if="moment.enabled" ng-repeat="date in dates" ng-click="moment.day = $index">
+							<i class="icon icon-left material-icons" ng-if="$index == moment.day">&#xE061;</i>
+							<div class="content">
+								{{date}}
+							</div>
+						</a>
+					</div>
+				</div>
+
+				<div class="row text-center" ng-if="moment.enabled">
+					<div class="col">
+						<div>
+							<button class="button button-clear- button-energized icon ion-plus" ng-click="moment.addHour(1)" on-hold="moment.processHour(1)" on-release="moment.stopProcess()"></button>
+						</div>
+						<div class="time-widget" ng-bind="moment.hour"></div>
+						<div>
+							<button class="button button-clear- button-energized icon ion-minus" ng-click="moment.addHour(-1)" on-hold="moment.processHour(-1)" on-release="moment.stopProcess()"></button>
+						</div>
+					</div>
+					<div class="col col-10">
+						<div>
+							<button class="button button-clear"></button>
+						</div>
+						<div class="time-widget">
+							:
+						</div>
+						<div>
+							<button class="button button-clear "></button>
+						</div>
+					</div>
+					<div class="col">
+						<div>
+							<button class="button button-clear- button-energized icon ion-plus" ng-click="moment.addMinute(1)" on-hold="moment.processMinute(1)" on-release="moment.stopProcess()"></button>
+						</div>
+						<div class="time-widget" ng-bind="moment.minute"></div>
+						<div>
+							<button class="button button-clear- button-energized icon ion-minus" ng-click="moment.addMinute(-1)" on-hold="moment.processMinute(-1)" on-release="moment.stopProcess()"></button>
+						</div>
+					</div>
+				</div>
+			</div>
+
+
+		</div>
+
+	</ion-content>
+	<div class="bottom-block">
+		<div class="info" ng-if="!count">
+			<i class="icon material-icons" ng-click="gotoCards()">&#xE88E;</i> Включайте опции касанием. <br> Здесь появится общая стоимость и кнопки выбора.
+		</div>
+		<div class="confirm-options" ng-if="count">
+			<div class="row">
+				<div class="col col-25 cancel" ng-click="back()">
+					<i class="material-icons icon">&#xE14C;</i>
+				</div>
+				<div class="col col-50 text-center">
+					<div class="opt-info">
+						<div class="count">
+							{{ utils.declOfNum(count,['выбрана','выбрано','выбрано']) }} {{count}} {{ utils.declOfNum(count,['опция','опции','опций']) }}
+						</div>
+						<div class="summ">
+							на сумму
+							<span>
+								{{ cost }} &#8381;
+							</span>
+						</div>
+					</div>
+				</div>
+				<div class="col col-25 text-right" ng-click="orderSetOptions()">
+					<i class="material-icons icon">&#xE5CA;</i>
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+</ion-view>

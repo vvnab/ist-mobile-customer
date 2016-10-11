@@ -1,0 +1,39 @@
+<div class="order-card-current started">
+  <div class="img-holder">
+    <img src="main/assets/images/930-onboard.png" alt="" />
+  </div>
+
+  <div class="content">
+    Автомобиль вашего заказа:
+    <br>
+    <div class="car">
+      {{ order.auto_model }} {{ order.auto_color }}
+      <br> № {{ order.auto_nom }}
+    </div>
+  </div>
+
+
+  <div class="info-row row">
+    <div class="col col-60">
+      <div class="cost-title">
+        {{ order.wtd_cost }}
+        <span>
+           &#8381;
+        </span>
+      </div>
+      <div class="cost-text">
+        Цена поездки
+      </div>
+    </div>
+    <div class="col col-40">
+      <div class="order-info-button" ng-click="toOrderSummary()">
+        <img src="main/assets/images/info-o-zakaze.png" alt="" />
+        <div class="text">
+          Инфо о заказе
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</div>

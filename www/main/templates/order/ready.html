@@ -1,0 +1,66 @@
+<div class="order-card-current ready" ng-controller="OrderAccepted">
+  <!-- <div class="img-holder">
+    <img src="main/assets/images/940-rideend.png" alt="" />
+  </div> -->
+  <ion-content>
+
+    <div class="map-container" style="height:{{deviceHeight*0.35}}px">
+      <div class="head-box-shadow">
+
+      </div>
+      <leaflet defaults="map.defaults" markers="markers" height="100%" width="100%"></leaflet>
+      <div class="footer-box-shadow">
+
+      </div>
+    </div>
+    <div class="content">
+      <div>
+        Выходите
+      </div>
+      {{ order.auto_model }} {{ order.auto_color }}
+      <br> № {{ order.auto_nom }}
+    </div>
+
+
+    <div class="info-row row">
+      <div class="col col-60">
+        <div class="cost-title">
+          {{ order.wtd_cost }}
+          <span>
+           &#8381;
+        </span>
+        </div>
+        <div class="cost-text">
+          Цена поездки
+        </div>
+      </div>
+      <div class="col col-40">
+        <div class="order-info-button" ng-click="toOrderSummary()">
+          <img src="main/assets/images/info-o-zakaze.png" alt="" />
+          <div class="text">
+            Инфо о заказе
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ion-content>
+  <div class="actions">
+    <div class="row">
+      <div class="col">
+        <button class="button button-block" ng-click="orderCallCrew()" ng-disabled="callCrew">
+          <div ng-show="!calCrewLoading">
+            Связаться с водителем
+          </div>
+          <ion-spinner ng-show="calCrewLoading" icon="android"></ion-spinner>
+        </button>
+      </div>
+      <div class="col">
+        <button class="button button-block" ng-class="{disabled: !order.canCancel()}" ng-click="orderCancel()">
+          Отменить заказ<br>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

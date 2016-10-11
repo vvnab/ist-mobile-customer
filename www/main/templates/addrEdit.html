@@ -1,0 +1,54 @@
+<ion-view can-swipe-back="false" view-title="{{addr.typeStr}}">
+	<ion-content>
+		<div class="list addr-edit">
+
+			<div class="item-icon-left item" ng-click="gotoAddrSelect()">
+				<div class="input-spinner" ng-if-="search.loading">
+					<i class="icon ca-locpoint icon-right" ng-if="!search.loading"></i>
+					<ion-spinner icon="android" class="icon-right icon" ng-if="search.loading"></ion-spinner>
+				</div>
+				<div class="selected-street" ng-bind="addr.adr"></div>
+			</div>
+
+			<div ng-if="addr.type == 9">
+				<div class="item">
+					<input type="text" autocomplete="off" placeholder="дом" ng-model="addr.hse" ng-model-options="{debounce: {'default': 100, 'blur': 0}}" auto-focus="false" key-focus/>
+					<textarea class="note" ng-model="addr.ent" placeholder="Подъезд / Как проехать" key-focus></textarea>
+					<!-- <div class="col col-67">
+	    	        	<label class="item-input-wrapper search-input">
+	    		            <input
+	    		            	type="text"
+	    		            	autocomplete="off"
+	    		            	placeholder="корпус/строение"
+	    		            	ng-model="addr.corp"
+	    		            	ng-model-options="{debounce: {'default': 100, 'blur': 0}}"
+	    		            	key-focus/>
+	    	            </label>
+		        	</div> -->
+				</div>
+			</div>
+			<!-- TODO  -->
+			<div ng-if="false" class="item-icon-left item check-favorites" ng-click="saveFavorite = !saveFavorite">
+				<label class="icon">
+					<i class="material-icons" ng-if="saveFavorite">&#xE5CA;</i>
+					<i class="material-icons" ng-if="!saveFavorite"></i>
+				</label>
+				<span>
+					Сохранить адрес в избранном
+				</span>
+
+			</div>
+			<div class="item button-item">
+				<button class="button button-block" ng-click="saveAddr()" ng-class="{disabled: addr.next()}">
+					<i class="icon material-icons">&#xE5CA;</i>
+					<span>Выбрать</span>
+				</button>
+
+			</div>
+		</div>
+
+
+
+
+	</ion-content>
+</ion-view>
