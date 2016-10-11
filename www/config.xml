@@ -92,13 +92,15 @@
     <plugin name="ionic-plugin-keyboard" spec="~2.2.1" />
     <plugin name="com.appmetrica.cordova.plugins.appmetrica" spec="https://github.com/slogger/AppMetricaCordovaPlugin.git" />
     <plugin name="cordova-plugin-x-toast" spec="~2.5.2" />
-    <!-- <plugin name="cordova-plugin-crosswalk-webview" spec="~2.1.0">
+    <!--
+    <plugin name="cordova-plugin-crosswalk-webview" spec="~2.1.0">
         <variable name="XWALK_VERSION" value="21+" />
         <variable name="XWALK_LITEVERSION" value="xwalk_core_library_canary:17+" />
         <variable name="XWALK_COMMANDLINE" value="--disable-pull-to-refresh-effect" />
         <variable name="XWALK_MODE" value="embedded" />
         <variable name="XWALK_MULTIPLEAPK" value="true" />
-    </plugin> -->
+    </plugin>
+    -->
 
     <plugin name="cordova-plugin-datepicker" spec="~0.9.3" />
 
