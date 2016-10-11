@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.ionicframework.vsegda214536" version="4.0.5" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget id="com.ionicframework.vsegda214536" version="4.0.6" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>Такси Всегда</name>
     <description>
     Заказ такси
@@ -43,7 +43,7 @@
       <icon height="58" src="resources/iOS/Resources/icons/Icon-small@2x.png" width="58"/>
       <icon height="87" src="resources/iOS/Resources/icons/Icon-small@3x.png" width="87"/>
 
-      <splash height="1136" src="resources/iOS/Resources/splash/Default@2x~iphone_640x960.png" width="640"/>
+      <splash height="1136" src="resources/iOS/Resources/splash/Default-568h@2x~iphone_640x1136.png" width="640"/>
       <splash height="1334" src="resources/iOS/Resources/splash/Default-750@2x~iphone6-portrait_750x1334.png" width="750"/>
       <splash height="2208" src="resources/iOS/Resources/splash/Default-1242@3x~iphone6s-portrait_1242x2208.png" width="1242"/>
       <splash height="1242" src="resources/iOS/Resources/splash/Default-1242@3x~iphone6s-landscape_2208x1242.png" width="2208"/>
