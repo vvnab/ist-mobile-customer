@@ -66,9 +66,8 @@
           <div class="item item-icon-right item-icon-left">
             <i class="icon material-icons" ng-click="gotoAdvance()">&#xE429;</i>
             <!-- список активных опций -->
-
             <div class="options" ng-click="gotoAdvance()">
-              <div ng-if="activeOptions.length >0 && activeOptions.length < 5">
+                <div ng-if="activeOptions.length >0 && activeOptions.length < 5">
                 <i ng-repeat="opt in activeOptions" class="icon-option {{opt.icon}}"></i>
               </div>
             </div>

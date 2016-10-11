@@ -2202,7 +2202,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
       user.order.options = _.pluck(_.where(_.flatten($scope.groupedOpts), {
         enabled: true
       }), "name");
-      $state.go("app.main");
+      app.askPrice ? $state.go("askPrice") : $state.go("app.main");
     };
 
     $scope.back = function() {
@@ -2786,8 +2786,6 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
         // $ionicLoading.hide();
       });
     };
-    $scope.askPrice = true;
-
 
     app.getTrfs()
     $scope.townsDialog = function() {
@@ -3192,6 +3190,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
     var setActiveOptions = function() {
       return app.getOpts(user.order.trf ? user.order.trf.id : null).then(function(opts) {
         return user.order.reduceOptions().then(function(res) {
+          console.log(opts,res)
           $scope.activeOptions = _.filter(opts, function(i) {
             return _.contains(res, i.name);
           });
@@ -3286,7 +3285,8 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
 
     $scope.addrSelect = function(addr) {
       user.order.adds[$stateParams.id] = new Addr(addr);
-      $state.go("app.main");
+      user.order.getCost();
+      app.askPrice ? $state.go("askPrice") : $state.go("app.main");
     };
   }
 })();
@@ -3454,7 +3454,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
     .controller('AddrEditCtrl', AddrEditCtrl);
 
 
-  function AddrEditCtrl($scope, $state, $stateParams, Addr, Order, user) {
+  function AddrEditCtrl($scope, $state, $stateParams, Addr, Order, user, app) {
     var count = 0;
     $scope.addr = user.order.adds[$stateParams.id];
     $scope.$watch("addr.hse", function(i) {
@@ -3468,7 +3468,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
     $scope.saveAddr = function() {
       if ($scope.addr && $scope.addr.error) delete $scope.addr.error;
       user.order.getCost();
-      $state.go("app.main");
+      app.askPrice ? $state.go("askPrice") : $state.go("app.main");
     };
     $scope.gotoAddrSelect = function() {
       $state.go("app.addr", {
@@ -3674,7 +3674,8 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
       console.log(addr);
       user.order.adds[$stateParams.id] = addr;
       if ($scope.id != 0 && addr.next() == null) {
-        $state.go("app.main");
+        user.order.getCost();
+        app.askPrice ? $state.go("askPrice") : $state.go("app.main");
       } else {
         $state.go("app.addrEdit", {
           id: $stateParams.id
@@ -4019,6 +4020,7 @@ angular.module('app', ['ionic','ngCordova','leaflet-directive', 'app.directives'
       })
       .state('askPrice', {
         url: "/askPrice",
+        cache: false,
         templateUrl: "main/templates/askPrice.html",
         controller: 'AskPrice',
         onEnter: function() {
