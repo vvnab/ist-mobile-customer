@@ -1,5 +1,5 @@
 <ion-view can-swipe-back="false" view-title="{{ title || 'Заказ'}}">
-  <ion-content>
+  <ion-content scroll="false">
     <!-- {{ order.state }} -->
     <div ng-include="'main/templates/order/searchCar.html'"
          ng-if="[0,1].indexOf(order.state) > -1 && !summary"></div>

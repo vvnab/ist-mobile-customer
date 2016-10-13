@@ -2552,6 +2552,10 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
           level: 5
         }).time;
       }
+      $scope.orderGetCost();
+    });
+
+    $scope.orderGetCost = function() {
       $scope.loadingCost = true;
       user.order.getCost()
         .then(function() {
@@ -2559,7 +2563,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
         }).catch(function() {
           $scope.loadingCost = false;
         });
-    });
+    };
 
     $scope.trfChange = function(trf) {
       console.log(trf);
@@ -2577,13 +2581,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
       var id = trf.id;
       user.order.trf = id;
       setActiveOptions();
-      $scope.loadingCost = true;
-      user.order.getCost()
-        .then(function() {
-          $scope.loadingCost = false;
-        }).catch(function() {
-          $scope.loadingCost = false;
-        });
+      $scope.orderGetCost();
     };
 
 
@@ -2617,13 +2615,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
           default: true
         }).id;
         $scope.order.type = $scope.state.order_type || 0;
-        $scope.loadingCost = true;
-        user.order.getCost()
-          .then(function() {
-            $scope.loadingCost = false;
-          }).catch(function() {
-            $scope.loadingCost = false;
-          });
+        $scope.orderGetCost();
         setActiveOptions();
       }
     };
@@ -2665,14 +2657,16 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
     $scope.clearOptions = function() {
       user.order.options = [];
       setActiveOptions();
+      $scope.orderGetCost();
       $scope.optionsPopover.hide();
-    }
+    };
 
     $scope.clearPromo = function() {
       app.promo.enabled = false;
       app.card = null;
       $scope.cardsPopover.hide();
-    }
+      $scope.orderGetCost();
+    };
     $scope.activeOptions = [];
 
     $scope.deviceWidth = window.screen.width;
@@ -2885,7 +2879,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
         title:'Повторить',
         action:$scope.orderRepeat
       },{
-        title:'Повторить',
+        title:'Повторить обратный',
         action:$scope.orderRepeatBack
       }];
       if (ord.isArchive()) {
@@ -3336,27 +3330,49 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
 
     console.log(app.twn_id);
     $scope.id = $stateParams.id;
+    var center = {
+      lat: Config.TOWN_CORDS[app.twn_id][0],
+      lng: Config.TOWN_CORDS[app.twn_id][1],
+      zoom: 12
+    };
+    if (app.coords && $stateParams.id == 0) {
+      center = {
+        lat: app.coords.lat,
+        lng: app.coords.lon,
+        zoom: 15
+      };
+    }
     $scope.map = {
       defaults: {
-        center: {
-          lat: Config.TOWN_CORDS[app.twn_id][0],
-          lng: Config.TOWN_CORDS[app.twn_id][1],
-          zoom: 12
-        },
+        center: center,
         tileLayer: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
         maxZoom: 18,
         zoomControl: false
       }
     };
-
     $scope.markers = [];
+    if (app.coords && $stateParams.id == 0) {
+      $scope.markers[1] = {
+        lat: app.coords.lat,
+        lng: app.coords.lon,
+        icon: {
+          type: 'div',
+          className: 'map-order-icon',
+          iconSize: [60, 60],
+          iconAnchor: [30, 60],
+          popupAnchor: [0, -45],
+          html: "<img src='main/assets/images/user-location.png'>\
+                <div class='pulse red'></div>"
+        }
+      };
+    }
+
 
     $scope.$on("leafletDirectiveMap.click", function(event, args) {
-      console.log(args.leafletEvent.originalEvent)
-      $scope.markers = [{
+      $scope.markers[0] = {
         lat: args.leafletEvent.latlng.lat,
         lng: args.leafletEvent.latlng.lng
-      }];
+      };
       $scope.loadingAdresses = true;
       geolocationRes.get({
         lat: args.leafletEvent.latlng.lat,
@@ -3367,7 +3383,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
         $scope.geolocationAdds = _.map(result, function(item) {
           var addr = new Addr(item);
           // addr.set(item);
-          console.log(addr)
+          console.log(addr);
           return addr;
         });
         $scope.loadingAdresses = false;

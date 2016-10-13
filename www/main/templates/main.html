@@ -26,11 +26,14 @@
           <div
               style="max-width:{{deviceWidth/4-10}}px;max-height:{{deviceWidth/4-10}}px;"
               ng-class="{selected: i.id == order.trf.id}" class="tariff">
-            <i class="icon {{i.icon}}"></i>
-            <div>
-              <!--{{i.time}} мин.-->
-              {{i.desc || i.name}}
-            </div>
+              <div></div>
+              <div class="tariff-content">
+                <i class="icon {{i.icon}}"></i>
+                <div>
+                  <!--{{i.time}} мин.-->
+                  {{i.desc || i.name}}
+                </div>
+              </div>
             <!-- <div>
               от {{i.mincost}} &#8381;
             </div> -->
@@ -117,7 +120,7 @@
             </div>
 						<div class="options none" ng-click="gotoAdvance()" ng-if="!(activeOptions.length || order.type)">
 							ОПЦИИ ЗАКАЗА
-						</div>
+            </div>
             <i class="icon icon-left more material-icons" ng-click="showOptionsPopover($event)">&#xE5D4;</i>
 					</div>
 					<!--a class="item item-icon-left item-icon-right schedule" ng-click="gotoAdvance()" ng-if="order.type">
