@@ -2234,7 +2234,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
         center: {
           lat: Config.TOWN_CORDS[app.twn_id][0],
           lng: Config.TOWN_CORDS[app.twn_id][1],
-          zoom: 12
+          zoom: 12,
         },
         tileLayer: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
         maxZoom: 18,
@@ -2289,7 +2289,10 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
           map.fitBounds([
             [order.crewGeo.lat, order.crewGeo.lon],
             [order.adds[0].lat, order.adds[0].lon]
-          ]);
+          ],{
+            paddingBottomRight:[20,20],
+            paddingTopLeft:[20,50]
+          });
         });
       }
 
@@ -2656,6 +2659,7 @@ angular.module('app.filters', ['ngStorage']).filter('removedOrders', function($l
 
     $scope.clearOptions = function() {
       user.order.options = [];
+      order.type = 0;
       setActiveOptions();
       $scope.orderGetCost();
       $scope.optionsPopover.hide();

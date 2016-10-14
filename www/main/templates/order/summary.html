@@ -106,22 +106,22 @@
   <div class="actions">
     <div class="row">
       <div class="col">
-        <button class="button" ng-click="orderRepeat(order)">
+        <button class="button button-block" ng-click="orderRepeat(order)">
           Повторить
         </button>
       </div>
       <div class="col">
-        <button class="button" ng-click="orderRepeatBack(order)">
+        <button class="button button-block" ng-click="orderRepeatBack(order)">
           Повторить <br> обратный
         </button>
       </div>
       <div ng-if="!summary && order.canCancel()" class="col">
-        <button class="button" ng-click="orderCancel()">
+        <button class="button button-block" ng-click="orderCancel()">
           Отменить
         </button>
       </div>
       <div ng-if="summary" class="col">
-        <button class="button" ng-click="cancelSummary()">
+        <button class="button button-block" ng-click="cancelSummary()">
           Назад
         </button>
       </div>
